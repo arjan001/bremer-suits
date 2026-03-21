@@ -445,7 +445,7 @@ function NavbarOfferForm({ item, onSave, onCancel }: { item: AdminNavbarOffer | 
     <form onSubmit={(e) => { e.preventDefault(); onSave({ text, isActive: item?.isActive ?? true }) }} className="p-6 space-y-4">
       <div>
         <label className="block text-sm font-semibold text-black mb-1">Offer Text *</label>
-        <textarea value={text} onChange={(e) => setText(e.target.value)} required rows={3} placeholder="e.g. Free delivery on orders above KSh 5,000 | Shop Now | Bremer Suits" className={inputCls + " resize-y"} />
+        <textarea value={text} onChange={(e) => setText(e.target.value)} required rows={3} placeholder="e.g. Free delivery on orders above $500 | Shop Now | Bremer Suits" className={inputCls + " resize-y"} />
         <p className="text-xs text-gray-400 mt-1">Use | to separate sections of text</p>
       </div>
       <div className="flex gap-3 justify-end pt-2">

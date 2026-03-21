@@ -675,7 +675,7 @@ function FooterSocialTab({
             <input
               value={form.socialLinks.whatsapp}
               onChange={(e) => handleSocialChange('whatsapp', e.target.value)}
-              placeholder="+254..."
+              placeholder="+1..."
               className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:border-black focus:ring-1 focus:ring-black outline-none"
             />
           </div>

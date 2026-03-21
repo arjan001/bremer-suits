@@ -125,8 +125,8 @@ export function PaymentModal({
 
   const validateMpesaForm = (): boolean => {
     const phone = mpesaPhone.replace(/\s/g, '')
-    if (!/^(\+?254|0)\d{9}$/.test(phone)) {
-      setError('Enter a valid Safaricom number (e.g. 0712345678)')
+    if (!/^\+?\d{7,15}$/.test(phone)) {
+      setError('Enter a valid phone number')
       return false
     }
     setError('')
@@ -193,7 +193,7 @@ export function PaymentModal({
           <div className="px-6 pt-5 pb-3">
             <p className="text-xs text-gray-400 uppercase tracking-widest font-medium">Amount Due</p>
             <p className="text-2xl font-bold text-black mt-1">
-              KSh {amount.toLocaleString()}
+              ${amount.toLocaleString()}
             </p>
           </div>
         )}
@@ -320,21 +320,21 @@ export function PaymentModal({
                 {/* M-Pesa Info */}
                 <div className="bg-[#E8F5E9] border border-[#C8E6C9] rounded-sm p-4">
                   <p className="text-sm text-[#2E7D32] leading-relaxed">
-                    An STK push will be sent to your Safaricom number. Enter your M-PESA PIN on your phone to complete the payment.
+                    An STK push will be sent to your phone number. Enter your M-PESA PIN on your phone to complete the payment.
                   </p>
                 </div>
 
                 {/* Phone Number */}
                 <div>
                   <label className="block text-sm font-semibold text-black mb-1.5">
-                    Safaricom Phone Number
+                    Phone Number
                   </label>
                   <div className="relative">
                     <input
                       type="tel"
                       value={mpesaPhone}
                       onChange={(e) => setMpesaPhone(formatMpesaPhone(e.target.value))}
-                      placeholder="0712 345 678"
+                      placeholder="(555) 000-0000"
                       required
                       className="w-full px-4 py-3 bg-white border border-gray-200 text-sm focus:border-black focus:ring-1 focus:ring-black outline-none transition-colors pl-12"
                     />
@@ -367,8 +367,8 @@ export function PaymentModal({
             >
               <Lock size={14} />
               {method === 'card'
-                ? `Pay KSh ${amount.toLocaleString()} with Card`
-                : `Pay KSh ${amount.toLocaleString()} via M-PESA`
+                ? `Pay $${amount.toLocaleString()} with Card`
+                : `Pay $${amount.toLocaleString()} via M-PESA`
               }
             </button>
 
@@ -396,7 +396,7 @@ export function PaymentModal({
                 </h3>
                 <p className="text-sm text-gray-500 leading-relaxed max-w-xs">
                   Please wait while we securely process your card payment of{' '}
-                  <span className="font-semibold text-black">KSh {amount.toLocaleString()}</span>.
+                  <span className="font-semibold text-black">${amount.toLocaleString()}</span>.
                 </p>
               </>
             ) : (
@@ -417,7 +417,7 @@ export function PaymentModal({
                 </p>
                 <div className="mt-5 px-4 py-2.5 bg-[#E8F5E9] border border-[#C8E6C9] rounded-sm">
                   <p className="text-xs text-[#2E7D32] font-medium">
-                    Amount: KSh {amount.toLocaleString()}
+                    Amount: ${amount.toLocaleString()}
                   </p>
                 </div>
               </>
@@ -441,7 +441,7 @@ export function PaymentModal({
             </h3>
             <p className="text-sm text-gray-500 leading-relaxed max-w-xs mb-2">
               Your payment of{' '}
-              <span className="font-semibold text-black">KSh {amount.toLocaleString()}</span>
+              <span className="font-semibold text-black">${amount.toLocaleString()}</span>
               {' '}has been successfully processed{method === 'mpesa' ? ' via M-PESA' : ''}.
             </p>
             <p className="text-xs text-gray-400 mb-6">

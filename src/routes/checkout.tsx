@@ -11,20 +11,14 @@ export const Route = createFileRoute('/checkout')({
 
 const deliveryLocations = [
   'Select delivery location',
-  'Nairobi CBD',
-  'Westlands',
-  'Karen',
-  'Kilimani',
-  'Lavington',
-  'South B / South C',
-  'Eastlands',
-  'Langata',
-  'Kileleshwa',
-  'Parklands',
-  'Mombasa',
-  'Kisumu',
-  'Nakuru',
-  'Eldoret',
+  'Downtown / City Center',
+  'Midtown',
+  'Uptown',
+  'West Side',
+  'East Side',
+  'North District',
+  'South District',
+  'Suburbs',
   'Other (specify in address)',
 ]
 
@@ -81,15 +75,15 @@ function Checkout() {
     if (method === 'whatsapp') {
       const message = encodeURIComponent(
         `Hi, I'd like to place an order:\n\n` +
-        items.map((item) => `- ${item.title} x${item.quantity} (KSh ${(item.price * item.quantity).toLocaleString()})`).join('\n') +
-        `\n\nTotal: KSh ${subtotal.toLocaleString()}` +
+        items.map((item) => `- ${item.title} x${item.quantity} ($${(item.price * item.quantity).toLocaleString()})`).join('\n') +
+        `\n\nTotal: $${subtotal.toLocaleString()}` +
         `\n\nName: ${formData.fullName}` +
         `\nPhone: ${formData.phone}` +
         `\nDelivery: ${formData.deliveryLocation}` +
         `\nAddress: ${formData.deliveryAddress}` +
         (formData.orderNotes ? `\nNotes: ${formData.orderNotes}` : ''),
       )
-      window.open(`https://wa.me/15551234567?text=${message}`, '_blank')
+      window.open(`https://wa.me/?text=${message}`, '_blank')
       placeOrder('whatsapp')
       setOrderPlaced(true)
       clearCart()
@@ -236,7 +230,7 @@ function Checkout() {
                         name="phone"
                         value={formData.phone}
                         onChange={handleInputChange}
-                        placeholder="0712 345 678"
+                        placeholder="(555) 000-0000"
                         required
                         className="w-full px-4 py-3 bg-white border border-gray-200 text-sm focus:border-black focus:ring-1 focus:ring-black outline-none transition-colors"
                       />
@@ -344,12 +338,12 @@ function Checkout() {
                             </p>
                           )}
                           <p className="text-sm text-gray-500 mt-0.5">
-                            KSh {item.price.toLocaleString()}
+                            ${item.price.toLocaleString()}
                           </p>
                         </div>
                         <div className="flex items-center gap-3">
                           <span className="text-sm font-medium text-black whitespace-nowrap">
-                            KSh {(item.price * item.quantity).toLocaleString()}
+                            ${(item.price * item.quantity).toLocaleString()}
                           </span>
                           <button
                             onClick={() => removeItem(item.id)}
@@ -388,7 +382,7 @@ function Checkout() {
               <div className="border-t border-gray-200 pt-4 space-y-2">
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-500">Subtotal</span>
-                  <span className="font-medium text-black">KSh {subtotal.toLocaleString()}</span>
+                  <span className="font-medium text-black">${subtotal.toLocaleString()}</span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-500">Delivery</span>
@@ -396,7 +390,7 @@ function Checkout() {
                 </div>
                 <div className="flex justify-between text-base font-bold text-black pt-2 border-t border-gray-200">
                   <span>Total</span>
-                  <span>KSh {subtotal.toLocaleString()}</span>
+                  <span>${subtotal.toLocaleString()}</span>
                 </div>
               </div>
 

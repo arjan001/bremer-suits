@@ -157,7 +157,7 @@ export function EnquireModal({ product, open, onClose }: EnquireModalProps) {
                     name="phone"
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
-                    placeholder="+254 712 345 678"
+                    placeholder="+1 (555) 000-0000"
                     className="w-full px-4 py-3 bg-white border border-gray-200 text-sm focus:border-black focus:ring-1 focus:ring-black outline-none transition-colors"
                   />
                 </div>

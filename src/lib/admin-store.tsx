@@ -245,7 +245,7 @@ const defaultSettings: AdminSettings = {
   storeName: '',
   storeEmail: '',
   storePhone: '',
-  currency: 'KSh',
+  currency: '$',
   deliveryFee: 0,
   freeDeliveryThreshold: 0,
   whatsappNumber: '',

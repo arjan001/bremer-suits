@@ -305,37 +305,37 @@ function HomePage() {
               {[
                 {
                   title: 'Modern Silhouette',
-                  price: '85$',
+                  price: '$850',
                   description: 'Discover how the right fit can elevate your suit from ordinary to exceptional.',
                 },
                 {
                   title: 'Urban Tailor',
-                  price: '65$',
+                  price: '$650',
                   description: 'Stay cool and stylish with breathable fabrics and smart layering tips.',
                 },
                 {
                   title: 'Clean Cut',
-                  price: '42$',
+                  price: '$420',
                   description: 'Versatile, refined, and modern\u2014learn how to make the vest work on its own.',
                 },
                 {
                   title: 'Metro Mode',
-                  price: '80$',
+                  price: '$800',
                   description: 'One suit, many occasions. Here\u2019s how to adapt your look effortlessly.',
                 },
                 {
                   title: 'The Refined Minimal',
-                  price: '35$',
+                  price: '$350',
                   description: 'Step outside the black-and-navy box with statement-making designs.',
                 },
                 {
                   title: 'Sleek Statement',
-                  price: '56$',
+                  price: '$560',
                   description: 'Ties, pocket squares, shoes\u2014details that define your style.',
                 },
                 {
                   title: 'Essential Form',
-                  price: '70$',
+                  price: '$700',
                   description: 'Explore how the suit has transformed\u2014and how to wear it today, learn how to wear the vest, jacket, and trousers in perfect harmony for timeless elegance.',
                 },
               ].map((item) => (
@@ -392,8 +392,8 @@ function HomePage() {
                 Well grown quality suits
               </h2>
               <div className="flex items-baseline gap-3 mb-8">
-                <span className="text-3xl font-bold text-white">60.00</span>
-                <span className="text-lg text-white/40 line-through">80.00</span>
+                <span className="text-3xl font-bold text-white">$600.00</span>
+                <span className="text-lg text-white/40 line-through">$800.00</span>
               </div>
 
               <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 mb-8">
