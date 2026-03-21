@@ -87,6 +87,7 @@ function Collections() {
           </div>
 
           {/* Products Grid - 4 columns */}
+          {filteredItems.length > 0 ? (
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
             {filteredItems.map((item) => {
               const inWishlist = isInWishlist(item.id)
@@ -172,6 +173,21 @@ function Collections() {
               )
             })}
           </div>
+          ) : (
+            <div className="text-center py-16">
+              <div className="w-20 h-20 rounded-full bg-gray-50 flex items-center justify-center mx-auto mb-4">
+                <Heart size={32} className="text-gray-300" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-600 mb-2">
+                {activeCategory !== 'All' ? 'No products in this category' : 'No products available yet'}
+              </h3>
+              <p className="text-sm text-gray-400 max-w-md mx-auto">
+                {activeCategory !== 'All'
+                  ? 'Try selecting a different category or check back soon.'
+                  : 'Our collection is being curated. Check back soon for new arrivals.'}
+              </p>
+            </div>
+          )}
         </div>
       </section>
 

@@ -1,13 +1,13 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useState } from 'react'
-import { Plus, Edit2, Trash2, X, Megaphone, Image } from 'lucide-react'
-import { useAdmin, type AdminHeroBanner, type AdminBanner, type AdminCarousel, type AdminNavbarOffer, type AdminPopupOffer } from '@/lib/admin-store'
+import { Plus, Edit2, Trash2, X, Megaphone, Image, Percent } from 'lucide-react'
+import { useAdmin, type AdminHeroBanner, type AdminBanner, type AdminCarousel, type AdminNavbarOffer, type AdminPopupOffer, type AdminOffer } from '@/lib/admin-store'
 
 export const Route = createFileRoute('/admin/offers')({
   component: AdminOffers,
 })
 
-type Tab = 'hero' | 'banners' | 'carousels' | 'navbar' | 'popup'
+type Tab = 'hero' | 'banners' | 'carousels' | 'navbar' | 'popup' | 'discounts'
 
 function AdminOffers() {
   const {
@@ -16,6 +16,7 @@ function AdminOffers() {
     carousels, addCarousel, updateCarousel, deleteCarousel,
     navbarOffers, addNavbarOffer, updateNavbarOffer, deleteNavbarOffer,
     popupOffers, addPopupOffer, updatePopupOffer, deletePopupOffer,
+    offers, addOffer, updateOffer, deleteOffer,
     categories,
   } = useAdmin()
 
@@ -42,6 +43,10 @@ function AdminOffers() {
   const [popupModal, setPopupModal] = useState<'closed' | 'add' | 'edit'>('closed')
   const [editPopup, setEditPopup] = useState<AdminPopupOffer | null>(null)
 
+  // Discount offer state
+  const [discountModal, setDiscountModal] = useState<'closed' | 'add' | 'edit'>('closed')
+  const [editDiscount, setEditDiscount] = useState<AdminOffer | null>(null)
+
   const handleDelete = () => {
     if (!deleteConfirm) return
     const { id, type } = deleteConfirm
@@ -50,6 +55,7 @@ function AdminOffers() {
     else if (type === 'carousels') deleteCarousel(id)
     else if (type === 'navbar') deleteNavbarOffer(id)
     else if (type === 'popup') deletePopupOffer(id)
+    else if (type === 'discounts') deleteOffer(id)
     setDeleteConfirm(null)
   }
 
@@ -59,6 +65,7 @@ function AdminOffers() {
     { key: 'carousels', label: 'Carousels', count: carousels.length },
     { key: 'navbar', label: 'Navbar Offers', count: navbarOffers.length },
     { key: 'popup', label: 'Popup Offers', count: popupOffers.length },
+    { key: 'discounts', label: 'Discount Codes', count: offers.length },
   ]
 
   const addButtonLabels: Record<Tab, string> = {
@@ -67,6 +74,7 @@ function AdminOffers() {
     carousels: 'Add Carousel',
     navbar: 'Add Offer Text',
     popup: 'Add Popup Offer',
+    discounts: 'Add Discount Code',
   }
 
   const handleAddClick = () => {
@@ -75,6 +83,7 @@ function AdminOffers() {
     else if (activeTab === 'carousels') { setEditCarousel(null); setCarouselModal('add') }
     else if (activeTab === 'navbar') { setEditNavbar(null); setNavbarModal('add') }
     else if (activeTab === 'popup') { setEditPopup(null); setPopupModal('add') }
+    else if (activeTab === 'discounts') { setEditDiscount(null); setDiscountModal('add') }
   }
 
   return (
@@ -258,9 +267,16 @@ function AdminOffers() {
               </div>
               <div className="flex-1 min-w-0">
                 <p className="font-semibold text-black text-sm">{o.title}</p>
-                <p className="text-xs text-gray-500">{o.discountPercent}% OFF {o.collectNewsletter && '| Collects newsletter'}</p>
+                <p className="text-xs text-gray-500">{o.discountPercent}% OFF {o.code && `| Code: ${o.code}`} {o.collectNewsletter && '| Collects newsletter'}</p>
               </div>
               <div className="flex items-center gap-2 shrink-0">
+                <button
+                  onClick={() => updatePopupOffer(o.id, { isActive: !o.isActive })}
+                  className={`w-11 h-6 rounded-full transition-colors relative ${o.isActive ? 'bg-gray-800' : 'bg-gray-300'}`}
+                >
+                  <span className="absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform"
+                    style={{ left: o.isActive ? '22px' : '2px' }} />
+                </button>
                 <button onClick={() => { setEditPopup(o); setPopupModal('edit') }} className="p-1.5 text-gray-400 hover:text-black transition-colors"><Edit2 size={15} /></button>
                 <button onClick={() => setDeleteConfirm({ id: o.id, type: 'popup' })} className="p-1.5 text-gray-400 hover:text-red-600 transition-colors"><Trash2 size={15} /></button>
               </div>
@@ -270,6 +286,42 @@ function AdminOffers() {
             <div className="bg-white border border-gray-200 rounded-lg p-12 text-center text-gray-400">
               <Image size={36} className="mx-auto mb-3 text-gray-300" />
               <p className="text-sm">No popup offers yet</p>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Discount Codes Tab */}
+      {activeTab === 'discounts' && (
+        <div className="space-y-3">
+          {offers.map((o) => (
+            <div key={o.id} className="bg-white border border-gray-200 rounded-lg p-4 flex items-center gap-4">
+              <div className="w-10 h-10 rounded-lg bg-purple-50 flex items-center justify-center shrink-0">
+                <Percent size={18} className="text-purple-600" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 mb-0.5">
+                  <p className="font-semibold text-black text-sm">{o.title}</p>
+                  {o.code && <span className="px-2 py-0.5 bg-gray-100 text-xs font-mono font-semibold text-gray-700 rounded">{o.code}</span>}
+                </div>
+                <p className="text-xs text-gray-500">{o.discountPercent}% OFF &middot; {new Date(o.startDate).toLocaleDateString()} — {new Date(o.endDate).toLocaleDateString()}</p>
+                {o.description && <p className="text-xs text-gray-400 mt-0.5 line-clamp-1">{o.description}</p>}
+              </div>
+              <div className="flex items-center gap-2 shrink-0">
+                <span className={`inline-flex px-2 py-0.5 text-xs font-semibold rounded-full ${
+                  o.status === 'active' ? 'bg-green-50 text-green-700' :
+                  o.status === 'scheduled' ? 'bg-blue-50 text-blue-700' :
+                  'bg-gray-100 text-gray-500'
+                }`}>{o.status}</span>
+                <button onClick={() => { setEditDiscount(o); setDiscountModal('edit') }} className="p-1.5 text-gray-400 hover:text-black transition-colors"><Edit2 size={15} /></button>
+                <button onClick={() => setDeleteConfirm({ id: o.id, type: 'discounts' })} className="p-1.5 text-gray-400 hover:text-red-600 transition-colors"><Trash2 size={15} /></button>
+              </div>
+            </div>
+          ))}
+          {offers.length === 0 && (
+            <div className="bg-white border border-gray-200 rounded-lg p-12 text-center text-gray-400">
+              <Percent size={36} className="mx-auto mb-3 text-gray-300" />
+              <p className="text-sm">No discount codes yet</p>
             </div>
           )}
         </div>
@@ -329,6 +381,16 @@ function AdminOffers() {
             else addPopupOffer(data as AdminPopupOffer)
             setPopupModal('closed')
           }} onCancel={() => setPopupModal('closed')} />
+        </ModalShell>
+      )}
+
+      {discountModal !== 'closed' && (
+        <ModalShell title={discountModal === 'add' ? 'Add Discount Code' : 'Edit Discount Code'} onClose={() => setDiscountModal('closed')}>
+          <DiscountOfferForm item={editDiscount} onSave={(data) => {
+            if (discountModal === 'edit' && editDiscount) updateOffer(editDiscount.id, data)
+            else addOffer(data as AdminOffer)
+            setDiscountModal('closed')
+          }} onCancel={() => setDiscountModal('closed')} />
         </ModalShell>
       )}
 
@@ -481,6 +543,44 @@ function PopupOfferForm({ item, onSave, onCancel }: { item: AdminPopupOffer | nu
             style={{ left: collectNewsletter ? '22px' : '2px' }} />
         </button>
         <label className="text-sm text-gray-700">Collect newsletter email in popup</label>
+      </div>
+      <div className="flex gap-3 justify-end pt-2">
+        <button type="button" onClick={onCancel} className="px-4 py-2.5 text-sm font-medium text-gray-600">Cancel</button>
+        <button type="submit" className="px-6 py-2.5 bg-black text-white text-sm font-semibold rounded-lg hover:bg-gray-800">Save</button>
+      </div>
+    </form>
+  )
+}
+
+/* ── Discount Offer Form ── */
+function DiscountOfferForm({ item, onSave, onCancel }: { item: AdminOffer | null; onSave: (d: Partial<AdminOffer>) => void; onCancel: () => void }) {
+  const [title, setTitle] = useState(item?.title || '')
+  const [description, setDescription] = useState(item?.description || '')
+  const [discountPercent, setDiscountPercent] = useState(item?.discountPercent || 10)
+  const [code, setCode] = useState(item?.code || '')
+  const [startDate, setStartDate] = useState(item?.startDate || new Date().toISOString().slice(0, 10))
+  const [endDate, setEndDate] = useState(item?.endDate || '')
+  const [status, setStatus] = useState<AdminOffer['status']>(item?.status || 'active')
+
+  return (
+    <form onSubmit={(e) => { e.preventDefault(); onSave({ title, description, discountPercent, code, startDate, endDate, status }) }} className="p-6 space-y-4">
+      <div><label className="block text-sm font-semibold text-black mb-1">Title *</label><input value={title} onChange={(e) => setTitle(e.target.value)} required className={inputCls} /></div>
+      <div><label className="block text-sm font-semibold text-black mb-1">Description</label><textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={2} className={inputCls + " resize-y"} /></div>
+      <div className="grid grid-cols-2 gap-4">
+        <div><label className="block text-sm font-semibold text-black mb-1">Discount %</label><input type="number" value={discountPercent} onChange={(e) => setDiscountPercent(Number(e.target.value))} min={1} max={100} className={inputCls} /></div>
+        <div><label className="block text-sm font-semibold text-black mb-1">Promo Code *</label><input value={code} onChange={(e) => setCode(e.target.value.toUpperCase())} required placeholder="SUMMER25" className={inputCls + " font-mono"} /></div>
+      </div>
+      <div className="grid grid-cols-2 gap-4">
+        <div><label className="block text-sm font-semibold text-black mb-1">Start Date</label><input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} className={inputCls} /></div>
+        <div><label className="block text-sm font-semibold text-black mb-1">End Date</label><input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} className={inputCls} /></div>
+      </div>
+      <div>
+        <label className="block text-sm font-semibold text-black mb-1">Status</label>
+        <select value={status} onChange={(e) => setStatus(e.target.value as AdminOffer['status'])} className={inputCls}>
+          <option value="active">Active</option>
+          <option value="scheduled">Scheduled</option>
+          <option value="expired">Expired</option>
+        </select>
       </div>
       <div className="flex gap-3 justify-end pt-2">
         <button type="button" onClick={onCancel} className="px-4 py-2.5 text-sm font-medium text-gray-600">Cancel</button>
