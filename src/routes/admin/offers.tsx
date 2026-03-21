@@ -372,9 +372,9 @@ const inputCls = "w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm f
 function HeroBannerForm({ item, categories, onSave, onCancel }: { item: AdminHeroBanner | null; categories: string[]; onSave: (d: Partial<AdminHeroBanner>) => void; onCancel: () => void }) {
   const [title, setTitle] = useState(item?.title || '')
   const [collection, setCollection] = useState(item?.collection || categories[0] || '')
-  const [link, setLink] = useState(item?.link || '/collections')
-  const [buttonText, setButtonText] = useState(item?.buttonText || 'Shop Now')
-  const [image, setImage] = useState(item?.image || '/images/suit-navy.webp')
+  const [link, setLink] = useState(item?.link || '')
+  const [buttonText, setButtonText] = useState(item?.buttonText || '')
+  const [image, setImage] = useState(item?.image || '')
 
   return (
     <form onSubmit={(e) => { e.preventDefault(); onSave({ title, collection, link, buttonText, image, isActive: item?.isActive ?? true }) }} className="p-6 space-y-4">
@@ -401,8 +401,8 @@ function HeroBannerForm({ item, categories, onSave, onCancel }: { item: AdminHer
 function BannerForm({ item, onSave, onCancel }: { item: AdminBanner | null; onSave: (d: Partial<AdminBanner>) => void; onCancel: () => void }) {
   const [title, setTitle] = useState(item?.title || '')
   const [description, setDescription] = useState(item?.description || '')
-  const [link, setLink] = useState(item?.link || '/collections')
-  const [image, setImage] = useState(item?.image || '/images/suit-navy.webp')
+  const [link, setLink] = useState(item?.link || '')
+  const [image, setImage] = useState(item?.image || '')
 
   return (
     <form onSubmit={(e) => { e.preventDefault(); onSave({ title, description, link, image, isActive: item?.isActive ?? true }) }} className="p-6 space-y-4">
@@ -421,8 +421,8 @@ function BannerForm({ item, onSave, onCancel }: { item: AdminBanner | null; onSa
 /* ── Carousel Form ── */
 function CarouselForm({ item, onSave, onCancel }: { item: AdminCarousel | null; onSave: (d: Partial<AdminCarousel>) => void; onCancel: () => void }) {
   const [title, setTitle] = useState(item?.title || '')
-  const [link, setLink] = useState(item?.link || '/collections')
-  const [image, setImage] = useState(item?.image || '/images/suit-navy.webp')
+  const [link, setLink] = useState(item?.link || '')
+  const [image, setImage] = useState(item?.image || '')
 
   return (
     <form onSubmit={(e) => { e.preventDefault(); onSave({ title, link, image, isActive: item?.isActive ?? true }) }} className="p-6 space-y-4">

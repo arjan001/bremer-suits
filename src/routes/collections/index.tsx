@@ -2,7 +2,7 @@ import { createFileRoute, Link } from '@tanstack/react-router'
 import { ArrowRight, Heart } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { useWishlist } from '@/lib/wishlist-context'
-import { allProducts } from '@/lib/products'
+import { getProducts, type Product } from '@/lib/products'
 
 export const Route = createFileRoute('/collections/')({
   component: Collections,
@@ -12,9 +12,12 @@ function Collections() {
   const [activeCategory, setActiveCategory] = useState<string>('All')
   const { toggleItem, isInWishlist } = useWishlist()
   const [dynamicCategories, setDynamicCategories] = useState<string[]>([])
+  const [products, setProducts] = useState<Product[]>([])
 
-  // Load categories from admin store in localStorage to match collections
   useEffect(() => {
+    setProducts(getProducts())
+
+    // Load categories from admin store in localStorage to match collections
     try {
       const stored = localStorage.getItem('bremer-admin-categories')
       if (stored) {
@@ -29,11 +32,11 @@ function Collections() {
 
   const categories = dynamicCategories.length > 0
     ? ['All', ...dynamicCategories]
-    : ['All', 'Business', 'Black Tie', 'Casual', 'Seasonal', 'Vests']
+    : ['All', ...[...new Set(products.map((p) => p.category))]]
 
   const filteredItems = activeCategory === 'All'
-    ? allProducts
-    : allProducts.filter((item) => item.category === activeCategory)
+    ? products
+    : products.filter((item) => item.category === activeCategory)
 
   return (
     <div className="min-h-screen bg-white">

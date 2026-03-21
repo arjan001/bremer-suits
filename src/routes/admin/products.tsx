@@ -82,7 +82,7 @@ function AdminProducts() {
               status: (parts[5] as AdminProduct['status']) || 'active',
               fabric: parts[6] || '',
               tag: parts[7] || null,
-              image: '/images/suit-navy.webp',
+              image: '',
               colors: [{ name: 'Black', value: '#000000' }],
               sizes: ['S', 'M', 'L', 'XL'],
               description: '',
@@ -302,7 +302,7 @@ function ProductModal({
   const [numericPrice, setNumericPrice] = useState(product?.numericPrice || 0)
   const [salePrice, setSalePrice] = useState(product?.salePrice || '')
   const [originalPrice, setOriginalPrice] = useState(product?.originalPrice || '')
-  const [image, setImage] = useState(product?.image || '/images/suit-navy.webp')
+  const [image, setImage] = useState(product?.image || '')
   const [tag, setTag] = useState(product?.tag || '')
   const [description, setDescription] = useState(product?.description || '')
   const [status, setStatus] = useState(product?.status || 'active')

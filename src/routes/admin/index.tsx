@@ -27,7 +27,7 @@ function AdminDashboard() {
         <StatCard
           label="TOTAL PRODUCTS"
           value={products.length}
-          subtitle="Live from DB"
+          subtitle="In store"
           icon={<Package size={20} className="text-gray-400" />}
         />
         <StatCard

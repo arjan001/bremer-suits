@@ -13,50 +13,11 @@ import {
   Heart,
 } from 'lucide-react'
 import { useWishlist } from '@/lib/wishlist-context'
-import { allProducts } from '@/lib/products'
+import { getProducts, type Product } from '@/lib/products'
 
 export const Route = createFileRoute('/')({
   component: HomePage,
 })
-
-const collections = [
-  {
-    title: 'Business Suits',
-    subtitle: 'Boardroom Ready',
-    image: '/images/suit-business.webp',
-    count: '12 Pieces',
-    category: 'Business',
-  },
-  {
-    title: 'Black Tie',
-    subtitle: 'Formal Elegance',
-    image: '/images/suit-formal.webp',
-    count: '8 Pieces',
-    category: 'Black Tie',
-  },
-  {
-    title: 'Casual Tailoring',
-    subtitle: 'Weekend Refined',
-    image: '/images/suit-casual.webp',
-    count: '10 Pieces',
-    category: 'Casual',
-  },
-  {
-    title: 'Vests & Sets',
-    subtitle: 'Layered Sophistication',
-    image: '/images/suit-vest.webp',
-    count: '6 Pieces',
-    category: 'Vests',
-  },
-]
-
-// Featured products from allProducts by ID
-const featuredIds = ['midnight-navy', 'boardroom', 'classic-vest-set', 'continental']
-const featuredProducts = allProducts.filter((p) => featuredIds.includes(p.id))
-
-// New arrivals from allProducts by ID
-const newArrivalIds = ['diplomat', 'eveningwear', 'weekend', 'heritage-tweed']
-const newArrivals = allProducts.filter((p) => newArrivalIds.includes(p.id))
 
 const services = [
   {
@@ -76,7 +37,7 @@ const services = [
   },
 ]
 
-function ProductCard({ product, badgeOverride }: { product: typeof allProducts[0]; badgeOverride?: string }) {
+function ProductCard({ product, badgeOverride }: { product: Product; badgeOverride?: string }) {
   const { toggleItem, isInWishlist } = useWishlist()
   const inWishlist = isInWishlist(product.id)
 
@@ -161,6 +122,47 @@ function HomePage() {
     .slice(0, 2)
 
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 })
+  const [products, setProducts] = useState<Product[]>([])
+  const [collections, setCollections] = useState<{ title: string; subtitle: string; image: string; count: string; category: string }[]>([])
+
+  useEffect(() => {
+    const allProducts = getProducts()
+    setProducts(allProducts)
+
+    // Build collections from admin categories if available
+    try {
+      const stored = localStorage.getItem('bremer-admin-categories')
+      if (stored) {
+        const cats = JSON.parse(stored) as Array<{ name: string; slug: string; description: string; image: string; status: string }>
+        const activeCats = cats.filter((c) => c.status === 'active')
+        if (activeCats.length > 0) {
+          setCollections(activeCats.map((c) => ({
+            title: c.name,
+            subtitle: c.description || c.name,
+            image: c.image || '/images/suit-hero.webp',
+            count: `${allProducts.filter((p) => p.category === c.name).length} Pieces`,
+            category: c.name,
+          })))
+          return
+        }
+      }
+    } catch { /* ignore */ }
+
+    // Fall back to deriving collections from products
+    const categories = [...new Set(allProducts.map((p) => p.category))]
+    setCollections(categories.slice(0, 4).map((cat) => ({
+      title: cat,
+      subtitle: cat,
+      image: allProducts.find((p) => p.category === cat)?.image || '/images/suit-hero.webp',
+      count: `${allProducts.filter((p) => p.category === cat).length} Pieces`,
+      category: cat,
+    })))
+  }, [])
+
+  const featuredProducts = products.slice(0, 4)
+  const newArrivals = products.filter((p) => p.tag === 'New' || p.tag === 'Best Seller').slice(0, 4).length > 0
+    ? products.filter((p) => p.tag === 'New' || p.tag === 'Best Seller').slice(0, 4)
+    : products.slice(4, 8)
 
   useEffect(() => {
     const calculateTimeLeft = () => {
@@ -228,7 +230,8 @@ function HomePage() {
         </div>
       </section>
 
-      {/* Shop by Collection - Card layout like Kallitos */}
+      {/* Shop by Collection - Card layout */}
+      {collections.length > 0 && (
       <section className="py-16 lg:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
@@ -274,8 +277,10 @@ function HomePage() {
           </div>
         </div>
       </section>
+      )}
 
-      {/* Our Specials - Menu style pricing */}
+      {/* Our Specials - Dynamic from products */}
+      {products.length > 0 && (
       <section className="py-16 lg:py-24 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
@@ -294,52 +299,16 @@ function HomePage() {
             {/* Left: Suit Image */}
             <div className="aspect-[3/4] overflow-hidden bg-gray-100">
               <img
-                src="/images/suit-navy.webp"
-                alt="Featured navy suit"
+                src={products[0]?.image || '/images/suit-hero.webp'}
+                alt="Featured suit"
                 className="w-full h-full object-cover"
               />
             </div>
 
             {/* Right: Menu List */}
             <div className="flex flex-col gap-6 lg:pt-4">
-              {[
-                {
-                  title: 'Modern Silhouette',
-                  price: '85$',
-                  description: 'Discover how the right fit can elevate your suit from ordinary to exceptional.',
-                },
-                {
-                  title: 'Urban Tailor',
-                  price: '65$',
-                  description: 'Stay cool and stylish with breathable fabrics and smart layering tips.',
-                },
-                {
-                  title: 'Clean Cut',
-                  price: '42$',
-                  description: 'Versatile, refined, and modern\u2014learn how to make the vest work on its own.',
-                },
-                {
-                  title: 'Metro Mode',
-                  price: '80$',
-                  description: 'One suit, many occasions. Here\u2019s how to adapt your look effortlessly.',
-                },
-                {
-                  title: 'The Refined Minimal',
-                  price: '35$',
-                  description: 'Step outside the black-and-navy box with statement-making designs.',
-                },
-                {
-                  title: 'Sleek Statement',
-                  price: '56$',
-                  description: 'Ties, pocket squares, shoes\u2014details that define your style.',
-                },
-                {
-                  title: 'Essential Form',
-                  price: '70$',
-                  description: 'Explore how the suit has transformed\u2014and how to wear it today, learn how to wear the vest, jacket, and trousers in perfect harmony for timeless elegance.',
-                },
-              ].map((item) => (
-                <div key={item.title}>
+              {products.slice(0, 7).map((item) => (
+                <Link key={item.id} to="/collections/$slug" params={{ slug: item.id }}>
                   <div className="flex items-baseline gap-2">
                     <h3
                       className="text-lg font-bold text-black whitespace-nowrap"
@@ -352,10 +321,10 @@ function HomePage() {
                       {item.price}
                     </span>
                   </div>
-                  <p className="text-sm text-gray-500 mt-1 italic leading-relaxed">
-                    {item.description}
+                  <p className="text-sm text-gray-500 mt-1 italic leading-relaxed line-clamp-2">
+                    {item.description || `Crafted with ${item.fabric} for the modern gentleman.`}
                   </p>
-                </div>
+                </Link>
               ))}
 
               <div className="text-center mt-4">
@@ -370,12 +339,17 @@ function HomePage() {
           </div>
         </div>
       </section>
+      )}
 
       {/* Deal of the Day - Countdown with Parallax */}
+      {(() => {
+        const dealProduct = products.find((p) => p.salePrice || p.originalPrice) || products[0]
+        if (!dealProduct) return null
+        return (
       <section className="relative overflow-hidden">
         <div
           className="parallax-bg absolute inset-0"
-          style={{ backgroundImage: "url('/images/suit-hero.webp')" }}
+          style={{ backgroundImage: `url('${dealProduct.image || '/images/suit-hero.webp'}')` }}
         />
         <div className="absolute inset-0 bg-black/75" />
 
@@ -389,11 +363,13 @@ function HomePage() {
                 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-4"
                 style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
               >
-                Well grown quality suits
+                {dealProduct.title}
               </h2>
               <div className="flex items-baseline gap-3 mb-8">
-                <span className="text-3xl font-bold text-white">60.00</span>
-                <span className="text-lg text-white/40 line-through">80.00</span>
+                <span className="text-3xl font-bold text-white">{dealProduct.salePrice || dealProduct.price}</span>
+                {dealProduct.originalPrice && (
+                  <span className="text-lg text-white/40 line-through">{dealProduct.originalPrice}</span>
+                )}
               </div>
 
               <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 mb-8">
@@ -422,7 +398,8 @@ function HomePage() {
               </div>
 
               <Link
-                to="/collections"
+                to="/collections/$slug"
+                params={{ slug: dealProduct.id }}
                 className="inline-flex items-center px-8 py-3.5 text-xs tracking-[0.2em] uppercase bg-white text-black hover:bg-gray-100 transition-colors duration-300 font-semibold"
               >
                 Shop Now
@@ -431,16 +408,19 @@ function HomePage() {
 
             <div className="hidden lg:flex justify-center">
               <img
-                src="/images/suit-navy.webp"
-                alt="Featured suit on display"
+                src={dealProduct.image}
+                alt={dealProduct.title}
                 className="h-[500px] object-contain drop-shadow-2xl"
               />
             </div>
           </div>
         </div>
       </section>
+        )
+      })()}
 
       {/* Featured Products - Grid with product page links */}
+      {featuredProducts.length > 0 && (
       <section className="py-16 lg:py-24 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-end justify-between mb-12">
@@ -477,6 +457,7 @@ function HomePage() {
           </div>
         </div>
       </section>
+      )}
 
       {/* Promotional Banner - Two columns like Kallitos */}
       <section className="py-16 lg:py-24">
@@ -535,6 +516,7 @@ function HomePage() {
       </section>
 
       {/* New Arrivals */}
+      {newArrivals.length > 0 && (
       <section className="py-16 lg:py-24 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-end justify-between mb-12">
@@ -562,6 +544,7 @@ function HomePage() {
           </div>
         </div>
       </section>
+      )}
 
       {/* Services Strip */}
       <section className="border-t border-b border-gray-100 py-12 lg:py-16 bg-white">

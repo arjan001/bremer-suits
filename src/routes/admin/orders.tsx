@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useState } from 'react'
-import { Search, Eye, X, ShoppingCart, Truck, XCircle, Clock, Package } from 'lucide-react'
+import { Search, Eye, X, ShoppingCart, Truck, XCircle, Clock, Package, Plus, Trash2 } from 'lucide-react'
 import { useAdmin, type AdminOrder } from '@/lib/admin-store'
 
 export const Route = createFileRoute('/admin/orders')({
@@ -18,11 +18,22 @@ const statusColors: Record<string, string> = {
 }
 
 function AdminOrders() {
-  const { orders, updateOrder, deleteOrder, settings } = useAdmin()
+  const { orders, addOrder, updateOrder, deleteOrder, products, settings } = useAdmin()
   const [search, setSearch] = useState('')
   const [filterStatus, setFilterStatus] = useState('all')
   const [viewOrder, setViewOrder] = useState<AdminOrder | null>(null)
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null)
+  const [showCreate, setShowCreate] = useState(false)
+
+  // Create order form state
+  const [customerName, setCustomerName] = useState('')
+  const [customerPhone, setCustomerPhone] = useState('')
+  const [customerEmail, setCustomerEmail] = useState('')
+  const [deliveryLocation, setDeliveryLocation] = useState('')
+  const [deliveryAddress, setDeliveryAddress] = useState('')
+  const [paymentMethod, setPaymentMethod] = useState<'card' | 'mpesa' | 'whatsapp'>('mpesa')
+  const [orderNotes, setOrderNotes] = useState('')
+  const [orderItems, setOrderItems] = useState<{ productId: string; title: string; price: number; quantity: number; image: string; selectedColor?: string; selectedSize?: string }[]>([])
 
   const filtered = orders.filter((o) => {
     const matchSearch = o.orderNumber.toLowerCase().includes(search.toLowerCase()) ||
@@ -36,6 +47,43 @@ function AdminOrders() {
     if (viewOrder?.id === id) setViewOrder({ ...viewOrder, status })
   }
 
+  const resetCreateForm = () => {
+    setCustomerName(''); setCustomerPhone(''); setCustomerEmail('')
+    setDeliveryLocation(''); setDeliveryAddress('')
+    setPaymentMethod('mpesa'); setOrderNotes(''); setOrderItems([])
+  }
+
+  const addProductToOrder = (productId: string) => {
+    const product = products.find((p) => p.id === productId)
+    if (!product) return
+    const existing = orderItems.find((i) => i.productId === productId)
+    if (existing) {
+      setOrderItems(orderItems.map((i) => i.productId === productId ? { ...i, quantity: i.quantity + 1 } : i))
+    } else {
+      setOrderItems([...orderItems, { productId: product.id, title: product.title, price: product.numericPrice, quantity: 1, image: product.image }])
+    }
+  }
+
+  const handleCreateOrder = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (orderItems.length === 0) return
+    const subtotal = orderItems.reduce((sum, i) => sum + i.price * i.quantity, 0)
+    const deliveryFee = settings.deliveryFee || 0
+    addOrder({
+      customer: { fullName: customerName, phone: customerPhone, email: customerEmail || undefined },
+      delivery: { location: deliveryLocation, address: deliveryAddress },
+      items: orderItems,
+      subtotal,
+      deliveryFee,
+      total: subtotal + deliveryFee,
+      paymentMethod,
+      status: 'pending',
+      orderNotes: orderNotes || undefined,
+    })
+    resetCreateForm()
+    setShowCreate(false)
+  }
+
   return (
     <div>
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
@@ -43,6 +91,9 @@ function AdminOrders() {
           <h1 className="text-2xl font-bold text-black" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>Orders</h1>
           <p className="text-sm text-gray-500 mt-1">{orders.length} total orders</p>
         </div>
+        <button onClick={() => setShowCreate(true)} className="flex items-center gap-2 px-4 py-2.5 bg-black text-white text-sm font-semibold rounded-lg hover:bg-gray-800 transition-colors">
+          <Plus size={16} /> Create Order
+        </button>
       </div>
 
       {/* Filters */}
@@ -122,6 +173,103 @@ function AdminOrders() {
           </table>
         </div>
       </div>
+
+      {/* Create Order Modal */}
+      {showCreate && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/40" onClick={() => setShowCreate(false)} />
+          <div className="relative bg-white rounded-lg w-full max-w-lg max-h-[90vh] overflow-y-auto shadow-xl">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 sticky top-0 bg-white z-10">
+              <h2 className="text-lg font-bold text-black">Create Manual Order</h2>
+              <button onClick={() => setShowCreate(false)} className="p-1 text-gray-400 hover:text-black"><X size={20} /></button>
+            </div>
+            <form onSubmit={handleCreateOrder} className="p-6 space-y-4">
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-sm font-semibold text-black mb-1">Customer Name *</label>
+                  <input value={customerName} onChange={(e) => setCustomerName(e.target.value)} required className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:border-black outline-none" />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-black mb-1">Phone *</label>
+                  <input value={customerPhone} onChange={(e) => setCustomerPhone(e.target.value)} required className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:border-black outline-none" />
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-black mb-1">Email</label>
+                <input type="email" value={customerEmail} onChange={(e) => setCustomerEmail(e.target.value)} className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:border-black outline-none" />
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-sm font-semibold text-black mb-1">Delivery Location *</label>
+                  <input value={deliveryLocation} onChange={(e) => setDeliveryLocation(e.target.value)} required className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:border-black outline-none" />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-black mb-1">Address *</label>
+                  <input value={deliveryAddress} onChange={(e) => setDeliveryAddress(e.target.value)} required className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:border-black outline-none" />
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-black mb-1">Payment Method</label>
+                <select value={paymentMethod} onChange={(e) => setPaymentMethod(e.target.value as 'card' | 'mpesa' | 'whatsapp')} className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:border-black outline-none">
+                  <option value="mpesa">M-PESA</option>
+                  <option value="card">Card</option>
+                  <option value="whatsapp">WhatsApp</option>
+                </select>
+              </div>
+
+              {/* Add Products */}
+              <div>
+                <label className="block text-sm font-semibold text-black mb-1">Add Products *</label>
+                {products.length > 0 ? (
+                  <select onChange={(e) => { if (e.target.value) addProductToOrder(e.target.value); e.target.value = '' }} className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:border-black outline-none" defaultValue="">
+                    <option value="">Select a product to add...</option>
+                    {products.filter((p) => p.status === 'active').map((p) => (
+                      <option key={p.id} value={p.id}>{p.title} — {p.price}</option>
+                    ))}
+                  </select>
+                ) : (
+                  <p className="text-sm text-gray-400 py-2">No products available. Add products first.</p>
+                )}
+                {orderItems.length > 0 && (
+                  <div className="mt-3 space-y-2">
+                    {orderItems.map((item) => (
+                      <div key={item.productId} className="flex items-center gap-3 p-2 bg-gray-50 rounded-lg">
+                        <div className="w-8 h-8 rounded bg-gray-200 overflow-hidden shrink-0">
+                          <img src={item.image} alt="" className="w-full h-full object-cover" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-xs font-medium text-black truncate">{item.title}</p>
+                          <p className="text-xs text-gray-400">{settings.currency} {item.price.toLocaleString()}</p>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <button type="button" onClick={() => setOrderItems(orderItems.map((i) => i.productId === item.productId ? { ...i, quantity: Math.max(1, i.quantity - 1) } : i))} className="w-6 h-6 flex items-center justify-center bg-gray-200 rounded text-xs">-</button>
+                          <span className="text-xs font-semibold w-6 text-center">{item.quantity}</span>
+                          <button type="button" onClick={() => setOrderItems(orderItems.map((i) => i.productId === item.productId ? { ...i, quantity: i.quantity + 1 } : i))} className="w-6 h-6 flex items-center justify-center bg-gray-200 rounded text-xs">+</button>
+                        </div>
+                        <button type="button" onClick={() => setOrderItems(orderItems.filter((i) => i.productId !== item.productId))} className="p-1 text-gray-400 hover:text-red-500"><Trash2 size={14} /></button>
+                      </div>
+                    ))}
+                    <div className="flex justify-between text-sm font-semibold pt-2 border-t border-gray-200">
+                      <span>Subtotal</span>
+                      <span>{settings.currency} {orderItems.reduce((s, i) => s + i.price * i.quantity, 0).toLocaleString()}</span>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-black mb-1">Order Notes</label>
+                <textarea value={orderNotes} onChange={(e) => setOrderNotes(e.target.value)} rows={2} className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:border-black outline-none resize-y" />
+              </div>
+
+              <div className="flex gap-3 justify-end pt-2">
+                <button type="button" onClick={() => { resetCreateForm(); setShowCreate(false) }} className="px-4 py-2.5 text-sm font-medium text-gray-600">Cancel</button>
+                <button type="submit" disabled={orderItems.length === 0} className="px-6 py-2.5 bg-black text-white text-sm font-semibold rounded-lg hover:bg-gray-800 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors">Create Order</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
 
       {/* Order Detail Modal */}
       {viewOrder && (
