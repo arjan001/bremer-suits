@@ -1,0 +1,246 @@
+import { createFileRoute } from '@tanstack/react-router'
+import { useState } from 'react'
+import { Search, Mail, Download, Send, X, Users, UserCheck, UserX, Trash2 } from 'lucide-react'
+import { useAdmin } from '@/lib/admin-store'
+
+export const Route = createFileRoute('/admin/newsletter')({
+  component: AdminNewsletter,
+})
+
+function AdminNewsletter() {
+  const { subscribers, addSubscriber, removeSubscriber, emailCampaigns, addEmailCampaign } = useAdmin()
+  const [search, setSearch] = useState('')
+  const [newEmail, setNewEmail] = useState('')
+  const [showCompose, setShowCompose] = useState(false)
+  const [emailSubject, setEmailSubject] = useState('')
+  const [emailBody, setEmailBody] = useState('')
+  const [sendSuccess, setSendSuccess] = useState(false)
+  const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null)
+
+  const active = subscribers.filter((s) => s.status === 'active')
+  const unsubscribed = subscribers.filter((s) => s.status === 'unsubscribed')
+
+  const filtered = subscribers.filter((s) =>
+    s.email.toLowerCase().includes(search.toLowerCase())
+  ).sort((a, b) => b.subscribedAt.localeCompare(a.subscribedAt))
+
+  const handleAdd = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (newEmail.trim()) {
+      addSubscriber(newEmail.trim())
+      setNewEmail('')
+    }
+  }
+
+  const handleExport = () => {
+    const csv = 'Email,Status,Subscribed At\n' + subscribers.map((s) => `${s.email},${s.status},${s.subscribedAt}`).join('\n')
+    const blob = new Blob([csv], { type: 'text/csv' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = 'newsletter-subscribers.csv'
+    a.click()
+    URL.revokeObjectURL(url)
+  }
+
+  const handleSendEmail = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!emailSubject.trim() || !emailBody.trim()) return
+    addEmailCampaign({
+      subject: emailSubject,
+      body: emailBody,
+      sentAt: new Date().toISOString(),
+      recipientCount: active.length,
+    })
+    setSendSuccess(true)
+    setTimeout(() => {
+      setSendSuccess(false)
+      setShowCompose(false)
+      setEmailSubject('')
+      setEmailBody('')
+    }, 2500)
+  }
+
+  return (
+    <div>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+        <div>
+          <h1 className="text-2xl font-bold text-black" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>Newsletter Subscribers</h1>
+          <p className="text-sm text-gray-500 mt-1">Manage your newsletter sign-ups and subscriptions</p>
+        </div>
+        <div className="flex items-center gap-2">
+          <button onClick={() => setShowCompose(true)} className="flex items-center gap-2 px-4 py-2.5 bg-black text-white text-sm font-semibold rounded-lg hover:bg-gray-800 transition-colors">
+            <Send size={16} /> Send Email
+          </button>
+          <button onClick={handleExport} className="flex items-center gap-2 px-4 py-2.5 bg-white border border-gray-200 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors">
+            <Download size={16} /> Export CSV
+          </button>
+        </div>
+      </div>
+
+      {/* Stats */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+        <div className="bg-white border border-gray-200 rounded-lg p-5">
+          <div className="flex items-center justify-between mb-2">
+            <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Total Subscribers</p>
+            <Users size={16} className="text-gray-300" />
+          </div>
+          <p className="text-3xl font-bold text-black">{subscribers.length}</p>
+        </div>
+        <div className="bg-white border border-gray-200 rounded-lg p-5">
+          <div className="flex items-center justify-between mb-2">
+            <p className="text-xs font-semibold text-green-600 uppercase tracking-wider">Active</p>
+            <UserCheck size={16} className="text-green-400" />
+          </div>
+          <p className="text-3xl font-bold text-green-700">{active.length}</p>
+        </div>
+        <div className="bg-white border border-gray-200 rounded-lg p-5">
+          <div className="flex items-center justify-between mb-2">
+            <p className="text-xs font-semibold text-red-500 uppercase tracking-wider">Inactive</p>
+            <UserX size={16} className="text-red-300" />
+          </div>
+          <p className="text-3xl font-bold text-red-600">{unsubscribed.length}</p>
+        </div>
+      </div>
+
+      {/* Add subscriber + Search */}
+      <div className="flex flex-col sm:flex-row gap-3 mb-6">
+        <form onSubmit={handleAdd} className="flex gap-2 flex-1">
+          <input type="email" value={newEmail} onChange={(e) => setNewEmail(e.target.value)} placeholder="Add subscriber email..." required className="flex-1 px-4 py-2.5 bg-white border border-gray-200 rounded-lg text-sm focus:border-black focus:ring-1 focus:ring-black outline-none" />
+          <button type="submit" className="px-4 py-2.5 bg-black text-white text-sm font-semibold rounded-lg hover:bg-gray-800 transition-colors whitespace-nowrap">Add</button>
+        </form>
+        <div className="relative sm:w-64">
+          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+          <input type="text" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search..."
+            className="w-full pl-10 pr-4 py-2.5 bg-white border border-gray-200 rounded-lg text-sm focus:border-black focus:ring-1 focus:ring-black outline-none" />
+        </div>
+      </div>
+
+      {/* Table */}
+      <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+        <table className="w-full text-sm">
+          <thead>
+            <tr className="border-b border-gray-100 bg-gray-50/50">
+              <th className="text-left px-5 py-3.5 font-semibold text-gray-600 text-xs uppercase tracking-wider">Email</th>
+              <th className="text-left px-5 py-3.5 font-semibold text-gray-600 text-xs uppercase tracking-wider">Status</th>
+              <th className="text-left px-5 py-3.5 font-semibold text-gray-600 text-xs uppercase tracking-wider hidden sm:table-cell">Subscribed</th>
+              <th className="text-right px-5 py-3.5 font-semibold text-gray-600 text-xs uppercase tracking-wider">Actions</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-gray-50">
+            {filtered.map((s) => (
+              <tr key={s.id} className="hover:bg-gray-50/50 transition-colors">
+                <td className="px-5 py-3.5 font-medium text-black">{s.email}</td>
+                <td className="px-5 py-3.5">
+                  <span className={`inline-flex px-2.5 py-1 text-xs font-semibold rounded-full ${
+                    s.status === 'active' ? 'bg-green-50 text-green-700' : 'bg-gray-100 text-gray-500'
+                  }`}>{s.status === 'active' ? 'Active' : 'Unsubscribed'}</span>
+                </td>
+                <td className="px-5 py-3.5 text-gray-500 hidden sm:table-cell">{new Date(s.subscribedAt).toLocaleDateString()}</td>
+                <td className="px-5 py-3.5">
+                  <div className="flex items-center justify-end gap-1">
+                    {s.status === 'active' && (
+                      <button onClick={() => setDeleteConfirm(s.id)} className="p-1.5 text-gray-400 hover:text-red-600 transition-colors" title="Unsubscribe">
+                        <Trash2 size={15} />
+                      </button>
+                    )}
+                  </div>
+                </td>
+              </tr>
+            ))}
+            {filtered.length === 0 && (
+              <tr><td colSpan={4} className="px-5 py-14 text-center text-gray-400"><Mail size={36} className="mx-auto mb-3 text-gray-300" /><p className="text-sm">No subscribers yet</p></td></tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Email Campaigns History */}
+      {emailCampaigns.length > 0 && (
+        <div className="mt-8">
+          <h2 className="text-lg font-bold text-black mb-4" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>Email History</h2>
+          <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-gray-100 bg-gray-50/50">
+                  <th className="text-left px-5 py-3 font-semibold text-gray-600 text-xs uppercase tracking-wider">Subject</th>
+                  <th className="text-left px-5 py-3 font-semibold text-gray-600 text-xs uppercase tracking-wider hidden sm:table-cell">Recipients</th>
+                  <th className="text-left px-5 py-3 font-semibold text-gray-600 text-xs uppercase tracking-wider">Sent</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-50">
+                {[...emailCampaigns].reverse().map((c) => (
+                  <tr key={c.id} className="hover:bg-gray-50/50">
+                    <td className="px-5 py-3 font-medium text-black">{c.subject}</td>
+                    <td className="px-5 py-3 text-gray-500 hidden sm:table-cell">{c.recipientCount} subscribers</td>
+                    <td className="px-5 py-3 text-gray-500">{new Date(c.sentAt).toLocaleDateString()}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {/* Compose Email Modal */}
+      {showCompose && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/40" onClick={() => { if (!sendSuccess) setShowCompose(false) }} />
+          <div className="relative bg-white rounded-lg w-full max-w-lg shadow-xl">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+              <div>
+                <h2 className="text-lg font-bold text-black">Send Mass Email</h2>
+                <p className="text-xs text-gray-400 mt-0.5">Send to {active.length} active subscriber{active.length !== 1 ? 's' : ''}</p>
+              </div>
+              <button onClick={() => setShowCompose(false)} className="p-1 text-gray-400 hover:text-black"><X size={20} /></button>
+            </div>
+            {sendSuccess ? (
+              <div className="p-10 text-center">
+                <div className="w-14 h-14 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Mail size={24} className="text-green-600" />
+                </div>
+                <h3 className="text-lg font-bold text-black mb-1">Email Sent!</h3>
+                <p className="text-sm text-gray-500">Your email has been queued for {active.length} subscriber{active.length !== 1 ? 's' : ''}.</p>
+              </div>
+            ) : (
+              <form onSubmit={handleSendEmail} className="p-6 space-y-4">
+                <div>
+                  <label className="block text-sm font-semibold text-black mb-1">Subject *</label>
+                  <input value={emailSubject} onChange={(e) => setEmailSubject(e.target.value)} required placeholder="e.g. New arrivals this week!" className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:border-black focus:ring-1 focus:ring-black outline-none" />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-black mb-1">Message *</label>
+                  <textarea value={emailBody} onChange={(e) => setEmailBody(e.target.value)} required rows={6} placeholder="Write your email content here..." className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:border-black focus:ring-1 focus:ring-black outline-none resize-y" />
+                </div>
+                <div className="bg-gray-50 rounded-lg p-3 text-xs text-gray-500">
+                  <p>This will send an email to all <span className="font-semibold text-black">{active.length}</span> active subscribers.</p>
+                </div>
+                <div className="flex gap-3 justify-end pt-2">
+                  <button type="button" onClick={() => setShowCompose(false)} className="px-4 py-2.5 text-sm font-medium text-gray-600 hover:text-black transition-colors">Cancel</button>
+                  <button type="submit" disabled={active.length === 0} className="flex items-center gap-2 px-6 py-2.5 bg-black text-white text-sm font-semibold rounded-lg hover:bg-gray-800 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors">
+                    <Send size={14} /> Send Email
+                  </button>
+                </div>
+              </form>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Unsubscribe Confirm */}
+      {deleteConfirm && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/40" onClick={() => setDeleteConfirm(null)} />
+          <div className="relative bg-white rounded-lg p-6 max-w-sm w-full shadow-xl">
+            <h3 className="text-lg font-bold text-black mb-2">Unsubscribe</h3>
+            <p className="text-sm text-gray-500 mb-6">Are you sure you want to unsubscribe this email?</p>
+            <div className="flex gap-3 justify-end">
+              <button onClick={() => setDeleteConfirm(null)} className="px-4 py-2 text-sm font-medium text-gray-600">Cancel</button>
+              <button onClick={() => { removeSubscriber(deleteConfirm); setDeleteConfirm(null) }} className="px-4 py-2 bg-red-600 text-white text-sm font-semibold rounded-lg hover:bg-red-700 transition-colors">Unsubscribe</button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
