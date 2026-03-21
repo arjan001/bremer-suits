@@ -72,7 +72,7 @@ export function CartDrawer() {
                           </p>
                         )}
                         <p className="text-sm text-gray-600 mt-0.5">
-                          KSh {item.price.toLocaleString()}
+                          ${item.price.toLocaleString()}
                         </p>
                       </div>
                       <button
@@ -117,7 +117,7 @@ export function CartDrawer() {
             <div className="flex items-center justify-between">
               <span className="text-base font-semibold text-black">Subtotal</span>
               <span className="text-base font-semibold text-black">
-                KSh {subtotal.toLocaleString()}
+                ${subtotal.toLocaleString()}
               </span>
             </div>
             <p className="text-xs text-gray-400">Shipping calculated at checkout</p>

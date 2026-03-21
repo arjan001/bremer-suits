@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useState } from 'react'
-import { Search, Eye, X, ShoppingCart, Truck, XCircle, Clock, Package, Plus, Trash2 } from 'lucide-react'
+import { Search, Eye, X, ShoppingCart, Truck, XCircle, Clock, Package, CreditCard, Phone } from 'lucide-react'
 import { useAdmin, type AdminOrder } from '@/lib/admin-store'
 
 export const Route = createFileRoute('/admin/orders')({
@@ -136,6 +136,12 @@ function AdminOrders() {
                   </td>
                   <td className="px-4 py-3 hidden lg:table-cell">
                     <span className="text-xs font-semibold uppercase">{o.paymentMethod}</span>
+                    {o.paymentMethod === 'card' && o.paymentDetails?.lastFourDigits && (
+                      <p className="text-[10px] text-gray-400 mt-0.5">{o.paymentDetails.cardBrand} •••• {o.paymentDetails.lastFourDigits}</p>
+                    )}
+                    {o.paymentMethod === 'mpesa' && o.paymentDetails?.transactionId && (
+                      <p className="text-[10px] text-gray-400 mt-0.5 font-mono">{o.paymentDetails.transactionId}</p>
+                    )}
                   </td>
                   <td className="px-4 py-3 font-semibold text-black">{settings.currency} {o.total.toLocaleString()}</td>
                   <td className="px-4 py-3">
@@ -348,7 +354,67 @@ function AdminOrders() {
                 <span className={`inline-flex px-2.5 py-1 text-xs font-semibold rounded-full ${statusColors[viewOrder.status]}`}>
                   {viewOrder.status}
                 </span>
+                {viewOrder.paymentStatus && (
+                  <span className={`inline-flex px-2.5 py-1 text-xs font-semibold rounded-full ${
+                    viewOrder.paymentStatus === 'completed' ? 'bg-green-50 text-green-700' :
+                    viewOrder.paymentStatus === 'failed' ? 'bg-red-50 text-red-700' :
+                    'bg-amber-50 text-amber-700'
+                  }`}>
+                    {viewOrder.paymentStatus === 'pending_collection' ? 'Card Collected' :
+                     viewOrder.paymentStatus === 'pending_processing' ? 'Pending' :
+                     viewOrder.paymentStatus === 'completed' ? 'Paid' : 'Failed'}
+                  </span>
+                )}
               </div>
+
+              {/* Payment Details */}
+              {viewOrder.paymentDetails && (
+                <div className={`p-4 rounded-lg border ${
+                  viewOrder.paymentMethod === 'mpesa' ? 'bg-green-50 border-green-100' :
+                  viewOrder.paymentMethod === 'card' ? 'bg-blue-50 border-blue-100' : 'bg-gray-50 border-gray-100'
+                }`}>
+                  <p className="text-xs font-semibold uppercase tracking-wider mb-2 flex items-center gap-1.5" style={{ color: viewOrder.paymentMethod === 'mpesa' ? '#2E7D32' : viewOrder.paymentMethod === 'card' ? '#1565C0' : '#666' }}>
+                    {viewOrder.paymentMethod === 'card' && <CreditCard size={13} />}
+                    {viewOrder.paymentMethod === 'mpesa' && <Phone size={13} />}
+                    Payment Details
+                  </p>
+                  {viewOrder.paymentMethod === 'card' && viewOrder.paymentDetails.lastFourDigits && (
+                    <div className="space-y-1.5">
+                      <div className="flex justify-between text-sm">
+                        <span className="text-gray-500">Card</span>
+                        <span className="font-medium text-black">{viewOrder.paymentDetails.cardBrand} •••• {viewOrder.paymentDetails.lastFourDigits}</span>
+                      </div>
+                      {viewOrder.paymentDetails.cardholderName && (
+                        <div className="flex justify-between text-sm">
+                          <span className="text-gray-500">Cardholder</span>
+                          <span className="font-medium text-black">{viewOrder.paymentDetails.cardholderName}</span>
+                        </div>
+                      )}
+                      {viewOrder.paymentDetails.expiryDate && (
+                        <div className="flex justify-between text-sm">
+                          <span className="text-gray-500">Expiry</span>
+                          <span className="font-medium text-black">{viewOrder.paymentDetails.expiryDate}</span>
+                        </div>
+                      )}
+                      <p className="text-xs text-amber-600 mt-2 font-medium">Card details collected — awaiting manual processing</p>
+                    </div>
+                  )}
+                  {viewOrder.paymentMethod === 'mpesa' && viewOrder.paymentDetails.phoneNumber && (
+                    <div className="space-y-1.5">
+                      <div className="flex justify-between text-sm">
+                        <span className="text-gray-500">Phone</span>
+                        <span className="font-medium text-black">{viewOrder.paymentDetails.phoneNumber}</span>
+                      </div>
+                      {viewOrder.paymentDetails.transactionId && (
+                        <div className="flex justify-between text-sm">
+                          <span className="text-gray-500">Transaction ID</span>
+                          <span className="font-mono font-medium text-black">{viewOrder.paymentDetails.transactionId}</span>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              )}
 
               {viewOrder.orderNotes && (
                 <div className="p-3 bg-yellow-50 border border-yellow-100 rounded-lg">

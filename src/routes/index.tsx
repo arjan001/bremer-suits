@@ -307,8 +307,44 @@ function HomePage() {
 
             {/* Right: Menu List */}
             <div className="flex flex-col gap-6 lg:pt-4">
-              {products.slice(0, 7).map((item) => (
-                <Link key={item.id} to="/collections/$slug" params={{ slug: item.id }}>
+              {[
+                {
+                  title: 'Modern Silhouette',
+                  price: '$850',
+                  description: 'Discover how the right fit can elevate your suit from ordinary to exceptional.',
+                },
+                {
+                  title: 'Urban Tailor',
+                  price: '$650',
+                  description: 'Stay cool and stylish with breathable fabrics and smart layering tips.',
+                },
+                {
+                  title: 'Clean Cut',
+                  price: '$420',
+                  description: 'Versatile, refined, and modern\u2014learn how to make the vest work on its own.',
+                },
+                {
+                  title: 'Metro Mode',
+                  price: '$800',
+                  description: 'One suit, many occasions. Here\u2019s how to adapt your look effortlessly.',
+                },
+                {
+                  title: 'The Refined Minimal',
+                  price: '$350',
+                  description: 'Step outside the black-and-navy box with statement-making designs.',
+                },
+                {
+                  title: 'Sleek Statement',
+                  price: '$560',
+                  description: 'Ties, pocket squares, shoes\u2014details that define your style.',
+                },
+                {
+                  title: 'Essential Form',
+                  price: '$700',
+                  description: 'Explore how the suit has transformed\u2014and how to wear it today, learn how to wear the vest, jacket, and trousers in perfect harmony for timeless elegance.',
+                },
+              ].map((item) => (
+                <div key={item.title}>
                   <div className="flex items-baseline gap-2">
                     <h3
                       className="text-lg font-bold text-black whitespace-nowrap"
@@ -366,10 +402,8 @@ function HomePage() {
                 {dealProduct.title}
               </h2>
               <div className="flex items-baseline gap-3 mb-8">
-                <span className="text-3xl font-bold text-white">{dealProduct.salePrice || dealProduct.price}</span>
-                {dealProduct.originalPrice && (
-                  <span className="text-lg text-white/40 line-through">{dealProduct.originalPrice}</span>
-                )}
+                <span className="text-3xl font-bold text-white">$600.00</span>
+                <span className="text-lg text-white/40 line-through">$800.00</span>
               </div>
 
               <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 mb-8">
