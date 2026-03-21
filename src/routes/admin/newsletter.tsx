@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useState } from 'react'
-import { Search, Mail, Download, Send, X, Users, UserCheck, UserX, Trash2 } from 'lucide-react'
+import { Search, Mail, Download, Send, X, Users, UserCheck, UserX, Trash2, Eye } from 'lucide-react'
 import { useAdmin } from '@/lib/admin-store'
 
 export const Route = createFileRoute('/admin/newsletter')({
@@ -8,7 +8,7 @@ export const Route = createFileRoute('/admin/newsletter')({
 })
 
 function AdminNewsletter() {
-  const { subscribers, addSubscriber, removeSubscriber, emailCampaigns, addEmailCampaign } = useAdmin()
+  const { subscribers, addSubscriber, updateSubscriber, removeSubscriber, emailCampaigns, addEmailCampaign, deleteEmailCampaign } = useAdmin()
   const [search, setSearch] = useState('')
   const [newEmail, setNewEmail] = useState('')
   const [showCompose, setShowCompose] = useState(false)
@@ -16,6 +16,8 @@ function AdminNewsletter() {
   const [emailBody, setEmailBody] = useState('')
   const [sendSuccess, setSendSuccess] = useState(false)
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null)
+  const [deleteCampaignConfirm, setDeleteCampaignConfirm] = useState<string | null>(null)
+  const [viewCampaign, setViewCampaign] = useState<{ subject: string; body: string; sentAt: string; recipientCount: number } | null>(null)
 
   const active = subscribers.filter((s) => s.status === 'active')
   const unsubscribed = subscribers.filter((s) => s.status === 'unsubscribed')
@@ -139,11 +141,18 @@ function AdminNewsletter() {
                 <td className="px-5 py-3.5 text-gray-500 hidden sm:table-cell">{new Date(s.subscribedAt).toLocaleDateString()}</td>
                 <td className="px-5 py-3.5">
                   <div className="flex items-center justify-end gap-1">
-                    {s.status === 'active' && (
-                      <button onClick={() => setDeleteConfirm(s.id)} className="p-1.5 text-gray-400 hover:text-red-600 transition-colors" title="Unsubscribe">
-                        <Trash2 size={15} />
-                      </button>
-                    )}
+                    <button
+                      onClick={() => updateSubscriber(s.id, { status: s.status === 'active' ? 'unsubscribed' : 'active' })}
+                      className={`px-2.5 py-1 text-xs font-semibold rounded-full transition-colors ${
+                        s.status === 'active' ? 'bg-yellow-50 text-yellow-700 hover:bg-yellow-100' : 'bg-green-50 text-green-700 hover:bg-green-100'
+                      }`}
+                      title={s.status === 'active' ? 'Deactivate' : 'Reactivate'}
+                    >
+                      {s.status === 'active' ? 'Deactivate' : 'Reactivate'}
+                    </button>
+                    <button onClick={() => setDeleteConfirm(s.id)} className="p-1.5 text-gray-400 hover:text-red-600 transition-colors" title="Delete">
+                      <Trash2 size={15} />
+                    </button>
                   </div>
                 </td>
               </tr>
@@ -166,6 +175,7 @@ function AdminNewsletter() {
                   <th className="text-left px-5 py-3 font-semibold text-gray-600 text-xs uppercase tracking-wider">Subject</th>
                   <th className="text-left px-5 py-3 font-semibold text-gray-600 text-xs uppercase tracking-wider hidden sm:table-cell">Recipients</th>
                   <th className="text-left px-5 py-3 font-semibold text-gray-600 text-xs uppercase tracking-wider">Sent</th>
+                  <th className="text-right px-5 py-3 font-semibold text-gray-600 text-xs uppercase tracking-wider">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-50">
@@ -174,6 +184,12 @@ function AdminNewsletter() {
                     <td className="px-5 py-3 font-medium text-black">{c.subject}</td>
                     <td className="px-5 py-3 text-gray-500 hidden sm:table-cell">{c.recipientCount} subscribers</td>
                     <td className="px-5 py-3 text-gray-500">{new Date(c.sentAt).toLocaleDateString()}</td>
+                    <td className="px-5 py-3">
+                      <div className="flex items-center justify-end gap-1">
+                        <button onClick={() => setViewCampaign(c)} className="p-1.5 text-gray-400 hover:text-black transition-colors" title="View"><Eye size={15} /></button>
+                        <button onClick={() => setDeleteCampaignConfirm(c.id)} className="p-1.5 text-gray-400 hover:text-red-600 transition-colors" title="Delete"><Trash2 size={15} /></button>
+                      </div>
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -232,11 +248,53 @@ function AdminNewsletter() {
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/40" onClick={() => setDeleteConfirm(null)} />
           <div className="relative bg-white rounded-lg p-6 max-w-sm w-full shadow-xl">
-            <h3 className="text-lg font-bold text-black mb-2">Unsubscribe</h3>
-            <p className="text-sm text-gray-500 mb-6">Are you sure you want to unsubscribe this email?</p>
+            <h3 className="text-lg font-bold text-black mb-2">Delete Subscriber</h3>
+            <p className="text-sm text-gray-500 mb-6">Are you sure you want to remove this subscriber?</p>
             <div className="flex gap-3 justify-end">
               <button onClick={() => setDeleteConfirm(null)} className="px-4 py-2 text-sm font-medium text-gray-600">Cancel</button>
-              <button onClick={() => { removeSubscriber(deleteConfirm); setDeleteConfirm(null) }} className="px-4 py-2 bg-red-600 text-white text-sm font-semibold rounded-lg hover:bg-red-700 transition-colors">Unsubscribe</button>
+              <button onClick={() => { removeSubscriber(deleteConfirm); setDeleteConfirm(null) }} className="px-4 py-2 bg-red-600 text-white text-sm font-semibold rounded-lg hover:bg-red-700 transition-colors">Delete</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Campaign Confirm */}
+      {deleteCampaignConfirm && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/40" onClick={() => setDeleteCampaignConfirm(null)} />
+          <div className="relative bg-white rounded-lg p-6 max-w-sm w-full shadow-xl">
+            <h3 className="text-lg font-bold text-black mb-2">Delete Campaign</h3>
+            <p className="text-sm text-gray-500 mb-6">Are you sure you want to delete this email campaign record?</p>
+            <div className="flex gap-3 justify-end">
+              <button onClick={() => setDeleteCampaignConfirm(null)} className="px-4 py-2 text-sm font-medium text-gray-600">Cancel</button>
+              <button onClick={() => { deleteEmailCampaign(deleteCampaignConfirm); setDeleteCampaignConfirm(null) }} className="px-4 py-2 bg-red-600 text-white text-sm font-semibold rounded-lg hover:bg-red-700 transition-colors">Delete</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* View Campaign Modal */}
+      {viewCampaign && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/40" onClick={() => setViewCampaign(null)} />
+          <div className="relative bg-white rounded-lg w-full max-w-md max-h-[80vh] overflow-y-auto shadow-xl">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 sticky top-0 bg-white z-10">
+              <h2 className="text-lg font-bold text-black">Campaign Details</h2>
+              <button onClick={() => setViewCampaign(null)} className="p-1 text-gray-400 hover:text-black"><X size={20} /></button>
+            </div>
+            <div className="p-6 space-y-4">
+              <div>
+                <p className="text-xs font-semibold text-gray-400 uppercase mb-1">Subject</p>
+                <p className="text-sm font-medium text-black">{viewCampaign.subject}</p>
+              </div>
+              <div>
+                <p className="text-xs font-semibold text-gray-400 uppercase mb-1">Message</p>
+                <div className="text-sm text-gray-700 whitespace-pre-wrap bg-gray-50 p-4 rounded-lg">{viewCampaign.body}</div>
+              </div>
+              <div className="flex items-center gap-4 text-xs text-gray-500">
+                <span>Sent: {new Date(viewCampaign.sentAt).toLocaleString()}</span>
+                <span>Recipients: {viewCampaign.recipientCount}</span>
+              </div>
             </div>
           </div>
         </div>

@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { TrendingUp, ShoppingCart, Users, DollarSign } from 'lucide-react'
+import { TrendingUp, ShoppingCart, Users, DollarSign, Calendar } from 'lucide-react'
 import { useAdmin } from '@/lib/admin-store'
 
 export const Route = createFileRoute('/admin/analytics')({
@@ -38,6 +38,19 @@ function AdminAnalytics() {
     revenueByStatus[o.status] = (revenueByStatus[o.status] || 0) + o.total
   })
 
+  // Monthly revenue breakdown (last 6 months)
+  const monthlyRevenue: { month: string; revenue: number; orders: number }[] = []
+  const now = new Date()
+  for (let i = 5; i >= 0; i--) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1)
+    const monthKey = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`
+    const monthLabel = d.toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
+    const monthOrders = orders.filter((o) => o.createdAt.startsWith(monthKey))
+    const rev = monthOrders.reduce((s, o) => s + o.total, 0)
+    monthlyRevenue.push({ month: monthLabel, revenue: rev, orders: monthOrders.length })
+  }
+  const maxMonthlyRevenue = Math.max(...monthlyRevenue.map((m) => m.revenue), 1)
+
   return (
     <div>
       <div className="mb-6">
@@ -51,6 +64,33 @@ function AdminAnalytics() {
         <MetricCard icon={<ShoppingCart size={18} />} label="Total Orders" value={orders.length.toString()} color="bg-blue-50 text-blue-600" />
         <MetricCard icon={<TrendingUp size={18} />} label="Avg Order Value" value={`${settings.currency} ${avgOrderValue.toLocaleString()}`} color="bg-purple-50 text-purple-600" />
         <MetricCard icon={<Users size={18} />} label="Subscribers" value={subscribers.filter((s) => s.status === 'active').length.toString()} color="bg-orange-50 text-orange-600" />
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        {/* Monthly Revenue */}
+        <div className="bg-white border border-gray-200 rounded-lg p-5 lg:col-span-2">
+          <div className="flex items-center gap-2 mb-4">
+            <Calendar size={16} className="text-gray-400" />
+            <h2 className="text-sm font-bold text-black">Monthly Revenue (Last 6 Months)</h2>
+          </div>
+          {orders.length > 0 ? (
+            <div className="space-y-3">
+              {monthlyRevenue.map((m) => (
+                <div key={m.month}>
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-sm text-gray-600 w-24">{m.month}</span>
+                    <span className="text-sm font-semibold text-black">{settings.currency} {m.revenue.toLocaleString()} ({m.orders} orders)</span>
+                  </div>
+                  <div className="w-full bg-gray-100 rounded-full h-2.5">
+                    <div className="bg-black h-2.5 rounded-full transition-all" style={{ width: `${Math.max((m.revenue / maxMonthlyRevenue) * 100, m.revenue > 0 ? 2 : 0)}%` }} />
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-sm text-gray-400 text-center py-6">No revenue data yet</p>
+          )}
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">

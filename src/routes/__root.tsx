@@ -2,8 +2,8 @@ import { HeadContent, Link, Outlet, Scripts, createRootRoute, useRouter } from '
 import { Header } from '@/components/Header'
 import { CartDrawer } from '@/components/CartDrawer'
 import { CartProvider } from '@/lib/cart-context'
-import { WishlistProvider, useWishlist } from '@/lib/wishlist-context'
-import { Phone, Mail, MapPin, Instagram, Clock, Navigation, X, Heart, ArrowRight } from 'lucide-react'
+import { WishlistProvider } from '@/lib/wishlist-context'
+import { Phone, Mail, MapPin, Instagram, Clock, Navigation, X } from 'lucide-react'
 import { useState, useEffect } from 'react'
 
 import '../styles.css'
@@ -69,7 +69,6 @@ function RootLayout() {
         <main>
           <Outlet />
         </main>
-        {!hideExtras && <SignatureProducts />}
         {!hideExtras && <FollowUs />}
         <Footer />
         {!hideExtras && <SubscribeModal />}
@@ -337,7 +336,7 @@ function SubscribeModal() {
   }, [])
 
   useEffect(() => {
-    if (dismissed) return
+    if (dismissed || !offer) return
     // Check if already dismissed this session
     try {
       if (sessionStorage.getItem('bremer-popup-dismissed')) {
@@ -347,7 +346,7 @@ function SubscribeModal() {
     } catch { /* ignore */ }
     const timer = setTimeout(() => setOpen(true), 4000)
     return () => clearTimeout(timer)
-  }, [dismissed])
+  }, [dismissed, offer])
 
   const handleDismiss = () => {
     setOpen(false)
@@ -376,15 +375,15 @@ function SubscribeModal() {
     setSubscribed(true)
   }
 
-  if (!open) return null
+  // Only show when an active popup offer exists in admin
+  if (!open || !offer) return null
 
-  // Use offer data or defaults
-  const title = offer?.title || 'Subscribe Now'
-  const description = offer?.description || 'Get 15% off your first order when you shop our new collection. Use code at checkout.'
-  const discount = offer?.discountPercent || 15
-  const promoCode = offer?.code || ''
-  const image = offer?.image || '/images/suit-navy.webp'
-  const showNewsletter = offer?.collectNewsletter ?? true
+  const title = offer.title
+  const description = offer.description
+  const discount = offer.discountPercent
+  const promoCode = offer.code
+  const image = offer.image
+  const showNewsletter = offer.collectNewsletter
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">

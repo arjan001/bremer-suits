@@ -20,13 +20,37 @@ export interface Product {
   sku: string
 }
 
-function generateSKU(id: string): string {
-  // Generate a deterministic UUID-like SKU from the product id
-  const hash = id.split('').reduce((acc, char) => {
-    return ((acc << 5) - acc + char.charCodeAt(0)) | 0
-  }, 0)
-  const hex = Math.abs(hash).toString(16).padStart(8, '0')
-  return `BRM-${hex.slice(0, 4).toUpperCase()}-${hex.slice(4, 8).toUpperCase()}`
+/**
+ * Load active products from admin store in localStorage.
+ * Returns empty array on the server or when no products are configured.
+ */
+export function getProducts(): Product[] {
+  if (typeof window === 'undefined') return []
+  try {
+    const stored = localStorage.getItem('bremer-admin-products')
+    if (stored) {
+      const adminProducts = JSON.parse(stored) as Array<Product & { status?: string }>
+      return adminProducts
+        .filter((p) => !p.status || p.status === 'active')
+        .map((p) => ({
+          id: p.id,
+          title: p.title,
+          category: p.category,
+          fabric: p.fabric,
+          price: p.price,
+          numericPrice: p.numericPrice,
+          image: p.image,
+          tag: p.tag,
+          description: p.description,
+          salePrice: p.salePrice,
+          originalPrice: p.originalPrice,
+          colors: p.colors || [],
+          sizes: p.sizes || [],
+          sku: p.sku,
+        }))
+    }
+  } catch { /* ignore */ }
+  return []
 }
 
 const defaultSuitSizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL']
@@ -299,18 +323,18 @@ export const signatureProducts: Product[] = [
 ]
 
 export function getProductById(id: string): Product | undefined {
-  return [...allProducts, ...signatureProducts].find((p) => p.id === id)
+  return getProducts().find((p) => p.id === id)
 }
 
 export function getRelatedProducts(currentId: string, limit = 4): Product[] {
+  const products = getProducts()
   const current = getProductById(currentId)
-  if (!current) return allProducts.slice(0, limit)
+  if (!current) return products.slice(0, limit)
 
-  // Prefer same category, then fill with others
-  const sameCategory = allProducts.filter(
+  const sameCategory = products.filter(
     (p) => p.id !== currentId && p.category === current.category
   )
-  const others = allProducts.filter(
+  const others = products.filter(
     (p) => p.id !== currentId && p.category !== current.category
   )
   return [...sameCategory, ...others].slice(0, limit)
