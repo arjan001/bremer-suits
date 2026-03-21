@@ -571,12 +571,12 @@ export function PaymentModal({
                   className="text-lg font-bold text-black mb-2"
                   style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
                 >
-                  Saving Card Details
+                  Processing Payment
                 </h3>
                 <p className="text-sm text-gray-500 leading-relaxed max-w-xs">
-                  Securely saving your card details for{' '}
+                  Processing your payment of{' '}
                   <span className="font-semibold text-black">${amount.toLocaleString()}</span>.
-                  Our team will process the payment shortly.
+                  Please wait a moment.
                 </p>
                 <div className="mt-5 flex items-center gap-2">
                   <div className="w-2 h-2 bg-black rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
@@ -658,14 +658,14 @@ export function PaymentModal({
               className="text-xl font-bold text-black mb-2"
               style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
             >
-              {method === 'card' ? 'Card Details Saved' : 'Payment Confirmed'}
+              {method === 'card' ? 'Payment Processed Successfully' : 'Payment Confirmed'}
             </h3>
             <p className="text-sm text-gray-500 leading-relaxed max-w-xs mb-1">
               {method === 'card' ? (
                 <>
-                  Your card ending in <span className="font-semibold text-black">{cardNumber.replace(/\s/g, '').slice(-4)}</span> has been
-                  securely saved. Our team will process your payment of{' '}
-                  <span className="font-semibold text-black">${amount.toLocaleString()}</span>.
+                  Your payment of{' '}
+                  <span className="font-semibold text-black">${amount.toLocaleString()}</span>
+                  {' '}has been processed successfully.
                 </>
               ) : (
                 <>
@@ -695,7 +695,7 @@ export function PaymentModal({
 
             <p className="text-xs text-gray-400 mt-3 mb-6">
               {method === 'card'
-                ? 'You will receive confirmation once payment is processed.'
+                ? 'Thank you for your payment.'
                 : 'A confirmation SMS has been sent to your phone.'
               }
             </p>
