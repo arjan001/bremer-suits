@@ -3,7 +3,7 @@ import { X, Minus, Plus, CreditCard, Phone, MessageCircle } from 'lucide-react'
 import { useState } from 'react'
 import { useCart } from '@/lib/cart-context'
 import { PaymentModal } from '@/components/PaymentModal'
-import { saveOrder } from '@/lib/order-store'
+import { saveOrder, type CardPaymentDetails, type MpesaPaymentDetails } from '@/lib/order-store'
 
 export const Route = createFileRoute('/checkout')({
   component: Checkout,
@@ -90,7 +90,7 @@ function Checkout() {
     }
   }
 
-  const placeOrder = (method: 'card' | 'mpesa' | 'whatsapp') => {
+  const placeOrder = (method: 'card' | 'mpesa' | 'whatsapp', paymentDetails?: CardPaymentDetails | MpesaPaymentDetails) => {
     saveOrder({
       customer: { fullName: formData.fullName, phone: formData.phone, email: formData.email || undefined },
       delivery: { location: formData.deliveryLocation, address: formData.deliveryAddress },
@@ -107,13 +107,15 @@ function Checkout() {
       deliveryFee: 0,
       total: subtotal,
       paymentMethod: method,
+      paymentDetails,
+      paymentStatus: method === 'card' ? 'pending_collection' : method === 'mpesa' ? 'completed' : 'pending_processing',
       status: 'pending',
       orderNotes: formData.orderNotes || undefined,
     })
   }
 
-  const handlePaymentSuccess = () => {
-    placeOrder(paymentMethod)
+  const handlePaymentSuccess = (paymentDetails: CardPaymentDetails | MpesaPaymentDetails) => {
+    placeOrder(paymentMethod, paymentDetails)
     setPaymentModalOpen(false)
     setOrderPlaced(true)
     clearCart()

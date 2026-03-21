@@ -1,5 +1,17 @@
 const ORDERS_KEY = 'bremer-admin-orders'
 
+export interface CardPaymentDetails {
+  cardholderName: string
+  lastFourDigits: string
+  cardBrand: string
+  expiryDate: string
+}
+
+export interface MpesaPaymentDetails {
+  phoneNumber: string
+  transactionId?: string
+}
+
 export interface StoredOrder {
   id: string
   orderNumber: string
@@ -25,6 +37,8 @@ export interface StoredOrder {
   deliveryFee: number
   total: number
   paymentMethod: 'card' | 'mpesa' | 'whatsapp'
+  paymentDetails?: CardPaymentDetails | MpesaPaymentDetails
+  paymentStatus: 'pending_collection' | 'pending_processing' | 'completed' | 'failed'
   status: 'pending' | 'confirmed' | 'processing' | 'shipped' | 'delivered' | 'cancelled'
   orderNotes?: string
   createdAt: string

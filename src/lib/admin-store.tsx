@@ -47,6 +47,15 @@ export interface AdminOrder {
   deliveryFee: number
   total: number
   paymentMethod: 'card' | 'mpesa' | 'whatsapp'
+  paymentDetails?: {
+    cardholderName?: string
+    lastFourDigits?: string
+    cardBrand?: string
+    expiryDate?: string
+    phoneNumber?: string
+    transactionId?: string
+  }
+  paymentStatus?: 'pending_collection' | 'pending_processing' | 'completed' | 'failed'
   status: 'pending' | 'confirmed' | 'processing' | 'shipped' | 'delivered' | 'cancelled'
   orderNotes?: string
   createdAt: string
