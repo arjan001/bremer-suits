@@ -1,5 +1,4 @@
 import { createContext, useContext, useState, useCallback, useEffect, type ReactNode } from 'react'
-import { allProducts, signatureProducts } from './products'
 
 /* ── Types ── */
 export interface AdminProduct {
@@ -241,85 +240,17 @@ function genId(): string {
   return Date.now().toString(36) + Math.random().toString(36).slice(2, 8)
 }
 
-/* ── Seed data ── */
-const now = new Date().toISOString()
-
-function seedProducts(): AdminProduct[] {
-  return [...allProducts, ...signatureProducts].map((p) => ({
-    ...p,
-    status: 'active' as const,
-    stock: Math.floor(Math.random() * 50) + 10,
-    createdAt: now,
-    updatedAt: now,
-  }))
-}
-
-const seedCategories: AdminCategory[] = [
-  { id: 'cat-1', name: 'Business', slug: 'business', description: 'Professional business suits', image: '/images/suit-navy.webp', status: 'active' },
-  { id: 'cat-2', name: 'Black Tie', slug: 'black-tie', description: 'Formal evening wear', image: '/images/suit-formal.webp', status: 'active' },
-  { id: 'cat-3', name: 'Casual', slug: 'casual', description: 'Casual tailoring', image: '/images/suit-casual.webp', status: 'active' },
-  { id: 'cat-4', name: 'Seasonal', slug: 'seasonal', description: 'Seasonal collections', image: '/images/suit-seasonal.webp', status: 'active' },
-  { id: 'cat-5', name: 'Vests', slug: 'vests', description: 'Waistcoats and vest sets', image: '/images/vest-classic.webp', status: 'active' },
-  { id: 'cat-6', name: 'Formal', slug: 'formal', description: 'Formal attire', image: '/images/suit-formal.webp', status: 'active' },
-  { id: 'cat-7', name: 'Three-Piece', slug: 'three-piece', description: 'Three-piece suit sets', image: '/images/suit-navy.webp', status: 'active' },
-]
-
-const seedHeroBanners: AdminHeroBanner[] = [
-  { id: 'hb-1', title: 'Business Collection', collection: 'Business', link: '/collections?category=Business', buttonText: 'Shop Business', image: '/images/suit-navy.webp', isActive: true },
-  { id: 'hb-2', title: 'Formal Evening Wear', collection: 'Black Tie', link: '/collections?category=Black+Tie', buttonText: 'Shop Black Tie', image: '/images/suit-formal.webp', isActive: true },
-]
-
-const seedBanners: AdminBanner[] = [
-  { id: 'bn-1', title: 'New Season Arrivals', description: 'Discover our latest collection of bespoke suits.', link: '/collections', image: '/images/suit-navy.webp', isActive: true },
-]
-
-const seedNavbarOffers: AdminNavbarOffer[] = [
-  { id: 'no-1', text: 'Free delivery on orders above KSh 5,000 | Shop Now | Bremer Suits', isActive: true },
-  { id: 'no-2', text: 'New Arrivals: Premium Suit Collection | Browse | Bremer Suits', isActive: true },
-]
-
-const seedPopupOffers: AdminPopupOffer[] = [
-  { id: 'po-1', title: 'Welcome Offer', description: 'Sign up for our newsletter and get 10% off your first order!', discountPercent: 10, code: 'WELCOME10', image: '/images/suit-navy.webp', collectNewsletter: true, isActive: true },
-]
-
-const seedDelivery: AdminDeliveryZone[] = [
-  { id: 'dz-1', name: 'Nairobi CBD', fee: 300, estimatedDays: '1-2', status: 'active' },
-  { id: 'dz-2', name: 'Westlands', fee: 300, estimatedDays: '1-2', status: 'active' },
-  { id: 'dz-3', name: 'Karen', fee: 400, estimatedDays: '1-2', status: 'active' },
-  { id: 'dz-4', name: 'Kilimani', fee: 300, estimatedDays: '1-2', status: 'active' },
-  { id: 'dz-5', name: 'Mombasa', fee: 800, estimatedDays: '3-5', status: 'active' },
-  { id: 'dz-6', name: 'Kisumu', fee: 800, estimatedDays: '3-5', status: 'active' },
-  { id: 'dz-7', name: 'Nakuru', fee: 600, estimatedDays: '2-3', status: 'active' },
-  { id: 'dz-8', name: 'Eldoret', fee: 800, estimatedDays: '3-5', status: 'active' },
-]
-
-const seedCardDetails: AdminCardDetail[] = [
-  { id: 'cd-1', type: 'mpesa', label: 'M-PESA Paybill', details: 'Paybill: 123456, Account: BREMER', isActive: true },
-  { id: 'cd-2', type: 'mpesa', label: 'M-PESA Till Number', details: 'Till: 789012', isActive: true },
-  { id: 'cd-3', type: 'bank', label: 'Bank Transfer', details: 'Equity Bank, Acc: 0123456789, Branch: Westlands', isActive: true },
-]
-
-const seedPolicies: AdminPolicy[] = [
-  { id: 'pol-1', title: 'Privacy Policy', slug: 'privacy-policy', content: 'Our privacy policy details...', updatedAt: now },
-  { id: 'pol-2', title: 'Terms of Service', slug: 'terms-of-service', content: 'Our terms of service...', updatedAt: now },
-  { id: 'pol-3', title: 'Refund Policy', slug: 'refund-policy', content: 'Our refund policy details...', updatedAt: now },
-  { id: 'pol-4', title: 'Shipping Policy', slug: 'shipping-policy', content: 'Our shipping policy details...', updatedAt: now },
-]
-
-const seedUsers: AdminUser[] = [
-  { id: 'usr-1', name: 'Admin', email: 'admin@bremersuits.com', role: 'super_admin', status: 'active', lastLogin: now, createdAt: now },
-]
-
-const seedSettings: AdminSettings = {
-  storeName: 'Bremer Suits',
-  storeEmail: 'info@bremersuits.com',
-  storePhone: '+254 712 345 678',
+/* ── Default settings (no dummy data, just structure defaults) ── */
+const defaultSettings: AdminSettings = {
+  storeName: '',
+  storeEmail: '',
+  storePhone: '',
   currency: 'KSh',
-  deliveryFee: 300,
-  freeDeliveryThreshold: 5000,
-  whatsappNumber: '+254712345678',
-  address: 'Downtown District, Business CBD',
-  socialLinks: { instagram: '@bremersuits', tiktok: '@bremersuits', whatsapp: '+254712345678', twitter: '', facebook: '' },
+  deliveryFee: 0,
+  freeDeliveryThreshold: 0,
+  whatsappNumber: '',
+  address: '',
+  socialLinks: { instagram: '', tiktok: '', whatsapp: '', twitter: '', facebook: '' },
   theme: {
     logoUrl: '',
     faviconUrl: '',
@@ -328,12 +259,8 @@ const seedSettings: AdminSettings = {
     headingFont: 'Playfair Display',
     bodyFont: 'Inter',
   },
-  footerText: 'Premium custom suits, professional fashion styling, and image consulting — your one-stop destination for bespoke tailoring.',
-  seoPages: [
-    { id: 'seo-1', name: 'Home', path: '/', title: 'Bremer Suits | Custom Suits & Image Consulting', description: 'Premium custom suits, professional fashion styling, and image consulting. Elevate your personal brand with Bremer Suits.' },
-    { id: 'seo-2', name: 'Collections', path: '/collections', title: 'Collections | Bremer Suits', description: 'Browse our curated collection of premium custom suits, business attire, and formal wear.' },
-    { id: 'seo-3', name: 'Contact', path: '/contact', title: 'Contact Us | Bremer Suits', description: 'Get in touch with Bremer Suits for custom tailoring inquiries and appointments.' },
-  ],
+  footerText: '',
+  seoPages: [],
 }
 
 /* ── Context ── */
@@ -386,9 +313,11 @@ interface AdminContextType {
   // Newsletter
   subscribers: AdminNewsletterSub[]
   addSubscriber: (email: string) => void
+  updateSubscriber: (id: string, s: Partial<AdminNewsletterSub>) => void
   removeSubscriber: (id: string) => void
   emailCampaigns: AdminEmailCampaign[]
   addEmailCampaign: (c: Omit<AdminEmailCampaign, 'id'>) => void
+  deleteEmailCampaign: (id: string) => void
   // Delivery
   deliveryZones: AdminDeliveryZone[]
   addDeliveryZone: (z: Omit<AdminDeliveryZone, 'id'>) => void
@@ -396,7 +325,9 @@ interface AdminContextType {
   deleteDeliveryZone: (id: string) => void
   // Policies
   policies: AdminPolicy[]
+  addPolicy: (p: Omit<AdminPolicy, 'id' | 'updatedAt'>) => void
   updatePolicy: (id: string, p: Partial<AdminPolicy>) => void
+  deletePolicy: (id: string) => void
   // Users
   users: AdminUser[]
   addUser: (u: Omit<AdminUser, 'id' | 'createdAt' | 'lastLogin'>) => void
@@ -415,29 +346,29 @@ interface AdminContextType {
 const AdminContext = createContext<AdminContextType | null>(null)
 
 export function AdminProvider({ children }: { children: ReactNode }) {
-  const [products, setProducts] = useState<AdminProduct[]>(() => load(KEYS.products, seedProducts()))
+  const [products, setProducts] = useState<AdminProduct[]>(() => load(KEYS.products, []))
   const [orders, setOrders] = useState<AdminOrder[]>(() => load(KEYS.orders, []))
-  const [categories, setCategories] = useState<AdminCategory[]>(() => load(KEYS.categories, seedCategories))
+  const [categories, setCategories] = useState<AdminCategory[]>(() => load(KEYS.categories, []))
   const [offers, setOffers] = useState<AdminOffer[]>(() => load(KEYS.offers, []))
-  const [heroBanners, setHeroBanners] = useState<AdminHeroBanner[]>(() => load(KEYS.heroBanners, seedHeroBanners))
-  const [banners, setBanners] = useState<AdminBanner[]>(() => load(KEYS.banners, seedBanners))
+  const [heroBanners, setHeroBanners] = useState<AdminHeroBanner[]>(() => load(KEYS.heroBanners, []))
+  const [banners, setBanners] = useState<AdminBanner[]>(() => load(KEYS.banners, []))
   const [carousels, setCarousels] = useState<AdminCarousel[]>(() => load(KEYS.carousels, []))
-  const [navbarOffers, setNavbarOffers] = useState<AdminNavbarOffer[]>(() => load(KEYS.navbarOffers, seedNavbarOffers))
-  const [popupOffers, setPopupOffers] = useState<AdminPopupOffer[]>(() => load(KEYS.popupOffers, seedPopupOffers))
+  const [navbarOffers, setNavbarOffers] = useState<AdminNavbarOffer[]>(() => load(KEYS.navbarOffers, []))
+  const [popupOffers, setPopupOffers] = useState<AdminPopupOffer[]>(() => load(KEYS.popupOffers, []))
   const [subscribers, setSubscribers] = useState<AdminNewsletterSub[]>(() => load(KEYS.newsletter, []))
   const [emailCampaigns, setEmailCampaigns] = useState<AdminEmailCampaign[]>(() => load(KEYS.emailCampaigns, []))
-  const [deliveryZones, setDeliveryZones] = useState<AdminDeliveryZone[]>(() => load(KEYS.delivery, seedDelivery))
-  const [policies, setPolicies] = useState<AdminPolicy[]>(() => load(KEYS.policies, seedPolicies))
-  const [users, setUsers] = useState<AdminUser[]>(() => load(KEYS.users, seedUsers))
-  const [cardDetails, setCardDetails] = useState<AdminCardDetail[]>(() => load(KEYS.cardDetails, seedCardDetails))
+  const [deliveryZones, setDeliveryZones] = useState<AdminDeliveryZone[]>(() => load(KEYS.delivery, []))
+  const [policies, setPolicies] = useState<AdminPolicy[]>(() => load(KEYS.policies, []))
+  const [users, setUsers] = useState<AdminUser[]>(() => load(KEYS.users, []))
+  const [cardDetails, setCardDetails] = useState<AdminCardDetail[]>(() => load(KEYS.cardDetails, []))
   const [settings, setSettings] = useState<AdminSettings>(() => {
     const stored = load<Partial<AdminSettings>>(KEYS.settings, {})
     return {
-      ...seedSettings,
+      ...defaultSettings,
       ...stored,
-      socialLinks: { ...seedSettings.socialLinks, ...(stored.socialLinks || {}) },
-      theme: { ...seedSettings.theme, ...(stored.theme || {}) },
-      seoPages: stored.seoPages ?? seedSettings.seoPages,
+      socialLinks: { ...defaultSettings.socialLinks, ...(stored.socialLinks || {}) },
+      theme: { ...defaultSettings.theme, ...(stored.theme || {}) },
+      seoPages: stored.seoPages ?? defaultSettings.seoPages,
     }
   })
 
@@ -509,11 +440,17 @@ export function AdminProvider({ children }: { children: ReactNode }) {
   const addSubscriber = useCallback((email: string) => {
     setSubscribers((prev) => [...prev, { id: genId(), email, subscribedAt: new Date().toISOString(), status: 'active' }])
   }, [])
+  const updateSubscriber = useCallback((id: string, s: Partial<AdminNewsletterSub>) => {
+    setSubscribers((prev) => prev.map((x) => x.id === id ? { ...x, ...s } : x))
+  }, [])
   const removeSubscriber = useCallback((id: string) => {
-    setSubscribers((prev) => prev.map((x) => x.id === id ? { ...x, status: 'unsubscribed' as const } : x))
+    setSubscribers((prev) => prev.filter((x) => x.id !== id))
   }, [])
   const addEmailCampaign = useCallback((c: Omit<AdminEmailCampaign, 'id'>) => {
     setEmailCampaigns((prev) => [...prev, { ...c, id: genId() }])
+  }, [])
+  const deleteEmailCampaign = useCallback((id: string) => {
+    setEmailCampaigns((prev) => prev.filter((x) => x.id !== id))
   }, [])
 
   // Hero Banners
@@ -583,8 +520,15 @@ export function AdminProvider({ children }: { children: ReactNode }) {
   }, [])
 
   // Policies
+  const addPolicy = useCallback((p: Omit<AdminPolicy, 'id' | 'updatedAt'>) => {
+    const ts = new Date().toISOString()
+    setPolicies((prev) => [...prev, { ...p, id: genId(), updatedAt: ts }])
+  }, [])
   const updatePolicy = useCallback((id: string, p: Partial<AdminPolicy>) => {
     setPolicies((prev) => prev.map((x) => x.id === id ? { ...x, ...p, updatedAt: new Date().toISOString() } : x))
+  }, [])
+  const deletePolicy = useCallback((id: string) => {
+    setPolicies((prev) => prev.filter((x) => x.id !== id))
   }, [])
 
   // Users
@@ -626,10 +570,10 @@ export function AdminProvider({ children }: { children: ReactNode }) {
       carousels, addCarousel, updateCarousel, deleteCarousel,
       navbarOffers, addNavbarOffer, updateNavbarOffer, deleteNavbarOffer,
       popupOffers, addPopupOffer, updatePopupOffer, deletePopupOffer,
-      subscribers, addSubscriber, removeSubscriber,
-      emailCampaigns, addEmailCampaign,
+      subscribers, addSubscriber, updateSubscriber, removeSubscriber,
+      emailCampaigns, addEmailCampaign, deleteEmailCampaign,
       deliveryZones, addDeliveryZone, updateDeliveryZone, deleteDeliveryZone,
-      policies, updatePolicy,
+      policies, addPolicy, updatePolicy, deletePolicy,
       users, addUser, updateUser, deleteUser,
       cardDetails, addCardDetail, updateCardDetail, deleteCardDetail,
       settings, updateSettings,
