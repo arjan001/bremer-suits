@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS settings (
   store_name TEXT DEFAULT '',
   store_email TEXT DEFAULT '',
   store_phone TEXT DEFAULT '',
-  currency TEXT DEFAULT 'KSh',
+  currency TEXT DEFAULT '$',
   delivery_fee NUMERIC(10,2) DEFAULT 0,
   free_delivery_threshold NUMERIC(10,2) DEFAULT 0,
   whatsapp_number TEXT DEFAULT '',

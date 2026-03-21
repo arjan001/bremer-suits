@@ -75,7 +75,7 @@ function AdminProducts() {
             addProduct({
               title: parts[0],
               category: parts[1] || categories[0]?.name || 'General',
-              price: parts[2] || 'KSh 0',
+              price: parts[2] || '$0',
               numericPrice: parseFloat(parts[2]?.replace(/[^0-9.]/g, '') || '0'),
               sku: parts[3] || 'BRM-' + Date.now().toString(36).toUpperCase().slice(-8),
               stock: parseInt(parts[4] || '0', 10),
@@ -392,7 +392,7 @@ function ProductModal({
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-semibold text-black mb-1">Price (Display) *</label>
-                <input value={price} onChange={(e) => handlePriceChange(e.target.value)} placeholder="KSh 2,800" className={inputCls} />
+                <input value={price} onChange={(e) => handlePriceChange(e.target.value)} placeholder="$280.00" className={inputCls} />
               </div>
               <div>
                 <label className="block text-sm font-semibold text-black mb-1">Numeric Price *</label>
@@ -402,11 +402,11 @@ function ProductModal({
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-semibold text-black mb-1">Sale Price</label>
-                <input value={salePrice} onChange={(e) => setSalePrice(e.target.value)} placeholder="KSh 2,000 (leave empty if no sale)" className={inputCls} />
+                <input value={salePrice} onChange={(e) => setSalePrice(e.target.value)} placeholder="$200.00 (leave empty if no sale)" className={inputCls} />
               </div>
               <div>
                 <label className="block text-sm font-semibold text-black mb-1">Original Price (strikethrough)</label>
-                <input value={originalPrice} onChange={(e) => setOriginalPrice(e.target.value)} placeholder="KSh 3,500" className={inputCls} />
+                <input value={originalPrice} onChange={(e) => setOriginalPrice(e.target.value)} placeholder="$350.00" className={inputCls} />
               </div>
             </div>
           </div>
