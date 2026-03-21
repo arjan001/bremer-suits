@@ -353,17 +353,6 @@ export function PaymentModal({
           <form onSubmit={handleSubmit} className="px-6 pb-6">
             {method === 'card' ? (
               <div className="space-y-4">
-                {/* Test Mode Notice */}
-                <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 flex items-start gap-2.5">
-                  <AlertCircle size={16} className="text-amber-500 shrink-0 mt-0.5" />
-                  <div>
-                    <p className="text-xs text-amber-700 font-semibold">Test Mode</p>
-                    <p className="text-xs text-amber-600 mt-0.5 leading-relaxed">
-                      Card details are collected securely and will be processed by our team. No automatic charge.
-                    </p>
-                  </div>
-                </div>
-
                 {/* Card Number */}
                 <div>
                   <label className="block text-sm font-semibold text-black mb-1.5">
