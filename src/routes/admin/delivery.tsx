@@ -2,6 +2,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import { useState } from 'react'
 import { Plus, Edit2, Trash2, X, Truck } from 'lucide-react'
 import { useAdmin, type AdminDeliveryZone } from '@/lib/admin-store'
+import { showCreateSuccess, showUpdateSuccess, showDeleteSuccess, showDeleteConfirm, showError } from '@/lib/sweet-alert'
 
 export const Route = createFileRoute('/admin/delivery')({
   component: AdminDelivery,
@@ -11,7 +12,6 @@ function AdminDelivery() {
   const { deliveryZones, addDeliveryZone, updateDeliveryZone, deleteDeliveryZone, settings } = useAdmin()
   const [modal, setModal] = useState<'closed' | 'add' | 'edit'>('closed')
   const [editItem, setEditItem] = useState<AdminDeliveryZone | null>(null)
-  const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null)
 
   return (
     <div>
@@ -55,7 +55,14 @@ function AdminDelivery() {
                 <td className="px-4 py-3">
                   <div className="flex items-center justify-end gap-1">
                     <button onClick={() => { setEditItem(z); setModal('edit') }} className="p-1.5 text-gray-400 hover:text-black transition-colors"><Edit2 size={15} /></button>
-                    <button onClick={() => setDeleteConfirm(z.id)} className="p-1.5 text-gray-400 hover:text-red-600 transition-colors"><Trash2 size={15} /></button>
+                    <button onClick={async () => {
+                      const confirmed = await showDeleteConfirm('delivery zone')
+                      if (confirmed) {
+                        const ok = await deleteDeliveryZone(z.id)
+                        if (ok) showDeleteSuccess('Delivery Zone')
+                        else showError('Delete Failed')
+                      }
+                    }} className="p-1.5 text-gray-400 hover:text-red-600 transition-colors"><Trash2 size={15} /></button>
                   </div>
                 </td>
               </tr>
@@ -78,9 +85,14 @@ function AdminDelivery() {
             <DeliveryForm
               item={editItem}
               currency={settings.currency}
-              onSave={(data) => {
-                if (modal === 'edit' && editItem) updateDeliveryZone(editItem.id, data)
-                else addDeliveryZone(data as AdminDeliveryZone)
+              onSave={async (data) => {
+                if (modal === 'edit' && editItem) {
+                  const ok = await updateDeliveryZone(editItem.id, data)
+                  if (ok) await showUpdateSuccess('Delivery Zone')
+                } else {
+                  const ok = await addDeliveryZone(data as AdminDeliveryZone)
+                  if (ok) await showCreateSuccess('Delivery Zone')
+                }
                 setModal('closed')
               }}
               onCancel={() => setModal('closed')}
@@ -89,19 +101,6 @@ function AdminDelivery() {
         </div>
       )}
 
-      {deleteConfirm && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-black/40" onClick={() => setDeleteConfirm(null)} />
-          <div className="relative bg-white rounded-lg p-6 max-w-sm w-full shadow-xl">
-            <h3 className="text-lg font-bold text-black mb-2">Delete Zone</h3>
-            <p className="text-sm text-gray-500 mb-6">Are you sure?</p>
-            <div className="flex gap-3 justify-end">
-              <button onClick={() => setDeleteConfirm(null)} className="px-4 py-2 text-sm font-medium text-gray-600">Cancel</button>
-              <button onClick={() => { deleteDeliveryZone(deleteConfirm); setDeleteConfirm(null) }} className="px-4 py-2 bg-red-600 text-white text-sm font-semibold rounded-lg hover:bg-red-700">Delete</button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   )
 }

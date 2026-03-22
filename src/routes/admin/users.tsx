@@ -2,6 +2,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import { useState } from 'react'
 import { Plus, Edit2, Trash2, X, Users, Shield, ShieldCheck, Eye, Pencil } from 'lucide-react'
 import { useAdmin, type AdminUser } from '@/lib/admin-store'
+import { showCreateSuccess, showUpdateSuccess, showDeleteSuccess, showDeleteConfirm, showError } from '@/lib/sweet-alert'
 
 export const Route = createFileRoute('/admin/users')({
   component: AdminUsers,
@@ -30,7 +31,6 @@ function AdminUsers() {
   const { users, addUser, updateUser, deleteUser } = useAdmin()
   const [modal, setModal] = useState<'closed' | 'add' | 'edit'>('closed')
   const [editItem, setEditItem] = useState<AdminUser | null>(null)
-  const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null)
 
   return (
     <div>
@@ -86,7 +86,14 @@ function AdminUsers() {
                     <div className="flex items-center justify-end gap-1">
                       <button onClick={() => { setEditItem(u); setModal('edit') }} className="p-1.5 text-gray-400 hover:text-black transition-colors"><Edit2 size={15} /></button>
                       {u.role !== 'super_admin' && (
-                        <button onClick={() => setDeleteConfirm(u.id)} className="p-1.5 text-gray-400 hover:text-red-600 transition-colors"><Trash2 size={15} /></button>
+                        <button onClick={async () => {
+                          const confirmed = await showDeleteConfirm('user')
+                          if (confirmed) {
+                            const ok = await deleteUser(u.id)
+                            if (ok) await showDeleteSuccess('User')
+                            else await showError('Delete Failed')
+                          }
+                        }} className="p-1.5 text-gray-400 hover:text-red-600 transition-colors"><Trash2 size={15} /></button>
                       )}
                     </div>
                   </td>
@@ -110,9 +117,16 @@ function AdminUsers() {
             </div>
             <UserForm
               item={editItem}
-              onSave={(data) => {
-                if (modal === 'edit' && editItem) updateUser(editItem.id, data)
-                else addUser(data as Omit<AdminUser, 'id' | 'createdAt' | 'lastLogin'>)
+              onSave={async (data) => {
+                if (modal === 'edit' && editItem) {
+                  const ok = await updateUser(editItem.id, data)
+                  if (ok) await showUpdateSuccess('User')
+                  else await showError('Update Failed')
+                } else {
+                  const ok = await addUser(data as Omit<AdminUser, 'id' | 'createdAt' | 'lastLogin'>)
+                  if (ok) await showCreateSuccess('User')
+                  else await showError('Create Failed')
+                }
                 setModal('closed')
               }}
               onCancel={() => setModal('closed')}
@@ -121,19 +135,6 @@ function AdminUsers() {
         </div>
       )}
 
-      {deleteConfirm && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-black/40" onClick={() => setDeleteConfirm(null)} />
-          <div className="relative bg-white rounded-lg p-6 max-w-sm w-full shadow-xl">
-            <h3 className="text-lg font-bold text-black mb-2">Delete User</h3>
-            <p className="text-sm text-gray-500 mb-6">Are you sure?</p>
-            <div className="flex gap-3 justify-end">
-              <button onClick={() => setDeleteConfirm(null)} className="px-4 py-2 text-sm font-medium text-gray-600">Cancel</button>
-              <button onClick={() => { deleteUser(deleteConfirm); setDeleteConfirm(null) }} className="px-4 py-2 bg-red-600 text-white text-sm font-semibold rounded-lg hover:bg-red-700">Delete</button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   )
 }

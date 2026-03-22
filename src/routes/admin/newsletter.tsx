@@ -2,6 +2,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import { useState } from 'react'
 import { Search, Mail, Download, Send, X, Users, UserCheck, UserX, Trash2, Eye } from 'lucide-react'
 import { useAdmin } from '@/lib/admin-store'
+import { showCreateSuccess, showUpdateSuccess, showDeleteSuccess, showDeleteConfirm, showError, showSuccess } from '@/lib/sweet-alert'
 
 export const Route = createFileRoute('/admin/newsletter')({
   component: AdminNewsletter,
@@ -14,9 +15,6 @@ function AdminNewsletter() {
   const [showCompose, setShowCompose] = useState(false)
   const [emailSubject, setEmailSubject] = useState('')
   const [emailBody, setEmailBody] = useState('')
-  const [sendSuccess, setSendSuccess] = useState(false)
-  const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null)
-  const [deleteCampaignConfirm, setDeleteCampaignConfirm] = useState<string | null>(null)
   const [viewCampaign, setViewCampaign] = useState<{ subject: string; body: string; sentAt: string; recipientCount: number } | null>(null)
 
   const active = subscribers.filter((s) => s.status === 'active')
@@ -26,11 +24,16 @@ function AdminNewsletter() {
     s.email.toLowerCase().includes(search.toLowerCase())
   ).sort((a, b) => b.subscribedAt.localeCompare(a.subscribedAt))
 
-  const handleAdd = (e: React.FormEvent) => {
+  const handleAdd = async (e: React.FormEvent) => {
     e.preventDefault()
     if (newEmail.trim()) {
-      addSubscriber(newEmail.trim())
-      setNewEmail('')
+      const ok = await addSubscriber(newEmail.trim())
+      if (ok) {
+        showCreateSuccess('Subscriber')
+        setNewEmail('')
+      } else {
+        showError('Add Failed', 'Could not add subscriber. Please try again.')
+      }
     }
   }
 
@@ -45,22 +48,23 @@ function AdminNewsletter() {
     URL.revokeObjectURL(url)
   }
 
-  const handleSendEmail = (e: React.FormEvent) => {
+  const handleSendEmail = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!emailSubject.trim() || !emailBody.trim()) return
-    addEmailCampaign({
+    const ok = await addEmailCampaign({
       subject: emailSubject,
       body: emailBody,
       sentAt: new Date().toISOString(),
       recipientCount: active.length,
     })
-    setSendSuccess(true)
-    setTimeout(() => {
-      setSendSuccess(false)
+    if (ok) {
+      showSuccess('Campaign Sent!', 'Email campaign has been sent successfully.')
       setShowCompose(false)
       setEmailSubject('')
       setEmailBody('')
-    }, 2500)
+    } else {
+      showError('Send Failed', 'Could not send campaign. Please try again.')
+    }
   }
 
   return (
@@ -142,7 +146,11 @@ function AdminNewsletter() {
                 <td className="px-5 py-3.5">
                   <div className="flex items-center justify-end gap-1">
                     <button
-                      onClick={() => updateSubscriber(s.id, { status: s.status === 'active' ? 'unsubscribed' : 'active' })}
+                      onClick={async () => {
+                        const ok = await updateSubscriber(s.id, { status: s.status === 'active' ? 'unsubscribed' : 'active' })
+                        if (ok) showUpdateSuccess('Subscriber status')
+                        else showError('Update Failed', 'Could not update subscriber status.')
+                      }}
                       className={`px-2.5 py-1 text-xs font-semibold rounded-full transition-colors ${
                         s.status === 'active' ? 'bg-yellow-50 text-yellow-700 hover:bg-yellow-100' : 'bg-green-50 text-green-700 hover:bg-green-100'
                       }`}
@@ -150,7 +158,14 @@ function AdminNewsletter() {
                     >
                       {s.status === 'active' ? 'Deactivate' : 'Reactivate'}
                     </button>
-                    <button onClick={() => setDeleteConfirm(s.id)} className="p-1.5 text-gray-400 hover:text-red-600 transition-colors" title="Delete">
+                    <button onClick={async () => {
+                      const confirmed = await showDeleteConfirm('Subscriber')
+                      if (confirmed) {
+                        const ok = await removeSubscriber(s.id)
+                        if (ok) showDeleteSuccess('Subscriber')
+                        else showError('Delete Failed', 'Could not delete subscriber.')
+                      }
+                    }} className="p-1.5 text-gray-400 hover:text-red-600 transition-colors" title="Delete">
                       <Trash2 size={15} />
                     </button>
                   </div>
@@ -187,7 +202,14 @@ function AdminNewsletter() {
                     <td className="px-5 py-3">
                       <div className="flex items-center justify-end gap-1">
                         <button onClick={() => setViewCampaign(c)} className="p-1.5 text-gray-400 hover:text-black transition-colors" title="View"><Eye size={15} /></button>
-                        <button onClick={() => setDeleteCampaignConfirm(c.id)} className="p-1.5 text-gray-400 hover:text-red-600 transition-colors" title="Delete"><Trash2 size={15} /></button>
+                        <button onClick={async () => {
+                          const confirmed = await showDeleteConfirm('Campaign')
+                          if (confirmed) {
+                            const ok = await deleteEmailCampaign(c.id)
+                            if (ok) showDeleteSuccess('Campaign')
+                            else showError('Delete Failed', 'Could not delete campaign.')
+                          }
+                        }} className="p-1.5 text-gray-400 hover:text-red-600 transition-colors" title="Delete"><Trash2 size={15} /></button>
                       </div>
                     </td>
                   </tr>
@@ -201,7 +223,7 @@ function AdminNewsletter() {
       {/* Compose Email Modal */}
       {showCompose && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-black/40" onClick={() => { if (!sendSuccess) setShowCompose(false) }} />
+          <div className="absolute inset-0 bg-black/40" onClick={() => setShowCompose(false)} />
           <div className="relative bg-white rounded-lg w-full max-w-lg shadow-xl">
             <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
               <div>
@@ -210,65 +232,25 @@ function AdminNewsletter() {
               </div>
               <button onClick={() => setShowCompose(false)} className="p-1 text-gray-400 hover:text-black"><X size={20} /></button>
             </div>
-            {sendSuccess ? (
-              <div className="p-10 text-center">
-                <div className="w-14 h-14 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Mail size={24} className="text-green-600" />
-                </div>
-                <h3 className="text-lg font-bold text-black mb-1">Email Sent!</h3>
-                <p className="text-sm text-gray-500">Your email has been queued for {active.length} subscriber{active.length !== 1 ? 's' : ''}.</p>
+            <form onSubmit={handleSendEmail} className="p-6 space-y-4">
+              <div>
+                <label className="block text-sm font-semibold text-black mb-1">Subject *</label>
+                <input value={emailSubject} onChange={(e) => setEmailSubject(e.target.value)} required placeholder="e.g. New arrivals this week!" className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:border-black focus:ring-1 focus:ring-black outline-none" />
               </div>
-            ) : (
-              <form onSubmit={handleSendEmail} className="p-6 space-y-4">
-                <div>
-                  <label className="block text-sm font-semibold text-black mb-1">Subject *</label>
-                  <input value={emailSubject} onChange={(e) => setEmailSubject(e.target.value)} required placeholder="e.g. New arrivals this week!" className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:border-black focus:ring-1 focus:ring-black outline-none" />
-                </div>
-                <div>
-                  <label className="block text-sm font-semibold text-black mb-1">Message *</label>
-                  <textarea value={emailBody} onChange={(e) => setEmailBody(e.target.value)} required rows={6} placeholder="Write your email content here..." className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:border-black focus:ring-1 focus:ring-black outline-none resize-y" />
-                </div>
-                <div className="bg-gray-50 rounded-lg p-3 text-xs text-gray-500">
-                  <p>This will send an email to all <span className="font-semibold text-black">{active.length}</span> active subscribers.</p>
-                </div>
-                <div className="flex gap-3 justify-end pt-2">
-                  <button type="button" onClick={() => setShowCompose(false)} className="px-4 py-2.5 text-sm font-medium text-gray-600 hover:text-black transition-colors">Cancel</button>
-                  <button type="submit" disabled={active.length === 0} className="flex items-center gap-2 px-6 py-2.5 bg-black text-white text-sm font-semibold rounded-lg hover:bg-gray-800 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors">
-                    <Send size={14} /> Send Email
-                  </button>
-                </div>
-              </form>
-            )}
-          </div>
-        </div>
-      )}
-
-      {/* Unsubscribe Confirm */}
-      {deleteConfirm && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-black/40" onClick={() => setDeleteConfirm(null)} />
-          <div className="relative bg-white rounded-lg p-6 max-w-sm w-full shadow-xl">
-            <h3 className="text-lg font-bold text-black mb-2">Delete Subscriber</h3>
-            <p className="text-sm text-gray-500 mb-6">Are you sure you want to remove this subscriber?</p>
-            <div className="flex gap-3 justify-end">
-              <button onClick={() => setDeleteConfirm(null)} className="px-4 py-2 text-sm font-medium text-gray-600">Cancel</button>
-              <button onClick={() => { removeSubscriber(deleteConfirm); setDeleteConfirm(null) }} className="px-4 py-2 bg-red-600 text-white text-sm font-semibold rounded-lg hover:bg-red-700 transition-colors">Delete</button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Delete Campaign Confirm */}
-      {deleteCampaignConfirm && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-black/40" onClick={() => setDeleteCampaignConfirm(null)} />
-          <div className="relative bg-white rounded-lg p-6 max-w-sm w-full shadow-xl">
-            <h3 className="text-lg font-bold text-black mb-2">Delete Campaign</h3>
-            <p className="text-sm text-gray-500 mb-6">Are you sure you want to delete this email campaign record?</p>
-            <div className="flex gap-3 justify-end">
-              <button onClick={() => setDeleteCampaignConfirm(null)} className="px-4 py-2 text-sm font-medium text-gray-600">Cancel</button>
-              <button onClick={() => { deleteEmailCampaign(deleteCampaignConfirm); setDeleteCampaignConfirm(null) }} className="px-4 py-2 bg-red-600 text-white text-sm font-semibold rounded-lg hover:bg-red-700 transition-colors">Delete</button>
-            </div>
+              <div>
+                <label className="block text-sm font-semibold text-black mb-1">Message *</label>
+                <textarea value={emailBody} onChange={(e) => setEmailBody(e.target.value)} required rows={6} placeholder="Write your email content here..." className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:border-black focus:ring-1 focus:ring-black outline-none resize-y" />
+              </div>
+              <div className="bg-gray-50 rounded-lg p-3 text-xs text-gray-500">
+                <p>This will send an email to all <span className="font-semibold text-black">{active.length}</span> active subscribers.</p>
+              </div>
+              <div className="flex gap-3 justify-end pt-2">
+                <button type="button" onClick={() => setShowCompose(false)} className="px-4 py-2.5 text-sm font-medium text-gray-600 hover:text-black transition-colors">Cancel</button>
+                <button type="submit" disabled={active.length === 0} className="flex items-center gap-2 px-6 py-2.5 bg-black text-white text-sm font-semibold rounded-lg hover:bg-gray-800 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors">
+                  <Send size={14} /> Send Email
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}

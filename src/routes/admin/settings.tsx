@@ -18,6 +18,7 @@ import {
   FileText,
 } from 'lucide-react'
 import { useAdmin, type AdminSeoPage } from '@/lib/admin-store'
+import { showSuccess, showError, showDeleteConfirm } from '@/lib/sweet-alert'
 
 export const Route = createFileRoute('/admin/settings')({
   component: AdminSettings,
@@ -35,29 +36,25 @@ const tabs: { id: TabId; label: string }[] = [
 function AdminSettings() {
   const { settings, updateSettings } = useAdmin()
   const [form, setForm] = useState({ ...settings })
-  const [saved, setSaved] = useState(false)
   const [activeTab, setActiveTab] = useState<TabId>('general')
 
   const handleChange = (field: string, value: string | number) => {
     setForm((prev) => ({ ...prev, [field]: value }))
-    setSaved(false)
   }
 
   const handleSocialChange = (field: string, value: string) => {
     setForm((prev) => ({ ...prev, socialLinks: { ...prev.socialLinks, [field]: value } }))
-    setSaved(false)
   }
 
   const handleThemeChange = (field: string, value: string) => {
     setForm((prev) => ({ ...prev, theme: { ...prev.theme, [field]: value } }))
-    setSaved(false)
   }
 
-  const handleSave = (e?: React.FormEvent) => {
+  const handleSave = async (e?: React.FormEvent) => {
     e?.preventDefault()
-    updateSettings(form)
-    setSaved(true)
-    setTimeout(() => setSaved(false), 3000)
+    const ok = await updateSettings(form)
+    if (ok) showSuccess('Settings Saved!', 'Your settings have been saved successfully.')
+    else showError('Save Failed')
   }
 
   return (
@@ -82,12 +79,6 @@ function AdminSettings() {
         </button>
       </div>
 
-      {saved && (
-        <div className="mb-4 px-4 py-2.5 bg-green-50 border border-green-200 rounded-lg text-sm text-green-700 font-medium">
-          Settings saved successfully!
-        </div>
-      )}
-
       {/* Tabs */}
       <div className="flex gap-0 border-b border-gray-200 mb-6">
         {tabs.map((tab) => (
@@ -111,7 +102,7 @@ function AdminSettings() {
           <GeneralTab form={form} handleChange={handleChange} />
         )}
         {activeTab === 'seo' && (
-          <SeoTab form={form} setForm={setForm} setSaved={setSaved} />
+          <SeoTab form={form} setForm={setForm} />
         )}
         {activeTab === 'theme' && (
           <ThemeTab form={form} handleThemeChange={handleThemeChange} />
@@ -250,11 +241,9 @@ function GeneralTab({
 function SeoTab({
   form,
   setForm,
-  setSaved,
 }: {
   form: ReturnType<typeof useAdmin>['settings']
   setForm: React.Dispatch<React.SetStateAction<ReturnType<typeof useAdmin>['settings']>>
-  setSaved: React.Dispatch<React.SetStateAction<boolean>>
 }) {
   const [search, setSearch] = useState('')
   const [editingPage, setEditingPage] = useState<AdminSeoPage | null>(null)
@@ -302,17 +291,17 @@ function SeoTab({
         ),
       }))
     }
-    setSaved(false)
     setEditingPage(null)
     setIsAdding(false)
   }
 
-  const handleDeletePage = (id: string) => {
+  const handleDeletePage = async (id: string) => {
+    const confirmed = await showDeleteConfirm('SEO Page')
+    if (!confirmed) return
     setForm((prev) => ({
       ...prev,
       seoPages: prev.seoPages.filter((p) => p.id !== id),
     }))
-    setSaved(false)
   }
 
   const handleCancel = () => {
