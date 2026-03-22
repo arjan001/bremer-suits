@@ -230,16 +230,7 @@ function About() {
       <section className="py-16 lg:py-24 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-            {/* Left: Thread spools image */}
-            <div className="aspect-[3/4] overflow-hidden">
-              <img
-                src="/images/about-threads.jpg"
-                alt="Premium thread collection"
-                className="w-full h-full object-cover"
-              />
-            </div>
-
-            {/* Right: Services list */}
+            {/* Left: Services list */}
             <div>
               <p
                 className="text-sm italic text-amber-700 mb-3 font-medium"
@@ -271,6 +262,15 @@ function About() {
                   </div>
                 ))}
               </div>
+            </div>
+
+            {/* Right: Thread spools image */}
+            <div className="aspect-[3/4] overflow-hidden">
+              <img
+                src="/images/about-threads.jpg"
+                alt="Premium thread collection"
+                className="w-full h-full object-cover"
+              />
             </div>
           </div>
         </div>
