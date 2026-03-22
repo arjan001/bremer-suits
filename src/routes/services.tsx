@@ -3,13 +3,14 @@ import {
   Scissors,
   Crown,
   Eye,
-  Shirt,
-  Palette,
+  Heart,
   Users,
   CheckCircle,
   ArrowRight,
   Ruler,
   Sparkles,
+  Gem,
+  Watch,
 } from 'lucide-react'
 
 export const Route = createFileRoute('/services')({
@@ -19,40 +20,55 @@ export const Route = createFileRoute('/services')({
 const mainServices = [
   {
     icon: Scissors,
-    title: 'Custom Suiting',
-    subtitle: 'Bespoke & Made-to-Measure',
+    title: 'High-End Tailoring Services',
+    subtitle: 'Custom Suits & Bespoke Tailoring',
     description:
-      'Every Bremer suit begins with understanding you. From fabric selection to final fitting, we craft garments that fit your body, your lifestyle, and your ambitions.',
+      'Every Bremer suit begins with understanding you. From fabric selection to final fitting, we craft garments that fit your body, your lifestyle, and your ambitions. Our master tailors bring decades of expertise to every stitch.',
     features: [
-      'Personal consultation and body analysis',
+      'Custom suits, sport coats, trousers & overcoats',
       'Premium fabric library — Italian & British mills',
       'Multiple fittings for perfect drape',
       'Hand-finished details and monogramming',
-      'Suits, sport coats, trousers, and overcoats',
+      'Ready-made premium suit collection',
     ],
     image: '/images/sewing-machine.png',
   },
   {
+    icon: Heart,
+    title: 'Wedding Styling',
+    subtitle: 'Your Perfect Day, Perfectly Dressed',
+    description:
+      'Make your special day unforgettable with bespoke wedding attire. From groom suits to groomsmen coordination, we ensure every detail reflects the significance of your milestone.',
+    features: [
+      'Custom groom & groomsmen suit packages',
+      'Fabric and color coordination for wedding parties',
+      'Ruracio (traditional ceremony) styling',
+      'Pre-wedding consultations and fittings',
+      'Accessories coordination — ties, cufflinks, pocket squares',
+    ],
+    image: '/images/suit-formal.webp',
+  },
+  {
     icon: Crown,
-    title: 'Professional Fashion Styling',
+    title: 'Personal Styling & Fashion Design',
     subtitle: 'Wardrobe Strategy & Curation',
     description:
-      'We build wardrobes that work as hard as you do. Our styling service creates a cohesive, versatile collection that transitions seamlessly across every context of your professional life.',
+      'We build wardrobes that work as hard as you do. Our styling service creates a cohesive, versatile collection that transitions seamlessly across every context of your professional and personal life.',
     features: [
-      'Comprehensive wardrobe audit',
+      'Comprehensive wardrobe audit and planning',
       'Personal color and style analysis',
-      'Seasonal wardrobe planning',
-      'Shopping accompaniment and sourcing',
+      'Seasonal wardrobe curation',
+      'Custom fashion design for unique pieces',
       'Outfit coordination for key events',
     ],
     image: '/images/dressmaker.png',
   },
   {
     icon: Eye,
-    title: 'Image Consulting',
+    title: 'Image Consulting & Coaching',
     subtitle: 'Personal Brand Alignment',
     description:
-      'Your image is a strategic tool. Our consulting sessions help you understand and leverage the psychology of appearance to communicate authority, approachability, and competence.',
+      'Your image is a strategic tool. Our consulting sessions help you understand and leverage the psychology of appearance to communicate authority, approachability, and competence in every setting.',
     features: [
       'Personal brand assessment',
       'Executive presence coaching',
@@ -66,16 +82,16 @@ const mainServices = [
 
 const additionalServices = [
   {
-    icon: Shirt,
-    title: 'Wardrobe Audit',
+    icon: Watch,
+    title: 'Male Accessories',
     description:
-      'A thorough review of your current wardrobe to identify gaps, optimize what you have, and create a strategic plan for what to add.',
+      'Complete your look with our curated collection of premium accessories — ties, cufflinks, pocket squares, belts, and watches sourced from the finest brands.',
   },
   {
-    icon: Palette,
-    title: 'Color Analysis',
+    icon: Heart,
+    title: 'Ruracio Styling',
     description:
-      'Discover which colors enhance your natural complexion and communicate the right message for your professional context.',
+      'Look your best for traditional ceremonies. We specialize in culturally respectful yet fashion-forward styling for Ruracio and other traditional events.',
   },
   {
     icon: Users,
@@ -93,10 +109,10 @@ const additionalServices = [
     icon: Sparkles,
     title: 'Special Occasions',
     description:
-      'Wedding suits, gala outfits, and milestone event styling. We ensure you look impeccable for life\'s most important moments.',
+      'Gala outfits, anniversary styling, and milestone event preparation. We ensure you look impeccable for life\'s most important moments.',
   },
   {
-    icon: Scissors,
+    icon: Gem,
     title: 'Fabric Sourcing',
     description:
       'Access to the world\'s finest fabric mills. We help you select the perfect material for your vision and lifestyle.',
@@ -213,7 +229,7 @@ function Services() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {additionalServices.map((service) => (
               <div
                 key={service.title}
