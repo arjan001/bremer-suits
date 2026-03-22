@@ -2,6 +2,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import { useState } from 'react'
 import { Search, Eye, X, ShoppingCart, Truck, XCircle, Clock, Package, CreditCard, Phone, Plus, Trash2 } from 'lucide-react'
 import { useAdmin, type AdminOrder } from '@/lib/admin-store'
+import { showCreateSuccess, showUpdateSuccess, showDeleteSuccess, showDeleteConfirm, showError } from '@/lib/sweet-alert'
 
 export const Route = createFileRoute('/admin/orders')({
   component: AdminOrders,
@@ -22,7 +23,6 @@ function AdminOrders() {
   const [search, setSearch] = useState('')
   const [filterStatus, setFilterStatus] = useState('all')
   const [viewOrder, setViewOrder] = useState<AdminOrder | null>(null)
-  const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null)
   const [showCreate, setShowCreate] = useState(false)
 
   // Create order form state
@@ -42,9 +42,12 @@ function AdminOrders() {
     return matchSearch && matchStatus
   }).sort((a, b) => b.createdAt.localeCompare(a.createdAt))
 
-  const handleStatusChange = (id: string, status: AdminOrder['status']) => {
-    updateOrder(id, { status })
-    if (viewOrder?.id === id) setViewOrder({ ...viewOrder, status })
+  const handleStatusChange = async (id: string, status: AdminOrder['status']) => {
+    const ok = await updateOrder(id, { status })
+    if (ok) {
+      showUpdateSuccess('Order status')
+      if (viewOrder?.id === id) setViewOrder({ ...viewOrder, status })
+    } else showError('Status Update Failed')
   }
 
   const resetCreateForm = () => {
@@ -64,12 +67,12 @@ function AdminOrders() {
     }
   }
 
-  const handleCreateOrder = (e: React.FormEvent) => {
+  const handleCreateOrder = async (e: React.FormEvent) => {
     e.preventDefault()
     if (orderItems.length === 0) return
     const subtotal = orderItems.reduce((sum, i) => sum + i.price * i.quantity, 0)
     const deliveryFee = settings.deliveryFee || 0
-    addOrder({
+    const ok = await addOrder({
       customer: { fullName: customerName, phone: customerPhone, email: customerEmail || undefined },
       delivery: { location: deliveryLocation, address: deliveryAddress },
       items: orderItems,
@@ -80,6 +83,8 @@ function AdminOrders() {
       status: 'pending',
       orderNotes: orderNotes || undefined,
     })
+    if (ok) showCreateSuccess('Order')
+    else showError('Create Failed')
     resetCreateForm()
     setShowCreate(false)
   }
@@ -160,7 +165,14 @@ function AdminOrders() {
                       <button onClick={() => setViewOrder(o)} className="p-1.5 text-gray-400 hover:text-black transition-colors" title="View">
                         <Eye size={15} />
                       </button>
-                      <button onClick={() => setDeleteConfirm(o.id)} className="p-1.5 text-gray-400 hover:text-red-600 transition-colors" title="Delete">
+                      <button onClick={async () => {
+                        const confirmed = await showDeleteConfirm('order')
+                        if (confirmed) {
+                          const ok = await deleteOrder(o.id)
+                          if (ok) showDeleteSuccess('Order')
+                          else showError('Delete Failed')
+                        }
+                      }} className="p-1.5 text-gray-400 hover:text-red-600 transition-colors" title="Delete">
                         <XCircle size={15} />
                       </button>
                     </div>
@@ -440,20 +452,6 @@ function AdminOrders() {
         </div>
       )}
 
-      {/* Delete Confirm */}
-      {deleteConfirm && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-black/40" onClick={() => setDeleteConfirm(null)} />
-          <div className="relative bg-white rounded-lg p-6 max-w-sm w-full shadow-xl">
-            <h3 className="text-lg font-bold text-black mb-2">Delete Order</h3>
-            <p className="text-sm text-gray-500 mb-6">Are you sure you want to delete this order?</p>
-            <div className="flex gap-3 justify-end">
-              <button onClick={() => setDeleteConfirm(null)} className="px-4 py-2 text-sm font-medium text-gray-600">Cancel</button>
-              <button onClick={() => { deleteOrder(deleteConfirm); setDeleteConfirm(null) }} className="px-4 py-2 bg-red-600 text-white text-sm font-semibold rounded-lg hover:bg-red-700">Delete</button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   )
 }

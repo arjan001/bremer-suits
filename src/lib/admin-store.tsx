@@ -249,19 +249,19 @@ interface AdminContextType {
   loading: boolean
   // Products
   products: AdminProduct[]
-  addProduct: (p: Omit<AdminProduct, 'id' | 'createdAt' | 'updatedAt'>) => void
-  updateProduct: (id: string, p: Partial<AdminProduct>) => void
-  deleteProduct: (id: string) => void
+  addProduct: (p: Omit<AdminProduct, 'id' | 'createdAt' | 'updatedAt'>) => Promise<boolean>
+  updateProduct: (id: string, p: Partial<AdminProduct>) => Promise<boolean>
+  deleteProduct: (id: string) => Promise<boolean>
   // Orders
   orders: AdminOrder[]
-  addOrder: (o: Omit<AdminOrder, 'id' | 'orderNumber' | 'createdAt' | 'updatedAt'>) => void
-  updateOrder: (id: string, o: Partial<AdminOrder>) => void
-  deleteOrder: (id: string) => void
+  addOrder: (o: Omit<AdminOrder, 'id' | 'orderNumber' | 'createdAt' | 'updatedAt'>) => Promise<boolean>
+  updateOrder: (id: string, o: Partial<AdminOrder>) => Promise<boolean>
+  deleteOrder: (id: string) => Promise<boolean>
   // Categories
   categories: AdminCategory[]
-  addCategory: (c: Omit<AdminCategory, 'id'>) => void
-  updateCategory: (id: string, c: Partial<AdminCategory>) => void
-  deleteCategory: (id: string) => void
+  addCategory: (c: Omit<AdminCategory, 'id'>) => Promise<boolean>
+  updateCategory: (id: string, c: Partial<AdminCategory>) => Promise<boolean>
+  deleteCategory: (id: string) => Promise<boolean>
   // Offers (client-only, no DB table)
   offers: AdminOffer[]
   addOffer: (o: Omit<AdminOffer, 'id'>) => void
@@ -269,60 +269,60 @@ interface AdminContextType {
   deleteOffer: (id: string) => void
   // Hero Banners
   heroBanners: AdminHeroBanner[]
-  addHeroBanner: (b: Omit<AdminHeroBanner, 'id'>) => void
-  updateHeroBanner: (id: string, b: Partial<AdminHeroBanner>) => void
-  deleteHeroBanner: (id: string) => void
+  addHeroBanner: (b: Omit<AdminHeroBanner, 'id'>) => Promise<boolean>
+  updateHeroBanner: (id: string, b: Partial<AdminHeroBanner>) => Promise<boolean>
+  deleteHeroBanner: (id: string) => Promise<boolean>
   // Banners
   banners: AdminBanner[]
-  addBanner: (b: Omit<AdminBanner, 'id'>) => void
-  updateBanner: (id: string, b: Partial<AdminBanner>) => void
-  deleteBanner: (id: string) => void
+  addBanner: (b: Omit<AdminBanner, 'id'>) => Promise<boolean>
+  updateBanner: (id: string, b: Partial<AdminBanner>) => Promise<boolean>
+  deleteBanner: (id: string) => Promise<boolean>
   // Carousels
   carousels: AdminCarousel[]
-  addCarousel: (c: Omit<AdminCarousel, 'id'>) => void
-  updateCarousel: (id: string, c: Partial<AdminCarousel>) => void
-  deleteCarousel: (id: string) => void
+  addCarousel: (c: Omit<AdminCarousel, 'id'>) => Promise<boolean>
+  updateCarousel: (id: string, c: Partial<AdminCarousel>) => Promise<boolean>
+  deleteCarousel: (id: string) => Promise<boolean>
   // Navbar Offers
   navbarOffers: AdminNavbarOffer[]
-  addNavbarOffer: (o: Omit<AdminNavbarOffer, 'id'>) => void
-  updateNavbarOffer: (id: string, o: Partial<AdminNavbarOffer>) => void
-  deleteNavbarOffer: (id: string) => void
+  addNavbarOffer: (o: Omit<AdminNavbarOffer, 'id'>) => Promise<boolean>
+  updateNavbarOffer: (id: string, o: Partial<AdminNavbarOffer>) => Promise<boolean>
+  deleteNavbarOffer: (id: string) => Promise<boolean>
   // Popup Offers
   popupOffers: AdminPopupOffer[]
-  addPopupOffer: (o: Omit<AdminPopupOffer, 'id'>) => void
-  updatePopupOffer: (id: string, o: Partial<AdminPopupOffer>) => void
-  deletePopupOffer: (id: string) => void
+  addPopupOffer: (o: Omit<AdminPopupOffer, 'id'>) => Promise<boolean>
+  updatePopupOffer: (id: string, o: Partial<AdminPopupOffer>) => Promise<boolean>
+  deletePopupOffer: (id: string) => Promise<boolean>
   // Newsletter
   subscribers: AdminNewsletterSub[]
-  addSubscriber: (email: string) => void
-  updateSubscriber: (id: string, s: Partial<AdminNewsletterSub>) => void
-  removeSubscriber: (id: string) => void
+  addSubscriber: (email: string) => Promise<boolean>
+  updateSubscriber: (id: string, s: Partial<AdminNewsletterSub>) => Promise<boolean>
+  removeSubscriber: (id: string) => Promise<boolean>
   emailCampaigns: AdminEmailCampaign[]
-  addEmailCampaign: (c: Omit<AdminEmailCampaign, 'id'>) => void
-  deleteEmailCampaign: (id: string) => void
+  addEmailCampaign: (c: Omit<AdminEmailCampaign, 'id'>) => Promise<boolean>
+  deleteEmailCampaign: (id: string) => Promise<boolean>
   // Delivery
   deliveryZones: AdminDeliveryZone[]
-  addDeliveryZone: (z: Omit<AdminDeliveryZone, 'id'>) => void
-  updateDeliveryZone: (id: string, z: Partial<AdminDeliveryZone>) => void
-  deleteDeliveryZone: (id: string) => void
+  addDeliveryZone: (z: Omit<AdminDeliveryZone, 'id'>) => Promise<boolean>
+  updateDeliveryZone: (id: string, z: Partial<AdminDeliveryZone>) => Promise<boolean>
+  deleteDeliveryZone: (id: string) => Promise<boolean>
   // Policies
   policies: AdminPolicy[]
-  addPolicy: (p: Omit<AdminPolicy, 'id' | 'updatedAt'>) => void
-  updatePolicy: (id: string, p: Partial<AdminPolicy>) => void
-  deletePolicy: (id: string) => void
+  addPolicy: (p: Omit<AdminPolicy, 'id' | 'updatedAt'>) => Promise<boolean>
+  updatePolicy: (id: string, p: Partial<AdminPolicy>) => Promise<boolean>
+  deletePolicy: (id: string) => Promise<boolean>
   // Users
   users: AdminUser[]
-  addUser: (u: Omit<AdminUser, 'id' | 'createdAt' | 'lastLogin'>) => void
-  updateUser: (id: string, u: Partial<AdminUser>) => void
-  deleteUser: (id: string) => void
+  addUser: (u: Omit<AdminUser, 'id' | 'createdAt' | 'lastLogin'>) => Promise<boolean>
+  updateUser: (id: string, u: Partial<AdminUser>) => Promise<boolean>
+  deleteUser: (id: string) => Promise<boolean>
   // Card Details
   cardDetails: AdminCardDetail[]
-  addCardDetail: (c: Omit<AdminCardDetail, 'id'>) => void
-  updateCardDetail: (id: string, c: Partial<AdminCardDetail>) => void
-  deleteCardDetail: (id: string) => void
+  addCardDetail: (c: Omit<AdminCardDetail, 'id'>) => Promise<boolean>
+  updateCardDetail: (id: string, c: Partial<AdminCardDetail>) => Promise<boolean>
+  deleteCardDetail: (id: string) => Promise<boolean>
   // Settings
   settings: AdminSettings
-  updateSettings: (s: Partial<AdminSettings>) => void
+  updateSettings: (s: Partial<AdminSettings>) => Promise<boolean>
 }
 
 const AdminContext = createContext<AdminContextType | null>(null)
@@ -417,63 +417,72 @@ export function AdminProvider({ children }: { children: ReactNode }) {
   }, [])
 
   /* ── Products ── */
-  const addProduct = useCallback(async (p: Omit<AdminProduct, 'id' | 'createdAt' | 'updatedAt'>) => {
+  const addProduct = useCallback(async (p: Omit<AdminProduct, 'id' | 'createdAt' | 'updatedAt'>): Promise<boolean> => {
     try {
       const created = await productsApi.create(p as unknown as Record<string, unknown>)
       setProducts((prev) => [...prev, created as AdminProduct])
-    } catch (err) { console.error('Failed to add product:', err) }
+      return true
+    } catch (err) { console.error('Failed to add product:', err); return false }
   }, [])
-  const updateProduct = useCallback(async (id: string, p: Partial<AdminProduct>) => {
+  const updateProduct = useCallback(async (id: string, p: Partial<AdminProduct>): Promise<boolean> => {
     try {
       const updated = await productsApi.update(id, p as unknown as Record<string, unknown>)
       setProducts((prev) => prev.map((x) => x.id === id ? { ...x, ...(updated as Partial<AdminProduct>) } : x))
-    } catch (err) { console.error('Failed to update product:', err) }
+      return true
+    } catch (err) { console.error('Failed to update product:', err); return false }
   }, [])
-  const deleteProduct = useCallback(async (id: string) => {
+  const deleteProduct = useCallback(async (id: string): Promise<boolean> => {
     try {
       await productsApi.remove(id)
       setProducts((prev) => prev.filter((x) => x.id !== id))
-    } catch (err) { console.error('Failed to delete product:', err) }
+      return true
+    } catch (err) { console.error('Failed to delete product:', err); return false }
   }, [])
 
   /* ── Orders ── */
-  const addOrder = useCallback(async (o: Omit<AdminOrder, 'id' | 'orderNumber' | 'createdAt' | 'updatedAt'>) => {
+  const addOrder = useCallback(async (o: Omit<AdminOrder, 'id' | 'orderNumber' | 'createdAt' | 'updatedAt'>): Promise<boolean> => {
     try {
       const created = await ordersApi.create(o as unknown as Record<string, unknown>)
       setOrders((prev) => [...prev, created as AdminOrder])
-    } catch (err) { console.error('Failed to add order:', err) }
+      return true
+    } catch (err) { console.error('Failed to add order:', err); return false }
   }, [])
-  const updateOrder = useCallback(async (id: string, o: Partial<AdminOrder>) => {
+  const updateOrder = useCallback(async (id: string, o: Partial<AdminOrder>): Promise<boolean> => {
     try {
       const updated = await ordersApi.update(id, o as unknown as Record<string, unknown>)
       setOrders((prev) => prev.map((x) => x.id === id ? { ...x, ...(updated as Partial<AdminOrder>) } : x))
-    } catch (err) { console.error('Failed to update order:', err) }
+      return true
+    } catch (err) { console.error('Failed to update order:', err); return false }
   }, [])
-  const deleteOrder = useCallback(async (id: string) => {
+  const deleteOrder = useCallback(async (id: string): Promise<boolean> => {
     try {
       await ordersApi.remove(id)
       setOrders((prev) => prev.filter((x) => x.id !== id))
-    } catch (err) { console.error('Failed to delete order:', err) }
+      return true
+    } catch (err) { console.error('Failed to delete order:', err); return false }
   }, [])
 
   /* ── Categories ── */
-  const addCategory = useCallback(async (c: Omit<AdminCategory, 'id'>) => {
+  const addCategory = useCallback(async (c: Omit<AdminCategory, 'id'>): Promise<boolean> => {
     try {
       const created = await categoriesApi.create(c as unknown as Record<string, unknown>)
       setCategories((prev) => [...prev, created as AdminCategory])
-    } catch (err) { console.error('Failed to add category:', err) }
+      return true
+    } catch (err) { console.error('Failed to add category:', err); return false }
   }, [])
-  const updateCategory = useCallback(async (id: string, c: Partial<AdminCategory>) => {
+  const updateCategory = useCallback(async (id: string, c: Partial<AdminCategory>): Promise<boolean> => {
     try {
       const updated = await categoriesApi.update(id, c as unknown as Record<string, unknown>)
       setCategories((prev) => prev.map((x) => x.id === id ? { ...x, ...(updated as Partial<AdminCategory>) } : x))
-    } catch (err) { console.error('Failed to update category:', err) }
+      return true
+    } catch (err) { console.error('Failed to update category:', err); return false }
   }, [])
-  const deleteCategory = useCallback(async (id: string) => {
+  const deleteCategory = useCallback(async (id: string): Promise<boolean> => {
     try {
       await categoriesApi.remove(id)
       setCategories((prev) => prev.filter((x) => x.id !== id))
-    } catch (err) { console.error('Failed to delete category:', err) }
+      return true
+    } catch (err) { console.error('Failed to delete category:', err); return false }
   }, [])
 
   /* ── Offers (client-only, no DB table) ── */
@@ -488,224 +497,259 @@ export function AdminProvider({ children }: { children: ReactNode }) {
   }, [])
 
   /* ── Hero Banners ── */
-  const addHeroBanner = useCallback(async (b: Omit<AdminHeroBanner, 'id'>) => {
+  const addHeroBanner = useCallback(async (b: Omit<AdminHeroBanner, 'id'>): Promise<boolean> => {
     try {
       const created = await heroBannersApi.create(b as unknown as Record<string, unknown>)
       setHeroBanners((prev) => [...prev, created as AdminHeroBanner])
-    } catch (err) { console.error('Failed to add hero banner:', err) }
+      return true
+    } catch (err) { console.error('Failed to add hero banner:', err); return false }
   }, [])
-  const updateHeroBanner = useCallback(async (id: string, b: Partial<AdminHeroBanner>) => {
+  const updateHeroBanner = useCallback(async (id: string, b: Partial<AdminHeroBanner>): Promise<boolean> => {
     try {
       const updated = await heroBannersApi.update(id, b as unknown as Record<string, unknown>)
       setHeroBanners((prev) => prev.map((x) => x.id === id ? { ...x, ...(updated as Partial<AdminHeroBanner>) } : x))
-    } catch (err) { console.error('Failed to update hero banner:', err) }
+      return true
+    } catch (err) { console.error('Failed to update hero banner:', err); return false }
   }, [])
-  const deleteHeroBanner = useCallback(async (id: string) => {
+  const deleteHeroBanner = useCallback(async (id: string): Promise<boolean> => {
     try {
       await heroBannersApi.remove(id)
       setHeroBanners((prev) => prev.filter((x) => x.id !== id))
-    } catch (err) { console.error('Failed to delete hero banner:', err) }
+      return true
+    } catch (err) { console.error('Failed to delete hero banner:', err); return false }
   }, [])
 
   /* ── Banners ── */
-  const addBanner = useCallback(async (b: Omit<AdminBanner, 'id'>) => {
+  const addBanner = useCallback(async (b: Omit<AdminBanner, 'id'>): Promise<boolean> => {
     try {
       const created = await bannersApi.create(b as unknown as Record<string, unknown>)
       setBanners((prev) => [...prev, created as AdminBanner])
-    } catch (err) { console.error('Failed to add banner:', err) }
+      return true
+    } catch (err) { console.error('Failed to add banner:', err); return false }
   }, [])
-  const updateBanner = useCallback(async (id: string, b: Partial<AdminBanner>) => {
+  const updateBanner = useCallback(async (id: string, b: Partial<AdminBanner>): Promise<boolean> => {
     try {
       const updated = await bannersApi.update(id, b as unknown as Record<string, unknown>)
       setBanners((prev) => prev.map((x) => x.id === id ? { ...x, ...(updated as Partial<AdminBanner>) } : x))
-    } catch (err) { console.error('Failed to update banner:', err) }
+      return true
+    } catch (err) { console.error('Failed to update banner:', err); return false }
   }, [])
-  const deleteBanner = useCallback(async (id: string) => {
+  const deleteBanner = useCallback(async (id: string): Promise<boolean> => {
     try {
       await bannersApi.remove(id)
       setBanners((prev) => prev.filter((x) => x.id !== id))
-    } catch (err) { console.error('Failed to delete banner:', err) }
+      return true
+    } catch (err) { console.error('Failed to delete banner:', err); return false }
   }, [])
 
   /* ── Carousels ── */
-  const addCarousel = useCallback(async (c: Omit<AdminCarousel, 'id'>) => {
+  const addCarousel = useCallback(async (c: Omit<AdminCarousel, 'id'>): Promise<boolean> => {
     try {
       const created = await carouselsApi.create(c as unknown as Record<string, unknown>)
       setCarousels((prev) => [...prev, created as AdminCarousel])
-    } catch (err) { console.error('Failed to add carousel:', err) }
+      return true
+    } catch (err) { console.error('Failed to add carousel:', err); return false }
   }, [])
-  const updateCarousel = useCallback(async (id: string, c: Partial<AdminCarousel>) => {
+  const updateCarousel = useCallback(async (id: string, c: Partial<AdminCarousel>): Promise<boolean> => {
     try {
       const updated = await carouselsApi.update(id, c as unknown as Record<string, unknown>)
       setCarousels((prev) => prev.map((x) => x.id === id ? { ...x, ...(updated as Partial<AdminCarousel>) } : x))
-    } catch (err) { console.error('Failed to update carousel:', err) }
+      return true
+    } catch (err) { console.error('Failed to update carousel:', err); return false }
   }, [])
-  const deleteCarousel = useCallback(async (id: string) => {
+  const deleteCarousel = useCallback(async (id: string): Promise<boolean> => {
     try {
       await carouselsApi.remove(id)
       setCarousels((prev) => prev.filter((x) => x.id !== id))
-    } catch (err) { console.error('Failed to delete carousel:', err) }
+      return true
+    } catch (err) { console.error('Failed to delete carousel:', err); return false }
   }, [])
 
   /* ── Navbar Offers ── */
-  const addNavbarOffer = useCallback(async (o: Omit<AdminNavbarOffer, 'id'>) => {
+  const addNavbarOffer = useCallback(async (o: Omit<AdminNavbarOffer, 'id'>): Promise<boolean> => {
     try {
       const created = await navbarOffersApi.create(o as unknown as Record<string, unknown>)
       setNavbarOffers((prev) => [...prev, created as AdminNavbarOffer])
-    } catch (err) { console.error('Failed to add navbar offer:', err) }
+      return true
+    } catch (err) { console.error('Failed to add navbar offer:', err); return false }
   }, [])
-  const updateNavbarOffer = useCallback(async (id: string, o: Partial<AdminNavbarOffer>) => {
+  const updateNavbarOffer = useCallback(async (id: string, o: Partial<AdminNavbarOffer>): Promise<boolean> => {
     try {
       const updated = await navbarOffersApi.update(id, o as unknown as Record<string, unknown>)
       setNavbarOffers((prev) => prev.map((x) => x.id === id ? { ...x, ...(updated as Partial<AdminNavbarOffer>) } : x))
-    } catch (err) { console.error('Failed to update navbar offer:', err) }
+      return true
+    } catch (err) { console.error('Failed to update navbar offer:', err); return false }
   }, [])
-  const deleteNavbarOffer = useCallback(async (id: string) => {
+  const deleteNavbarOffer = useCallback(async (id: string): Promise<boolean> => {
     try {
       await navbarOffersApi.remove(id)
       setNavbarOffers((prev) => prev.filter((x) => x.id !== id))
-    } catch (err) { console.error('Failed to delete navbar offer:', err) }
+      return true
+    } catch (err) { console.error('Failed to delete navbar offer:', err); return false }
   }, [])
 
   /* ── Popup Offers ── */
-  const addPopupOffer = useCallback(async (o: Omit<AdminPopupOffer, 'id'>) => {
+  const addPopupOffer = useCallback(async (o: Omit<AdminPopupOffer, 'id'>): Promise<boolean> => {
     try {
       const created = await popupOffersApi.create(o as unknown as Record<string, unknown>)
       setPopupOffers((prev) => [...prev, created as AdminPopupOffer])
-    } catch (err) { console.error('Failed to add popup offer:', err) }
+      return true
+    } catch (err) { console.error('Failed to add popup offer:', err); return false }
   }, [])
-  const updatePopupOffer = useCallback(async (id: string, o: Partial<AdminPopupOffer>) => {
+  const updatePopupOffer = useCallback(async (id: string, o: Partial<AdminPopupOffer>): Promise<boolean> => {
     try {
       const updated = await popupOffersApi.update(id, o as unknown as Record<string, unknown>)
       setPopupOffers((prev) => prev.map((x) => x.id === id ? { ...x, ...(updated as Partial<AdminPopupOffer>) } : x))
-    } catch (err) { console.error('Failed to update popup offer:', err) }
+      return true
+    } catch (err) { console.error('Failed to update popup offer:', err); return false }
   }, [])
-  const deletePopupOffer = useCallback(async (id: string) => {
+  const deletePopupOffer = useCallback(async (id: string): Promise<boolean> => {
     try {
       await popupOffersApi.remove(id)
       setPopupOffers((prev) => prev.filter((x) => x.id !== id))
-    } catch (err) { console.error('Failed to delete popup offer:', err) }
+      return true
+    } catch (err) { console.error('Failed to delete popup offer:', err); return false }
   }, [])
 
   /* ── Newsletter ── */
-  const addSubscriber = useCallback(async (email: string) => {
+  const addSubscriber = useCallback(async (email: string): Promise<boolean> => {
     try {
       const created = await subscribersApi.create({ email, status: 'active', subscribedAt: new Date().toISOString() } as unknown as Record<string, unknown>)
       setSubscribers((prev) => [...prev, created as AdminNewsletterSub])
-    } catch (err) { console.error('Failed to add subscriber:', err) }
+      return true
+    } catch (err) { console.error('Failed to add subscriber:', err); return false }
   }, [])
-  const updateSubscriber = useCallback(async (id: string, s: Partial<AdminNewsletterSub>) => {
+  const updateSubscriber = useCallback(async (id: string, s: Partial<AdminNewsletterSub>): Promise<boolean> => {
     try {
       const updated = await subscribersApi.update(id, s as unknown as Record<string, unknown>)
       setSubscribers((prev) => prev.map((x) => x.id === id ? { ...x, ...(updated as Partial<AdminNewsletterSub>) } : x))
-    } catch (err) { console.error('Failed to update subscriber:', err) }
+      return true
+    } catch (err) { console.error('Failed to update subscriber:', err); return false }
   }, [])
-  const removeSubscriber = useCallback(async (id: string) => {
+  const removeSubscriber = useCallback(async (id: string): Promise<boolean> => {
     try {
       await subscribersApi.remove(id)
       setSubscribers((prev) => prev.filter((x) => x.id !== id))
-    } catch (err) { console.error('Failed to remove subscriber:', err) }
+      return true
+    } catch (err) { console.error('Failed to remove subscriber:', err); return false }
   }, [])
-  const addEmailCampaign = useCallback(async (c: Omit<AdminEmailCampaign, 'id'>) => {
+  const addEmailCampaign = useCallback(async (c: Omit<AdminEmailCampaign, 'id'>): Promise<boolean> => {
     try {
       const created = await campaignsApi.create(c as unknown as Record<string, unknown>)
       setEmailCampaigns((prev) => [...prev, created as AdminEmailCampaign])
-    } catch (err) { console.error('Failed to add campaign:', err) }
+      return true
+    } catch (err) { console.error('Failed to add campaign:', err); return false }
   }, [])
-  const deleteEmailCampaign = useCallback(async (id: string) => {
+  const deleteEmailCampaign = useCallback(async (id: string): Promise<boolean> => {
     try {
       await campaignsApi.remove(id)
       setEmailCampaigns((prev) => prev.filter((x) => x.id !== id))
-    } catch (err) { console.error('Failed to delete campaign:', err) }
+      return true
+    } catch (err) { console.error('Failed to delete campaign:', err); return false }
   }, [])
 
   /* ── Delivery ── */
-  const addDeliveryZone = useCallback(async (z: Omit<AdminDeliveryZone, 'id'>) => {
+  const addDeliveryZone = useCallback(async (z: Omit<AdminDeliveryZone, 'id'>): Promise<boolean> => {
     try {
       const created = await deliveryApi.create(z as unknown as Record<string, unknown>)
       setDeliveryZones((prev) => [...prev, created as AdminDeliveryZone])
-    } catch (err) { console.error('Failed to add delivery zone:', err) }
+      return true
+    } catch (err) { console.error('Failed to add delivery zone:', err); return false }
   }, [])
-  const updateDeliveryZone = useCallback(async (id: string, z: Partial<AdminDeliveryZone>) => {
+  const updateDeliveryZone = useCallback(async (id: string, z: Partial<AdminDeliveryZone>): Promise<boolean> => {
     try {
       const updated = await deliveryApi.update(id, z as unknown as Record<string, unknown>)
       setDeliveryZones((prev) => prev.map((x) => x.id === id ? { ...x, ...(updated as Partial<AdminDeliveryZone>) } : x))
-    } catch (err) { console.error('Failed to update delivery zone:', err) }
+      return true
+    } catch (err) { console.error('Failed to update delivery zone:', err); return false }
   }, [])
-  const deleteDeliveryZone = useCallback(async (id: string) => {
+  const deleteDeliveryZone = useCallback(async (id: string): Promise<boolean> => {
     try {
       await deliveryApi.remove(id)
       setDeliveryZones((prev) => prev.filter((x) => x.id !== id))
-    } catch (err) { console.error('Failed to delete delivery zone:', err) }
+      return true
+    } catch (err) { console.error('Failed to delete delivery zone:', err); return false }
   }, [])
 
   /* ── Policies ── */
-  const addPolicy = useCallback(async (p: Omit<AdminPolicy, 'id' | 'updatedAt'>) => {
+  const addPolicy = useCallback(async (p: Omit<AdminPolicy, 'id' | 'updatedAt'>): Promise<boolean> => {
     try {
       const created = await policiesApi.create(p as unknown as Record<string, unknown>)
       setPolicies((prev) => [...prev, created as AdminPolicy])
-    } catch (err) { console.error('Failed to add policy:', err) }
+      return true
+    } catch (err) { console.error('Failed to add policy:', err); return false }
   }, [])
-  const updatePolicy = useCallback(async (id: string, p: Partial<AdminPolicy>) => {
+  const updatePolicy = useCallback(async (id: string, p: Partial<AdminPolicy>): Promise<boolean> => {
     try {
       const updated = await policiesApi.update(id, p as unknown as Record<string, unknown>)
       setPolicies((prev) => prev.map((x) => x.id === id ? { ...x, ...(updated as Partial<AdminPolicy>) } : x))
-    } catch (err) { console.error('Failed to update policy:', err) }
+      return true
+    } catch (err) { console.error('Failed to update policy:', err); return false }
   }, [])
-  const deletePolicy = useCallback(async (id: string) => {
+  const deletePolicy = useCallback(async (id: string): Promise<boolean> => {
     try {
       await policiesApi.remove(id)
       setPolicies((prev) => prev.filter((x) => x.id !== id))
-    } catch (err) { console.error('Failed to delete policy:', err) }
+      return true
+    } catch (err) { console.error('Failed to delete policy:', err); return false }
   }, [])
 
   /* ── Users ── */
-  const addUser = useCallback(async (u: Omit<AdminUser, 'id' | 'createdAt' | 'lastLogin'>) => {
+  const addUser = useCallback(async (u: Omit<AdminUser, 'id' | 'createdAt' | 'lastLogin'>): Promise<boolean> => {
     try {
       const created = await usersApi.create(u as unknown as Record<string, unknown>)
       setUsers((prev) => [...prev, created as AdminUser])
-    } catch (err) { console.error('Failed to add user:', err) }
+      return true
+    } catch (err) { console.error('Failed to add user:', err); return false }
   }, [])
-  const updateUser = useCallback(async (id: string, u: Partial<AdminUser>) => {
+  const updateUser = useCallback(async (id: string, u: Partial<AdminUser>): Promise<boolean> => {
     try {
       const updated = await usersApi.update(id, u as unknown as Record<string, unknown>)
       setUsers((prev) => prev.map((x) => x.id === id ? { ...x, ...(updated as Partial<AdminUser>) } : x))
-    } catch (err) { console.error('Failed to update user:', err) }
+      return true
+    } catch (err) { console.error('Failed to update user:', err); return false }
   }, [])
-  const deleteUser = useCallback(async (id: string) => {
+  const deleteUser = useCallback(async (id: string): Promise<boolean> => {
     try {
       await usersApi.remove(id)
       setUsers((prev) => prev.filter((x) => x.id !== id))
-    } catch (err) { console.error('Failed to delete user:', err) }
+      return true
+    } catch (err) { console.error('Failed to delete user:', err); return false }
   }, [])
 
   /* ── Card Details ── */
-  const addCardDetail = useCallback(async (c: Omit<AdminCardDetail, 'id'>) => {
+  const addCardDetail = useCallback(async (c: Omit<AdminCardDetail, 'id'>): Promise<boolean> => {
     try {
       const created = await cardDetailsApi.create(c as unknown as Record<string, unknown>)
       setCardDetails((prev) => [...prev, created as AdminCardDetail])
-    } catch (err) { console.error('Failed to add card detail:', err) }
+      return true
+    } catch (err) { console.error('Failed to add card detail:', err); return false }
   }, [])
-  const updateCardDetail = useCallback(async (id: string, c: Partial<AdminCardDetail>) => {
+  const updateCardDetail = useCallback(async (id: string, c: Partial<AdminCardDetail>): Promise<boolean> => {
     try {
       const updated = await cardDetailsApi.update(id, c as unknown as Record<string, unknown>)
       setCardDetails((prev) => prev.map((x) => x.id === id ? { ...x, ...(updated as Partial<AdminCardDetail>) } : x))
-    } catch (err) { console.error('Failed to update card detail:', err) }
+      return true
+    } catch (err) { console.error('Failed to update card detail:', err); return false }
   }, [])
-  const deleteCardDetail = useCallback(async (id: string) => {
+  const deleteCardDetail = useCallback(async (id: string): Promise<boolean> => {
     try {
       await cardDetailsApi.remove(id)
       setCardDetails((prev) => prev.filter((x) => x.id !== id))
-    } catch (err) { console.error('Failed to delete card detail:', err) }
+      return true
+    } catch (err) { console.error('Failed to delete card detail:', err); return false }
   }, [])
 
   /* ── Settings ── */
-  const updateSettings = useCallback(async (s: Partial<AdminSettings>) => {
-    setSettings((prev) => {
-      const merged = { ...prev, ...s }
-      settingsApi.save(merged as unknown as Record<string, unknown>).catch((err) => console.error('Failed to save settings:', err))
-      return merged
-    })
+  const updateSettings = useCallback(async (s: Partial<AdminSettings>): Promise<boolean> => {
+    try {
+      setSettings((prev) => {
+        const merged = { ...prev, ...s }
+        settingsApi.save(merged as unknown as Record<string, unknown>).catch((err) => console.error('Failed to save settings:', err))
+        return merged
+      })
+      return true
+    } catch (err) { console.error('Failed to save settings:', err); return false }
   }, [])
 
   return (

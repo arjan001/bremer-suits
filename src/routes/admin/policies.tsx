@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { Edit2, FileText, Save, X, Plus, Trash2, Eye, EyeOff } from 'lucide-react'
 import { useAdmin, type AdminPolicy } from '@/lib/admin-store'
 import { RichTextEditor } from '@/components/ui/rich-text-editor'
+import { showCreateSuccess, showUpdateSuccess, showDeleteSuccess, showDeleteConfirm, showError } from '@/lib/sweet-alert'
 
 export const Route = createFileRoute('/admin/policies')({
   component: AdminPolicies,
@@ -19,7 +20,6 @@ function AdminPolicies() {
   const [newSlug, setNewSlug] = useState('')
   const [newContent, setNewContent] = useState('')
   const [previewId, setPreviewId] = useState<string | null>(null)
-  const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null)
 
   const slugify = (text: string) =>
     text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
@@ -32,34 +32,48 @@ function AdminPolicies() {
     setPreviewId(null)
   }
 
-  const saveEdit = () => {
+  const saveEdit = async () => {
     if (editingId && editTitle.trim()) {
-      updatePolicy(editingId, {
+      const ok = await updatePolicy(editingId, {
         title: editTitle.trim(),
         slug: editSlug.trim() || slugify(editTitle),
         content: editContent,
       })
-      setEditingId(null)
+      if (ok) {
+        await showUpdateSuccess('Policy')
+        setEditingId(null)
+      } else {
+        showError('Update Failed')
+      }
     }
   }
 
-  const handleAdd = () => {
+  const handleAdd = async () => {
     if (newTitle.trim()) {
-      addPolicy({
+      const ok = await addPolicy({
         title: newTitle.trim(),
         slug: newSlug.trim() || slugify(newTitle),
         content: newContent || '<p></p>',
       })
-      setShowAdd(false)
-      setNewTitle('')
-      setNewSlug('')
-      setNewContent('')
+      if (ok) {
+        await showCreateSuccess('Policy')
+        setShowAdd(false)
+        setNewTitle('')
+        setNewSlug('')
+        setNewContent('')
+      } else {
+        showError('Create Failed')
+      }
     }
   }
 
-  const handleDelete = (id: string) => {
-    deletePolicy(id)
-    setDeleteConfirm(null)
+  const handleDelete = async (id: string) => {
+    const confirmed = await showDeleteConfirm('policy')
+    if (confirmed) {
+      const ok = await deletePolicy(id)
+      if (ok) showDeleteSuccess('Policy')
+      else showError('Delete Failed')
+    }
   }
 
   return (
@@ -227,7 +241,7 @@ function AdminPolicies() {
                       <button onClick={() => startEdit(p)} className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-gray-600 hover:text-black border border-gray-200 rounded-lg hover:border-gray-300 transition-colors">
                         <Edit2 size={14} /> Edit
                       </button>
-                      <button onClick={() => setDeleteConfirm(p.id)} className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-red-500 hover:text-red-700 border border-gray-200 rounded-lg hover:border-red-200 transition-colors">
+                      <button onClick={() => handleDelete(p.id)} className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-red-500 hover:text-red-700 border border-gray-200 rounded-lg hover:border-red-200 transition-colors">
                         <Trash2 size={14} /> Delete
                       </button>
                     </div>
@@ -243,19 +257,6 @@ function AdminPolicies() {
         </div>
       )}
 
-      {/* Delete Confirmation Modal */}
-      {deleteConfirm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-          <div className="bg-white rounded-xl shadow-xl p-6 w-full max-w-sm mx-4">
-            <h3 className="text-lg font-bold text-black mb-2">Delete Policy</h3>
-            <p className="text-sm text-gray-600 mb-4">Are you sure you want to delete this policy? This action cannot be undone.</p>
-            <div className="flex justify-end gap-2">
-              <button onClick={() => setDeleteConfirm(null)} className="px-4 py-2 text-sm text-gray-600 hover:text-black border border-gray-200 rounded-lg">Cancel</button>
-              <button onClick={() => handleDelete(deleteConfirm)} className="px-4 py-2 bg-red-600 text-white text-sm font-semibold rounded-lg hover:bg-red-700">Delete</button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   )
 }

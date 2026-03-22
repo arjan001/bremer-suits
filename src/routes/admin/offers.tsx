@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { Plus, Edit2, Trash2, X, Megaphone, Image, Percent } from 'lucide-react'
 import { useAdmin, type AdminHeroBanner, type AdminBanner, type AdminCarousel, type AdminNavbarOffer, type AdminPopupOffer, type AdminOffer } from '@/lib/admin-store'
 import { ImageUpload } from '@/components/ImageUpload'
+import { showCreateSuccess, showUpdateSuccess, showDeleteSuccess, showDeleteConfirm, showError } from '@/lib/sweet-alert'
 
 export const Route = createFileRoute('/admin/offers')({
   component: AdminOffers,
@@ -22,7 +23,6 @@ function AdminOffers() {
   } = useAdmin()
 
   const [activeTab, setActiveTab] = useState<Tab>('hero')
-  const [deleteConfirm, setDeleteConfirm] = useState<{ id: string; type: Tab } | null>(null)
 
   // Hero Banner state
   const [heroModal, setHeroModal] = useState<'closed' | 'add' | 'edit'>('closed')
@@ -48,16 +48,18 @@ function AdminOffers() {
   const [discountModal, setDiscountModal] = useState<'closed' | 'add' | 'edit'>('closed')
   const [editDiscount, setEditDiscount] = useState<AdminOffer | null>(null)
 
-  const handleDelete = () => {
-    if (!deleteConfirm) return
-    const { id, type } = deleteConfirm
-    if (type === 'hero') deleteHeroBanner(id)
-    else if (type === 'banners') deleteBanner(id)
-    else if (type === 'carousels') deleteCarousel(id)
-    else if (type === 'navbar') deleteNavbarOffer(id)
-    else if (type === 'popup') deletePopupOffer(id)
-    else if (type === 'discounts') deleteOffer(id)
-    setDeleteConfirm(null)
+  const handleDeleteItem = async (id: string, type: Tab) => {
+    const confirmed = await showDeleteConfirm('item')
+    if (!confirmed) return
+    let ok = false
+    if (type === 'hero') ok = await deleteHeroBanner(id)
+    else if (type === 'banners') ok = await deleteBanner(id)
+    else if (type === 'carousels') ok = await deleteCarousel(id)
+    else if (type === 'navbar') ok = await deleteNavbarOffer(id)
+    else if (type === 'popup') ok = await deletePopupOffer(id)
+    else if (type === 'discounts') { deleteOffer(id); ok = true }
+    if (ok) showDeleteSuccess('Item')
+    else showError('Delete Failed')
   }
 
   const tabs: { key: Tab; label: string; count: number }[] = [
@@ -145,7 +147,7 @@ function AdminOffers() {
                     style={{ left: b.isActive ? '22px' : '2px' }} />
                 </button>
                 <button onClick={() => { setEditHero(b); setHeroModal('edit') }} className="p-1.5 text-gray-400 hover:text-black transition-colors"><Edit2 size={15} /></button>
-                <button onClick={() => setDeleteConfirm({ id: b.id, type: 'hero' })} className="p-1.5 text-gray-400 hover:text-red-600 transition-colors"><Trash2 size={15} /></button>
+                <button onClick={() => handleDeleteItem(b.id, 'hero')} className="p-1.5 text-gray-400 hover:text-red-600 transition-colors"><Trash2 size={15} /></button>
               </div>
             </div>
           ))}
@@ -180,7 +182,7 @@ function AdminOffers() {
                     style={{ left: b.isActive ? '22px' : '2px' }} />
                 </button>
                 <button onClick={() => { setEditBanner(b); setBannerModal('edit') }} className="p-1.5 text-gray-400 hover:text-black transition-colors"><Edit2 size={15} /></button>
-                <button onClick={() => setDeleteConfirm({ id: b.id, type: 'banners' })} className="p-1.5 text-gray-400 hover:text-red-600 transition-colors"><Trash2 size={15} /></button>
+                <button onClick={() => handleDeleteItem(b.id, 'banners')} className="p-1.5 text-gray-400 hover:text-red-600 transition-colors"><Trash2 size={15} /></button>
               </div>
             </div>
           ))}
@@ -214,7 +216,7 @@ function AdminOffers() {
                     style={{ left: c.isActive ? '22px' : '2px' }} />
                 </button>
                 <button onClick={() => { setEditCarousel(c); setCarouselModal('edit') }} className="p-1.5 text-gray-400 hover:text-black transition-colors"><Edit2 size={15} /></button>
-                <button onClick={() => setDeleteConfirm({ id: c.id, type: 'carousels' })} className="p-1.5 text-gray-400 hover:text-red-600 transition-colors"><Trash2 size={15} /></button>
+                <button onClick={() => handleDeleteItem(c.id, 'carousels')} className="p-1.5 text-gray-400 hover:text-red-600 transition-colors"><Trash2 size={15} /></button>
               </div>
             </div>
           ))}
@@ -245,7 +247,7 @@ function AdminOffers() {
                     style={{ left: o.isActive ? '22px' : '2px' }} />
                 </button>
                 <button onClick={() => { setEditNavbar(o); setNavbarModal('edit') }} className="p-1.5 text-gray-400 hover:text-black transition-colors"><Edit2 size={15} /></button>
-                <button onClick={() => setDeleteConfirm({ id: o.id, type: 'navbar' })} className="p-1.5 text-gray-400 hover:text-red-600 transition-colors"><Trash2 size={15} /></button>
+                <button onClick={() => handleDeleteItem(o.id, 'navbar')} className="p-1.5 text-gray-400 hover:text-red-600 transition-colors"><Trash2 size={15} /></button>
               </div>
             </div>
           ))}
@@ -279,7 +281,7 @@ function AdminOffers() {
                     style={{ left: o.isActive ? '22px' : '2px' }} />
                 </button>
                 <button onClick={() => { setEditPopup(o); setPopupModal('edit') }} className="p-1.5 text-gray-400 hover:text-black transition-colors"><Edit2 size={15} /></button>
-                <button onClick={() => setDeleteConfirm({ id: o.id, type: 'popup' })} className="p-1.5 text-gray-400 hover:text-red-600 transition-colors"><Trash2 size={15} /></button>
+                <button onClick={() => handleDeleteItem(o.id, 'popup')} className="p-1.5 text-gray-400 hover:text-red-600 transition-colors"><Trash2 size={15} /></button>
               </div>
             </div>
           ))}
@@ -315,7 +317,7 @@ function AdminOffers() {
                   'bg-gray-100 text-gray-500'
                 }`}>{o.status}</span>
                 <button onClick={() => { setEditDiscount(o); setDiscountModal('edit') }} className="p-1.5 text-gray-400 hover:text-black transition-colors"><Edit2 size={15} /></button>
-                <button onClick={() => setDeleteConfirm({ id: o.id, type: 'discounts' })} className="p-1.5 text-gray-400 hover:text-red-600 transition-colors"><Trash2 size={15} /></button>
+                <button onClick={() => handleDeleteItem(o.id, 'discounts')} className="p-1.5 text-gray-400 hover:text-red-600 transition-colors"><Trash2 size={15} /></button>
               </div>
             </div>
           ))}
@@ -333,9 +335,9 @@ function AdminOffers() {
       {/* Hero Banner Modal */}
       {heroModal !== 'closed' && (
         <ModalShell title={heroModal === 'add' ? 'Add Hero Banner' : 'Edit Hero Banner'} onClose={() => setHeroModal('closed')}>
-          <HeroBannerForm item={editHero} categories={categories.map((c) => c.name)} onSave={(data) => {
-            if (heroModal === 'edit' && editHero) updateHeroBanner(editHero.id, data)
-            else addHeroBanner(data as AdminHeroBanner)
+          <HeroBannerForm item={editHero} categories={categories.map((c) => c.name)} onSave={async (data) => {
+            if (heroModal === 'edit' && editHero) { const ok = await updateHeroBanner(editHero.id, data); if (ok) showUpdateSuccess('Hero Banner'); else showError('Update Failed') }
+            else { const ok = await addHeroBanner(data as AdminHeroBanner); if (ok) showCreateSuccess('Hero Banner'); else showError('Create Failed') }
             setHeroModal('closed')
           }} onCancel={() => setHeroModal('closed')} />
         </ModalShell>
@@ -344,9 +346,9 @@ function AdminOffers() {
       {/* Banner Modal */}
       {bannerModal !== 'closed' && (
         <ModalShell title={bannerModal === 'add' ? 'Add Banner' : 'Edit Banner'} onClose={() => setBannerModal('closed')}>
-          <BannerForm item={editBanner} onSave={(data) => {
-            if (bannerModal === 'edit' && editBanner) updateBanner(editBanner.id, data)
-            else addBanner(data as AdminBanner)
+          <BannerForm item={editBanner} onSave={async (data) => {
+            if (bannerModal === 'edit' && editBanner) { const ok = await updateBanner(editBanner.id, data); if (ok) showUpdateSuccess('Banner'); else showError('Update Failed') }
+            else { const ok = await addBanner(data as AdminBanner); if (ok) showCreateSuccess('Banner'); else showError('Create Failed') }
             setBannerModal('closed')
           }} onCancel={() => setBannerModal('closed')} />
         </ModalShell>
@@ -355,9 +357,9 @@ function AdminOffers() {
       {/* Carousel Modal */}
       {carouselModal !== 'closed' && (
         <ModalShell title={carouselModal === 'add' ? 'Add Carousel' : 'Edit Carousel'} onClose={() => setCarouselModal('closed')}>
-          <CarouselForm item={editCarousel} onSave={(data) => {
-            if (carouselModal === 'edit' && editCarousel) updateCarousel(editCarousel.id, data)
-            else addCarousel(data as AdminCarousel)
+          <CarouselForm item={editCarousel} onSave={async (data) => {
+            if (carouselModal === 'edit' && editCarousel) { const ok = await updateCarousel(editCarousel.id, data); if (ok) showUpdateSuccess('Carousel'); else showError('Update Failed') }
+            else { const ok = await addCarousel(data as AdminCarousel); if (ok) showCreateSuccess('Carousel'); else showError('Create Failed') }
             setCarouselModal('closed')
           }} onCancel={() => setCarouselModal('closed')} />
         </ModalShell>
@@ -366,9 +368,9 @@ function AdminOffers() {
       {/* Navbar Offer Modal */}
       {navbarModal !== 'closed' && (
         <ModalShell title={navbarModal === 'add' ? 'Add Offer Text' : 'Edit Offer Text'} onClose={() => setNavbarModal('closed')}>
-          <NavbarOfferForm item={editNavbar} onSave={(data) => {
-            if (navbarModal === 'edit' && editNavbar) updateNavbarOffer(editNavbar.id, data)
-            else addNavbarOffer(data as AdminNavbarOffer)
+          <NavbarOfferForm item={editNavbar} onSave={async (data) => {
+            if (navbarModal === 'edit' && editNavbar) { const ok = await updateNavbarOffer(editNavbar.id, data); if (ok) showUpdateSuccess('Navbar Offer'); else showError('Update Failed') }
+            else { const ok = await addNavbarOffer(data as AdminNavbarOffer); if (ok) showCreateSuccess('Navbar Offer'); else showError('Create Failed') }
             setNavbarModal('closed')
           }} onCancel={() => setNavbarModal('closed')} />
         </ModalShell>
@@ -377,9 +379,9 @@ function AdminOffers() {
       {/* Popup Offer Modal */}
       {popupModal !== 'closed' && (
         <ModalShell title={popupModal === 'add' ? 'Add Popup Offer' : 'Edit Popup Offer'} onClose={() => setPopupModal('closed')}>
-          <PopupOfferForm item={editPopup} onSave={(data) => {
-            if (popupModal === 'edit' && editPopup) updatePopupOffer(editPopup.id, data)
-            else addPopupOffer(data as AdminPopupOffer)
+          <PopupOfferForm item={editPopup} onSave={async (data) => {
+            if (popupModal === 'edit' && editPopup) { const ok = await updatePopupOffer(editPopup.id, data); if (ok) showUpdateSuccess('Popup Offer'); else showError('Update Failed') }
+            else { const ok = await addPopupOffer(data as AdminPopupOffer); if (ok) showCreateSuccess('Popup Offer'); else showError('Create Failed') }
             setPopupModal('closed')
           }} onCancel={() => setPopupModal('closed')} />
         </ModalShell>
@@ -390,25 +392,12 @@ function AdminOffers() {
           <DiscountOfferForm item={editDiscount} onSave={(data) => {
             if (discountModal === 'edit' && editDiscount) updateOffer(editDiscount.id, data)
             else addOffer(data as AdminOffer)
+            showCreateSuccess('Discount Code')
             setDiscountModal('closed')
           }} onCancel={() => setDiscountModal('closed')} />
         </ModalShell>
       )}
 
-      {/* Delete Confirm */}
-      {deleteConfirm && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-black/40" onClick={() => setDeleteConfirm(null)} />
-          <div className="relative bg-white rounded-lg p-6 max-w-sm w-full shadow-xl">
-            <h3 className="text-lg font-bold text-black mb-2">Delete Item</h3>
-            <p className="text-sm text-gray-500 mb-6">Are you sure? This action cannot be undone.</p>
-            <div className="flex gap-3 justify-end">
-              <button onClick={() => setDeleteConfirm(null)} className="px-4 py-2 text-sm font-medium text-gray-600">Cancel</button>
-              <button onClick={handleDelete} className="px-4 py-2 bg-red-600 text-white text-sm font-semibold rounded-lg hover:bg-red-700 transition-colors">Delete</button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   )
 }

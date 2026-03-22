@@ -2,6 +2,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import { useState } from 'react'
 import { Plus, Edit2, Trash2, X, CreditCard, Phone, Building2 } from 'lucide-react'
 import { useAdmin, type AdminCardDetail } from '@/lib/admin-store'
+import { showCreateSuccess, showUpdateSuccess, showDeleteSuccess, showDeleteConfirm, showError } from '@/lib/sweet-alert'
 
 export const Route = createFileRoute('/admin/card-details')({
   component: AdminCardDetails,
@@ -14,7 +15,6 @@ function AdminCardDetails() {
   const { cardDetails, addCardDetail, updateCardDetail, deleteCardDetail } = useAdmin()
   const [modal, setModal] = useState<'closed' | 'add' | 'edit'>('closed')
   const [editItem, setEditItem] = useState<AdminCardDetail | null>(null)
-  const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null)
 
   return (
     <div>
@@ -50,7 +50,14 @@ function AdminCardDetails() {
               </div>
               <div className="flex gap-1 shrink-0">
                 <button onClick={() => { setEditItem(cd); setModal('edit') }} className="p-1.5 text-gray-400 hover:text-black transition-colors"><Edit2 size={15} /></button>
-                <button onClick={() => setDeleteConfirm(cd.id)} className="p-1.5 text-gray-400 hover:text-red-600 transition-colors"><Trash2 size={15} /></button>
+                <button onClick={async () => {
+                  const confirmed = await showDeleteConfirm('payment method')
+                  if (confirmed) {
+                    const ok = await deleteCardDetail(cd.id)
+                    if (ok) showDeleteSuccess('Payment Method')
+                    else showError('Delete Failed')
+                  }
+                }} className="p-1.5 text-gray-400 hover:text-red-600 transition-colors"><Trash2 size={15} /></button>
               </div>
             </div>
           )
@@ -74,9 +81,16 @@ function AdminCardDetails() {
             </div>
             <CardDetailForm
               item={editItem}
-              onSave={(data) => {
-                if (modal === 'edit' && editItem) updateCardDetail(editItem.id, data)
-                else addCardDetail(data as AdminCardDetail)
+              onSave={async (data) => {
+                if (modal === 'edit' && editItem) {
+                  const ok = await updateCardDetail(editItem.id, data)
+                  if (ok) await showUpdateSuccess('Payment Method')
+                  else showError('Update Failed')
+                } else {
+                  const ok = await addCardDetail(data as AdminCardDetail)
+                  if (ok) await showCreateSuccess('Payment Method')
+                  else showError('Create Failed')
+                }
                 setModal('closed')
               }}
               onCancel={() => setModal('closed')}
@@ -85,24 +99,11 @@ function AdminCardDetails() {
         </div>
       )}
 
-      {deleteConfirm && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-black/40" onClick={() => setDeleteConfirm(null)} />
-          <div className="relative bg-white rounded-lg p-6 max-w-sm w-full shadow-xl">
-            <h3 className="text-lg font-bold text-black mb-2">Delete Payment Method</h3>
-            <p className="text-sm text-gray-500 mb-6">Are you sure?</p>
-            <div className="flex gap-3 justify-end">
-              <button onClick={() => setDeleteConfirm(null)} className="px-4 py-2 text-sm font-medium text-gray-600">Cancel</button>
-              <button onClick={() => { deleteCardDetail(deleteConfirm); setDeleteConfirm(null) }} className="px-4 py-2 bg-red-600 text-white text-sm font-semibold rounded-lg hover:bg-red-700">Delete</button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   )
 }
 
-function CardDetailForm({ item, onSave, onCancel }: { item: AdminCardDetail | null; onSave: (d: Partial<AdminCardDetail>) => void; onCancel: () => void }) {
+function CardDetailForm({ item, onSave, onCancel }: { item: AdminCardDetail | null; onSave: (d: Partial<AdminCardDetail>) => void | Promise<void>; onCancel: () => void }) {
   const [type, setType] = useState(item?.type || 'mpesa')
   const [label, setLabel] = useState(item?.label || '')
   const [details, setDetails] = useState(item?.details || '')

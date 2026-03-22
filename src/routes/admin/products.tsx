@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { Plus, Search, Edit2, Trash2, X, Package, Download, Upload, Eye, Palette } from 'lucide-react'
 import { useAdmin, type AdminProduct } from '@/lib/admin-store'
 import { ImageUpload } from '@/components/ImageUpload'
+import { showCreateSuccess, showUpdateSuccess, showDeleteSuccess, showDeleteConfirm, showError } from '@/lib/sweet-alert'
 
 export const Route = createFileRoute('/admin/products')({
   component: AdminProducts,
@@ -33,7 +34,6 @@ function AdminProducts() {
   const [filterCategory, setFilterCategory] = useState('')
   const [modal, setModal] = useState<ModalMode>('closed')
   const [editItem, setEditItem] = useState<AdminProduct | null>(null)
-  const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null)
   const [viewItem, setViewItem] = useState<AdminProduct | null>(null)
 
   const filtered = products.filter((p) => {
@@ -44,7 +44,14 @@ function AdminProducts() {
 
   const openEdit = (p: AdminProduct) => { setEditItem(p); setModal('edit') }
   const openAdd = () => { setEditItem(null); setModal('add') }
-  const handleDelete = (id: string) => { deleteProduct(id); setDeleteConfirm(null) }
+  const handleDelete = async (id: string) => {
+    const confirmed = await showDeleteConfirm('product')
+    if (confirmed) {
+      const ok = await deleteProduct(id)
+      if (ok) showDeleteSuccess('Product')
+      else showError('Delete Failed')
+    }
+  }
 
   const handleExport = () => {
     const csv = 'Title,Category,Price,SKU,Stock,Status,Fabric,Tag\n' + products.map((p) =>
@@ -185,7 +192,7 @@ function AdminProducts() {
                     <div className="flex items-center justify-end gap-1">
                       <button onClick={() => setViewItem(p)} className="p-1.5 text-gray-400 hover:text-black transition-colors" title="View"><Eye size={15} /></button>
                       <button onClick={() => openEdit(p)} className="p-1.5 text-gray-400 hover:text-black transition-colors" title="Edit"><Edit2 size={15} /></button>
-                      <button onClick={() => setDeleteConfirm(p.id)} className="p-1.5 text-gray-400 hover:text-red-600 transition-colors" title="Delete"><Trash2 size={15} /></button>
+                      <button onClick={() => handleDelete(p.id)} className="p-1.5 text-gray-400 hover:text-red-600 transition-colors" title="Delete"><Trash2 size={15} /></button>
                     </div>
                   </td>
                 </tr>
@@ -248,36 +255,26 @@ function AdminProducts() {
           product={editItem}
           categories={categories.map((c) => c.name)}
           onClose={() => setModal('closed')}
-          onSave={(data) => {
+          onSave={async (data) => {
             if (modal === 'edit' && editItem) {
-              updateProduct(editItem.id, data)
+              const ok = await updateProduct(editItem.id, data)
+              if (ok) showUpdateSuccess('Product')
+              else showError('Update Failed')
             } else {
-              addProduct({
+              const ok = await addProduct({
                 ...data,
                 colors: data.colors || [],
                 sizes: data.sizes || ['S', 'M', 'L', 'XL', 'XXL'],
                 sku: 'BRM-' + Date.now().toString(36).toUpperCase().slice(-8),
               } as AdminProduct)
+              if (ok) showCreateSuccess('Product')
+              else showError('Create Failed')
             }
             setModal('closed')
           }}
         />
       )}
 
-      {/* Delete Confirm */}
-      {deleteConfirm && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-black/40" onClick={() => setDeleteConfirm(null)} />
-          <div className="relative bg-white rounded-lg p-6 max-w-sm w-full shadow-xl">
-            <h3 className="text-lg font-bold text-black mb-2">Delete Product</h3>
-            <p className="text-sm text-gray-500 mb-6">Are you sure? This action cannot be undone.</p>
-            <div className="flex gap-3 justify-end">
-              <button onClick={() => setDeleteConfirm(null)} className="px-4 py-2 text-sm font-medium text-gray-600">Cancel</button>
-              <button onClick={() => handleDelete(deleteConfirm)} className="px-4 py-2 bg-red-600 text-white text-sm font-semibold rounded-lg hover:bg-red-700 transition-colors">Delete</button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   )
 }

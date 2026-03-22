@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { Plus, Edit2, Trash2, X, Search, Image } from 'lucide-react'
 import { useAdmin, type AdminCategory } from '@/lib/admin-store'
 import { ImageUpload } from '@/components/ImageUpload'
+import { showCreateSuccess, showUpdateSuccess, showDeleteSuccess, showDeleteConfirm, showError } from '@/lib/sweet-alert'
 
 export const Route = createFileRoute('/admin/categories')({
   component: AdminCategories,
@@ -12,7 +13,6 @@ function AdminCategories() {
   const { categories, addCategory, updateCategory, deleteCategory, products } = useAdmin()
   const [modal, setModal] = useState<'closed' | 'add' | 'edit'>('closed')
   const [editItem, setEditItem] = useState<AdminCategory | null>(null)
-  const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null)
   const [search, setSearch] = useState('')
 
   const getProductCount = (catName: string) => products.filter((p) => p.category === catName).length
@@ -70,7 +70,14 @@ function AdminCategories() {
                   </div>
                   <div className="flex gap-1">
                     <button onClick={() => openEdit(c)} className="p-1.5 text-gray-400 hover:text-black transition-colors"><Edit2 size={14} /></button>
-                    <button onClick={() => setDeleteConfirm(c.id)} className="p-1.5 text-gray-400 hover:text-red-600 transition-colors"><Trash2 size={14} /></button>
+                    <button onClick={async () => {
+                      const confirmed = await showDeleteConfirm('category')
+                      if (confirmed) {
+                        const ok = await deleteCategory(c.id)
+                        if (ok) showDeleteSuccess('Category')
+                        else showError('Delete Failed')
+                      }
+                    }} className="p-1.5 text-gray-400 hover:text-red-600 transition-colors"><Trash2 size={14} /></button>
                   </div>
                 </div>
               </div>
@@ -92,31 +99,21 @@ function AdminCategories() {
           mode={modal}
           category={editItem}
           onClose={() => setModal('closed')}
-          onSave={(data) => {
+          onSave={async (data) => {
             if (modal === 'edit' && editItem) {
-              updateCategory(editItem.id, data)
+              const ok = await updateCategory(editItem.id, data)
+              if (ok) showUpdateSuccess('Category')
+              else showError('Update Failed')
             } else {
-              addCategory(data as AdminCategory)
+              const ok = await addCategory(data as AdminCategory)
+              if (ok) showCreateSuccess('Category')
+              else showError('Create Failed')
             }
             setModal('closed')
           }}
         />
       )}
 
-      {/* Delete confirm */}
-      {deleteConfirm && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-black/40" onClick={() => setDeleteConfirm(null)} />
-          <div className="relative bg-white rounded-lg p-6 max-w-sm w-full shadow-xl">
-            <h3 className="text-lg font-bold text-black mb-2">Delete Category</h3>
-            <p className="text-sm text-gray-500 mb-6">Are you sure? Products in this category won't be deleted.</p>
-            <div className="flex gap-3 justify-end">
-              <button onClick={() => setDeleteConfirm(null)} className="px-4 py-2 text-sm font-medium text-gray-600">Cancel</button>
-              <button onClick={() => { deleteCategory(deleteConfirm); setDeleteConfirm(null) }} className="px-4 py-2 bg-red-600 text-white text-sm font-semibold rounded-lg hover:bg-red-700 transition-colors">Delete</button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   )
 }
