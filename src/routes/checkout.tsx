@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { X, Minus, Plus, CreditCard, Phone, MessageCircle, Lock, ShieldCheck, ChevronRight, Package, MapPin, Wallet, CheckCircle, Truck, Copy, Search } from 'lucide-react'
+import { X, Minus, Plus, CreditCard, Phone, MessageCircle, Lock, ShieldCheck, ChevronRight, Package, MapPin, Wallet, CheckCircle, Truck, Copy, Clock, XCircle } from 'lucide-react'
 import { useState } from 'react'
 import { useCart } from '@/lib/cart-context'
 import { PaymentModal } from '@/components/PaymentModal'
@@ -47,6 +47,7 @@ function Checkout() {
   const [paymentMethod, setPaymentMethod] = useState<'card' | 'mpesa'>('card')
   const [formError, setFormError] = useState('')
   const [copiedOrderNum, setCopiedOrderNum] = useState(false)
+  const [showTracking, setShowTracking] = useState(false)
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>,
@@ -174,93 +175,237 @@ function Checkout() {
       }
     }
 
+    const trackingStatusSteps = [
+      { key: 'pending', label: 'Order Placed', icon: Package },
+      { key: 'confirmed', label: 'Confirmed', icon: CheckCircle },
+      { key: 'processing', label: 'Processing', icon: Clock },
+      { key: 'shipped', label: 'Shipped', icon: Truck },
+      { key: 'delivered', label: 'Delivered', icon: MapPin },
+    ] as const
+
+    const statusIndex: Record<string, number> = {
+      pending: 0,
+      confirmed: 1,
+      processing: 2,
+      shipped: 3,
+      delivered: 4,
+      cancelled: -1,
+    }
+
+    const currentStepIndex = confirmedOrder ? (statusIndex[confirmedOrder.status] ?? -1) : -1
+    const isCancelled = confirmedOrder?.status === 'cancelled'
+
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
-        <div className="text-center max-w-lg bg-white p-10 lg:p-14 border border-gray-100">
-          <div className="w-20 h-20 bg-black rounded-full flex items-center justify-center mx-auto mb-8">
-            <CheckCircle size={36} className="text-white" />
-          </div>
-          <h1
-            className="text-3xl lg:text-4xl font-bold text-black mb-3"
-            style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
-          >
-            Order Confirmed
-          </h1>
-          <p className="text-gray-500 text-sm leading-relaxed mb-4">
-            Thank you for choosing Bremer Suits!
-          </p>
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4 py-12">
+        <div className="w-full max-w-2xl">
+          <div className="text-center bg-white p-10 lg:p-14 border border-gray-100">
+            <div className="w-20 h-20 bg-black rounded-full flex items-center justify-center mx-auto mb-8">
+              <CheckCircle size={36} className="text-white" />
+            </div>
+            <h1
+              className="text-3xl lg:text-4xl font-bold text-black mb-3"
+              style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
+            >
+              Order Confirmed
+            </h1>
+            <p className="text-gray-500 text-sm leading-relaxed mb-4">
+              Thank you for choosing Bremer Suits!
+            </p>
 
-          {/* Order Number */}
-          {confirmedOrder && (
-            <div className="bg-gray-50 border border-gray-200 p-5 mb-6 text-left">
-              <div className="flex items-center justify-between mb-3">
-                <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">Order Number</p>
-                <button
-                  onClick={copyOrderNumber}
-                  className="flex items-center gap-1 text-xs text-gray-400 hover:text-black transition-colors"
-                  title="Copy order number"
-                >
-                  <Copy size={12} />
-                  {copiedOrderNum ? 'Copied!' : 'Copy'}
-                </button>
+            {/* Order Number */}
+            {confirmedOrder && (
+              <div className="bg-gray-50 border border-gray-200 p-5 mb-6 text-left">
+                <div className="flex items-center justify-between mb-3">
+                  <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">Order Number</p>
+                  <button
+                    onClick={copyOrderNumber}
+                    className="flex items-center gap-1 text-xs text-gray-400 hover:text-black transition-colors"
+                    title="Copy order number"
+                  >
+                    <Copy size={12} />
+                    {copiedOrderNum ? 'Copied!' : 'Copy'}
+                  </button>
+                </div>
+                <p className="text-xl font-bold text-black tracking-wider font-mono mb-4">{confirmedOrder.orderNumber}</p>
+
+                <div className="space-y-2 border-t border-gray-200 pt-3">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-500">Status</span>
+                    <span className="inline-flex px-2 py-0.5 text-xs font-semibold rounded-full bg-yellow-50 text-yellow-700">Pending</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-500">Payment</span>
+                    <span className="font-medium text-black capitalize">{confirmedOrder.paymentMethod === 'mpesa' ? 'M-PESA' : confirmedOrder.paymentMethod}</span>
+                  </div>
+                  {confirmedOrder.paymentMethod === 'card' && confirmedOrder.paymentDetails && 'cardBrand' in confirmedOrder.paymentDetails && (
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-500">Card</span>
+                      <span className="font-medium text-black font-mono">
+                        {confirmedOrder.paymentDetails.cardBrand} •••• {confirmedOrder.paymentDetails.lastFourDigits}
+                      </span>
+                    </div>
+                  )}
+                  {confirmedOrder.paymentMethod === 'mpesa' && confirmedOrder.paymentDetails && 'transactionId' in confirmedOrder.paymentDetails && confirmedOrder.paymentDetails.transactionId && (
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-500">Transaction</span>
+                      <span className="font-medium text-black font-mono">{confirmedOrder.paymentDetails.transactionId}</span>
+                    </div>
+                  )}
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-500">Total</span>
+                    <span className="font-bold text-black">${confirmedOrder.total.toLocaleString()}</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-500">Items</span>
+                    <span className="font-medium text-black">{confirmedOrder.items.length} {confirmedOrder.items.length === 1 ? 'item' : 'items'}</span>
+                  </div>
+                </div>
               </div>
-              <p className="text-xl font-bold text-black tracking-wider font-mono mb-4">{confirmedOrder.orderNumber}</p>
+            )}
 
-              <div className="space-y-2 border-t border-gray-200 pt-3">
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-500">Status</span>
-                  <span className="inline-flex px-2 py-0.5 text-xs font-semibold rounded-full bg-yellow-50 text-yellow-700">Pending</span>
+            <p className="text-gray-400 text-sm leading-relaxed mb-8">
+              We will confirm your order and arrange delivery shortly. You'll receive a confirmation via phone or email.
+            </p>
+
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              <button
+                onClick={() => setShowTracking(!showTracking)}
+                className="inline-flex items-center justify-center gap-2 px-8 py-3.5 text-xs tracking-[0.2em] uppercase bg-black text-white hover:bg-gray-800 transition-colors duration-300 font-semibold"
+              >
+                <Truck size={14} />
+                {showTracking ? 'Hide Tracking' : 'Track Order'}
+              </button>
+              <Link
+                to="/collections"
+                className="inline-flex items-center justify-center px-8 py-3.5 text-xs tracking-[0.2em] uppercase border border-gray-200 text-gray-600 hover:border-black hover:text-black transition-colors duration-300 font-medium"
+              >
+                Continue Shopping
+              </Link>
+            </div>
+          </div>
+
+          {/* Embedded Order Tracking */}
+          {showTracking && confirmedOrder && (
+            <div className="mt-6 bg-white border border-gray-100 p-6 lg:p-8 animate-in fade-in slide-in-from-top-2 duration-300">
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <h2
+                    className="text-xl font-bold text-black mb-1"
+                    style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
+                  >
+                    Order Tracking
+                  </h2>
+                  <p className="text-xs text-gray-400">
+                    Order <span className="font-mono font-medium text-gray-600">{confirmedOrder.orderNumber}</span>
+                    {confirmedOrder.customer.email && (
+                      <> &middot; <span className="text-gray-600">{confirmedOrder.customer.email}</span></>
+                    )}
+                  </p>
                 </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-500">Payment</span>
-                  <span className="font-medium text-black capitalize">{confirmedOrder.paymentMethod === 'mpesa' ? 'M-PESA' : confirmedOrder.paymentMethod}</span>
-                </div>
-                {confirmedOrder.paymentMethod === 'card' && confirmedOrder.paymentDetails && 'cardBrand' in confirmedOrder.paymentDetails && (
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-500">Card</span>
-                    <span className="font-medium text-black font-mono">
-                      {confirmedOrder.paymentDetails.cardBrand} •••• {confirmedOrder.paymentDetails.lastFourDigits}
-                    </span>
+                <span className={`inline-flex px-3 py-1 text-xs font-semibold rounded-full ${
+                  isCancelled ? 'bg-red-50 text-red-700' :
+                  confirmedOrder.status === 'delivered' ? 'bg-green-50 text-green-700' :
+                  'bg-yellow-50 text-yellow-700'
+                }`}>
+                  {confirmedOrder.status.charAt(0).toUpperCase() + confirmedOrder.status.slice(1)}
+                </span>
+              </div>
+
+              {/* Progress Tracker */}
+              {!isCancelled ? (
+                <div className="mb-8">
+                  <div className="flex items-center justify-between relative">
+                    <div className="absolute top-5 left-5 right-5 h-0.5 bg-gray-200" />
+                    <div
+                      className="absolute top-5 left-5 h-0.5 bg-black transition-all duration-500"
+                      style={{ width: currentStepIndex >= 0 ? `${(currentStepIndex / (trackingStatusSteps.length - 1)) * (100 - (10 / trackingStatusSteps.length))}%` : '0%' }}
+                    />
+                    {trackingStatusSteps.map((step, idx) => {
+                      const isCompleted = currentStepIndex >= idx
+                      const isCurrent = currentStepIndex === idx
+                      const StepIcon = step.icon
+                      return (
+                        <div key={step.key} className="relative z-10 flex flex-col items-center">
+                          <div className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors ${
+                            isCompleted
+                              ? 'bg-black text-white'
+                              : 'bg-white border-2 border-gray-200 text-gray-300'
+                          } ${isCurrent ? 'ring-4 ring-black/10' : ''}`}>
+                            <StepIcon size={16} />
+                          </div>
+                          <span className={`text-[10px] mt-2 font-semibold uppercase tracking-wider ${
+                            isCompleted ? 'text-black' : 'text-gray-300'
+                          }`}>
+                            {step.label}
+                          </span>
+                        </div>
+                      )
+                    })}
                   </div>
-                )}
-                {confirmedOrder.paymentMethod === 'mpesa' && confirmedOrder.paymentDetails && 'transactionId' in confirmedOrder.paymentDetails && confirmedOrder.paymentDetails.transactionId && (
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-500">Transaction</span>
-                    <span className="font-medium text-black font-mono">{confirmedOrder.paymentDetails.transactionId}</span>
-                  </div>
-                )}
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-500">Total</span>
-                  <span className="font-bold text-black">${confirmedOrder.total.toLocaleString()}</span>
                 </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-500">Items</span>
-                  <span className="font-medium text-black">{confirmedOrder.items.length} {confirmedOrder.items.length === 1 ? 'item' : 'items'}</span>
+              ) : (
+                <div className="mb-8 p-4 bg-red-50 border border-red-100 flex items-center gap-3">
+                  <XCircle size={20} className="text-red-500 shrink-0" />
+                  <div>
+                    <p className="text-sm font-semibold text-red-700">Order Cancelled</p>
+                    <p className="text-xs text-red-500 mt-0.5">This order has been cancelled. Contact support for assistance.</p>
+                  </div>
+                </div>
+              )}
+
+              {/* Order Details */}
+              <div className="space-y-5">
+                {/* Items */}
+                <div>
+                  <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Order Items</p>
+                  <div className="space-y-2">
+                    {confirmedOrder.items.map((item, i) => (
+                      <div key={i} className="flex items-center gap-3 p-3 bg-gray-50">
+                        <div className="w-12 h-14 bg-gray-200 overflow-hidden shrink-0">
+                          <img src={item.image} alt={item.title} className="w-full h-full object-cover" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium text-black truncate">{item.title}</p>
+                          <p className="text-xs text-gray-400 mt-0.5">
+                            {[item.selectedColor, item.selectedSize].filter(Boolean).join(' / ')} {item.quantity > 1 ? `x${item.quantity}` : ''}
+                          </p>
+                        </div>
+                        <p className="text-sm font-semibold text-black">${(item.price * item.quantity).toLocaleString()}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Payment & Delivery */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-gray-100">
+                  <div>
+                    <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Payment</p>
+                    <div className="flex items-center gap-2 mb-1">
+                      {confirmedOrder.paymentMethod === 'card' ? <CreditCard size={14} className="text-gray-400" /> : <Phone size={14} className="text-gray-400" />}
+                      <span className="text-sm font-medium text-black capitalize">{confirmedOrder.paymentMethod === 'mpesa' ? 'M-PESA' : confirmedOrder.paymentMethod}</span>
+                    </div>
+                    {confirmedOrder.paymentMethod === 'card' && confirmedOrder.paymentDetails && 'cardBrand' in confirmedOrder.paymentDetails && (
+                      <p className="text-xs text-gray-500 font-mono">{confirmedOrder.paymentDetails.cardBrand} •••• {confirmedOrder.paymentDetails.lastFourDigits}</p>
+                    )}
+                    {confirmedOrder.paymentMethod === 'mpesa' && confirmedOrder.paymentDetails && 'transactionId' in confirmedOrder.paymentDetails && confirmedOrder.paymentDetails.transactionId && (
+                      <p className="text-xs text-gray-500 font-mono">Txn: {confirmedOrder.paymentDetails.transactionId}</p>
+                    )}
+                  </div>
+                  <div>
+                    <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Delivery</p>
+                    <p className="text-sm text-black">{confirmedOrder.delivery.location}</p>
+                    <p className="text-xs text-gray-500">{confirmedOrder.delivery.address}</p>
+                  </div>
+                </div>
+
+                {/* Total */}
+                <div className="flex justify-between items-center pt-4 border-t border-gray-100">
+                  <span className="text-sm font-bold text-black">Order Total</span>
+                  <span className="text-lg font-bold text-black">${confirmedOrder.total.toLocaleString()}</span>
                 </div>
               </div>
             </div>
           )}
-
-          <p className="text-gray-400 text-sm leading-relaxed mb-8">
-            We will confirm your order and arrange delivery shortly. You'll receive a confirmation via phone or email.
-          </p>
-
-          <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <Link
-              to="/track-order"
-              search={confirmedOrder ? { orderNumber: confirmedOrder.orderNumber } : {}}
-              className="inline-flex items-center justify-center gap-2 px-8 py-3.5 text-xs tracking-[0.2em] uppercase bg-black text-white hover:bg-gray-800 transition-colors duration-300 font-semibold"
-            >
-              <Search size={14} />
-              Track Order
-            </Link>
-            <Link
-              to="/collections"
-              className="inline-flex items-center justify-center px-8 py-3.5 text-xs tracking-[0.2em] uppercase border border-gray-200 text-gray-600 hover:border-black hover:text-black transition-colors duration-300 font-medium"
-            >
-              Continue Shopping
-            </Link>
-          </div>
         </div>
       </div>
     )
