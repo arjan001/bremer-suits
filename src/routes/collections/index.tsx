@@ -208,8 +208,10 @@ function Collections() {
       <section className="relative bg-black overflow-hidden">
         <div className="absolute inset-0">
           <img
-            src="/images/suit-formal.webp"
-            alt="Collections"
+            src={selectedCategories.length === 1 && dynamicCategories.find(c => c.name === selectedCategories[0])?.image
+              ? dynamicCategories.find(c => c.name === selectedCategories[0])!.image
+              : '/images/collections-banner.jpg'}
+            alt={selectedCategories.length === 1 ? selectedCategories[0] : 'Collections'}
             className="w-full h-full object-cover opacity-40"
           />
         </div>
@@ -218,7 +220,11 @@ function Collections() {
             className="text-4xl lg:text-6xl text-white mb-2 italic"
             style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
           >
-            Clean Cut
+            {selectedCategories.length === 1
+              ? selectedCategories[0]
+              : selectedCategories.length > 1
+                ? 'Filtered Collections'
+                : 'Our Collections'}
           </h1>
         </div>
       </section>
