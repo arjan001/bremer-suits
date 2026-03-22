@@ -1,8 +1,9 @@
-import { createFileRoute, Link } from '@tanstack/react-router'
-import { ArrowRight, Heart, ChevronLeft, ChevronRight, SlidersHorizontal, X, Grid3X3, LayoutGrid } from 'lucide-react'
+import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
+import { ArrowRight, Heart, ChevronLeft, ChevronRight, SlidersHorizontal, X, Grid3X3, LayoutGrid, Search } from 'lucide-react'
 import { useState, useEffect, useRef, useMemo } from 'react'
 import { useWishlist } from '@/lib/wishlist-context'
 import { getProducts, type Product } from '@/lib/products'
+import { z } from 'zod'
 
 const BASE = '/.netlify/functions'
 
@@ -13,13 +14,21 @@ interface CategoryData {
   status: string
 }
 
+const collectionsSearchSchema = z.object({
+  q: z.string().default('').catch(''),
+})
+
 export const Route = createFileRoute('/collections/')({
   component: Collections,
+  validateSearch: collectionsSearchSchema,
 })
 
 const PRODUCTS_PER_PAGE = 12
 
 function Collections() {
+  const { q: searchQuery } = Route.useSearch()
+  const navigate = useNavigate({ from: '/collections' })
+  const [localSearch, setLocalSearch] = useState(searchQuery)
   const [selectedCategories, setSelectedCategories] = useState<string[]>([])
   const { toggleItem, isInWishlist } = useWishlist()
   const [dynamicCategories, setDynamicCategories] = useState<CategoryData[]>([])
@@ -34,6 +43,11 @@ function Collections() {
   const [gridCols, setGridCols] = useState<3 | 4>(3)
   const [currentPage, setCurrentPage] = useState(1)
   const carouselRef = useRef<HTMLDivElement>(null)
+
+  // Keep local search input in sync with URL
+  useEffect(() => {
+    setLocalSearch(searchQuery)
+  }, [searchQuery])
 
   useEffect(() => {
     async function loadData() {
@@ -102,6 +116,21 @@ function Collections() {
   const filteredItems = useMemo(() => {
     let items = products
 
+    // Text search filter
+    if (searchQuery) {
+      const q = searchQuery.toLowerCase()
+      items = items.filter((p) => {
+        return (
+          p.title.toLowerCase().includes(q) ||
+          p.category.toLowerCase().includes(q) ||
+          p.fabric.toLowerCase().includes(q) ||
+          (p.tag && p.tag.toLowerCase().includes(q)) ||
+          (p.description && p.description.toLowerCase().includes(q)) ||
+          p.colors.some((c) => c.name.toLowerCase().includes(q))
+        )
+      })
+    }
+
     if (selectedCategories.length > 0) {
       items = items.filter((p) => selectedCategories.includes(p.category))
     }
@@ -144,7 +173,7 @@ function Collections() {
     }
 
     return items
-  }, [products, selectedCategories, priceRange, selectedColors, selectedTags, selectedFabrics, sortBy])
+  }, [products, searchQuery, selectedCategories, priceRange, selectedColors, selectedTags, selectedFabrics, sortBy])
 
   // Pagination
   const totalPages = Math.ceil(filteredItems.length / PRODUCTS_PER_PAGE)
@@ -156,7 +185,7 @@ function Collections() {
   // Reset to page 1 when filters change
   useEffect(() => {
     setCurrentPage(1)
-  }, [selectedCategories, priceRange, selectedColors, selectedTags, selectedFabrics, sortBy])
+  }, [selectedCategories, priceRange, selectedColors, selectedTags, selectedFabrics, sortBy, searchQuery])
 
   const toggleCategory = (name: string) => {
     setSelectedCategories((prev) =>
@@ -192,7 +221,7 @@ function Collections() {
     }
   }
 
-  const activeFilterCount = selectedCategories.length + selectedColors.length + selectedTags.length + selectedFabrics.length + (priceRange[0] > 0 || priceRange[1] < maxPrice ? 1 : 0)
+  const activeFilterCount = selectedCategories.length + selectedColors.length + selectedTags.length + selectedFabrics.length + (priceRange[0] > 0 || priceRange[1] < maxPrice ? 1 : 0) + (searchQuery ? 1 : 0)
 
   const clearAllFilters = () => {
     setSelectedCategories([])
@@ -200,6 +229,16 @@ function Collections() {
     setSelectedTags([])
     setSelectedFabrics([])
     setPriceRange([0, maxPrice])
+    navigate({ search: { q: '' } })
+  }
+
+  const clearSearch = () => {
+    navigate({ search: (prev) => ({ ...prev, q: '' }) })
+  }
+
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    navigate({ search: (prev) => ({ ...prev, q: localSearch.trim() }) })
   }
 
   return (
@@ -220,11 +259,13 @@ function Collections() {
             className="text-4xl lg:text-6xl text-white mb-2 italic"
             style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
           >
-            {selectedCategories.length === 1
-              ? selectedCategories[0]
-              : selectedCategories.length > 1
-                ? 'Filtered Collections'
-                : 'Our Collections'}
+            {searchQuery
+              ? `Results for "${searchQuery}"`
+              : selectedCategories.length === 1
+                ? selectedCategories[0]
+                : selectedCategories.length > 1
+                  ? 'Filtered Collections'
+                  : 'Our Collections'}
           </h1>
         </div>
       </section>
@@ -412,6 +453,29 @@ function Collections() {
 
             {/* Product Grid Area */}
             <div className="flex-1 min-w-0">
+              {/* Search bar */}
+              <form onSubmit={handleSearchSubmit} className="mb-5">
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={localSearch}
+                    onChange={(e) => setLocalSearch(e.target.value)}
+                    placeholder="Search products..."
+                    className="w-full px-4 py-3 pl-10 bg-gray-50 border border-gray-200 text-sm focus:border-black focus:ring-1 focus:ring-black outline-none transition-colors"
+                  />
+                  <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
+                  {localSearch && (
+                    <button
+                      type="button"
+                      onClick={() => { setLocalSearch(''); navigate({ search: (prev) => ({ ...prev, q: '' }) }) }}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-black"
+                    >
+                      <X size={16} />
+                    </button>
+                  )}
+                </div>
+              </form>
+
               {/* Top bar */}
               <div className="flex items-center justify-between mb-6 pb-4 border-b border-gray-100">
                 <div>
@@ -455,6 +519,12 @@ function Collections() {
               {/* Active filter pills */}
               {activeFilterCount > 0 && (
                 <div className="flex flex-wrap gap-2 mb-5">
+                  {searchQuery && (
+                    <span className="inline-flex items-center gap-1 px-3 py-1 bg-black text-white text-xs rounded-full">
+                      Search: "{searchQuery}"
+                      <button onClick={clearSearch} className="text-white/60 hover:text-white"><X size={12} /></button>
+                    </span>
+                  )}
                   {selectedCategories.map((c) => (
                     <span key={c} className="inline-flex items-center gap-1 px-3 py-1 bg-gray-100 text-xs text-gray-700 rounded-full">
                       {c}

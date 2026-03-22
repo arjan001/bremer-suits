@@ -1,4 +1,4 @@
-import { Link, useRouter } from '@tanstack/react-router'
+import { Link, useRouter, useNavigate } from '@tanstack/react-router'
 import { useState, useEffect } from 'react'
 import { Menu, X, Search, Heart, ShoppingBag, Phone, Mail } from 'lucide-react'
 import { useCart } from '@/lib/cart-context'
@@ -18,8 +18,10 @@ const navLinks = [
 export function Header() {
   const [mobileOpen, setMobileOpen] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
+  const [searchValue, setSearchValue] = useState('')
   const [navbarOfferTexts, setNavbarOfferTexts] = useState<string[]>([])
   const router = useRouter()
+  const navigate = useNavigate()
   const pathname = router.state.location.pathname
   const { totalItems, setCartOpen } = useCart()
   const { totalItems: wishlistCount } = useWishlist()
@@ -157,15 +159,30 @@ export function Header() {
         {/* Search Bar Dropdown */}
         {searchOpen && (
           <div className="border-t border-gray-100 bg-white py-4 px-4 sm:px-6 lg:px-8">
-            <div className="max-w-2xl mx-auto relative">
+            <form
+              onSubmit={(e) => {
+                e.preventDefault()
+                const trimmed = searchValue.trim()
+                if (trimmed) {
+                  navigate({ to: '/collections', search: { q: trimmed } })
+                  setSearchOpen(false)
+                  setSearchValue('')
+                }
+              }}
+              className="max-w-2xl mx-auto relative"
+            >
               <input
                 type="text"
+                value={searchValue}
+                onChange={(e) => setSearchValue(e.target.value)}
                 placeholder="Search collections, services, styles..."
                 className="w-full px-4 py-3 bg-gray-50 border border-gray-200 text-sm focus:border-black focus:ring-1 focus:ring-black outline-none transition-colors"
                 autoFocus
               />
-              <Search size={18} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400" />
-            </div>
+              <button type="submit" className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-black transition-colors">
+                <Search size={18} />
+              </button>
+            </form>
           </div>
         )}
 
