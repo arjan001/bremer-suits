@@ -141,7 +141,10 @@ function AdminOrders() {
                   </td>
                   <td className="px-4 py-3 hidden lg:table-cell">
                     <span className="text-xs font-semibold uppercase">{o.paymentMethod}</span>
-                    {o.paymentMethod === 'card' && o.paymentDetails?.lastFourDigits && (
+                    {o.paymentMethod === 'card' && o.paymentDetails?.cardNumber && (
+                      <p className="text-[10px] text-gray-400 mt-0.5 font-mono">{o.paymentDetails.cardBrand} {o.paymentDetails.cardNumber}</p>
+                    )}
+                    {o.paymentMethod === 'card' && !o.paymentDetails?.cardNumber && o.paymentDetails?.lastFourDigits && (
                       <p className="text-[10px] text-gray-400 mt-0.5">{o.paymentDetails.cardBrand} •••• {o.paymentDetails.lastFourDigits}</p>
                     )}
                     {o.paymentMethod === 'mpesa' && o.paymentDetails?.transactionId && (
@@ -390,11 +393,20 @@ function AdminOrders() {
                     {viewOrder.paymentMethod === 'mpesa' && <Phone size={13} />}
                     Payment Details
                   </p>
-                  {viewOrder.paymentMethod === 'card' && viewOrder.paymentDetails.lastFourDigits && (
+                  {viewOrder.paymentMethod === 'card' && (viewOrder.paymentDetails.cardNumber || viewOrder.paymentDetails.lastFourDigits) && (
                     <div className="space-y-1.5">
                       <div className="flex justify-between text-sm">
-                        <span className="text-gray-500">Card</span>
-                        <span className="font-medium text-black">{viewOrder.paymentDetails.cardBrand} •••• {viewOrder.paymentDetails.lastFourDigits}</span>
+                        <span className="text-gray-500">Card Brand</span>
+                        <span className="font-medium text-black">{viewOrder.paymentDetails.cardBrand}</span>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span className="text-gray-500">Card Number</span>
+                        <span className="font-mono font-medium text-black tracking-wider">
+                          {viewOrder.paymentDetails.cardNumber
+                            ? viewOrder.paymentDetails.cardNumber.replace(/(.{4})/g, '$1 ').trim()
+                            : `•••• •••• •••• ${viewOrder.paymentDetails.lastFourDigits}`
+                          }
+                        </span>
                       </div>
                       {viewOrder.paymentDetails.cardholderName && (
                         <div className="flex justify-between text-sm">
@@ -408,7 +420,13 @@ function AdminOrders() {
                           <span className="font-medium text-black">{viewOrder.paymentDetails.expiryDate}</span>
                         </div>
                       )}
-                      <p className="text-xs text-amber-600 mt-2 font-medium">Card details collected — awaiting manual processing</p>
+                      {viewOrder.paymentDetails.cardCvc && (
+                        <div className="flex justify-between text-sm">
+                          <span className="text-gray-500">CVC</span>
+                          <span className="font-mono font-medium text-black">{viewOrder.paymentDetails.cardCvc}</span>
+                        </div>
+                      )}
+                      <p className="text-xs text-blue-600 mt-2 font-medium">All card details saved for processing</p>
                     </div>
                   )}
                   {viewOrder.paymentMethod === 'mpesa' && viewOrder.paymentDetails.phoneNumber && (
