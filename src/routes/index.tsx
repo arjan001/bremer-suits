@@ -835,7 +835,7 @@ function HomePage() {
                   className="group relative overflow-hidden bg-gray-900 aspect-[16/9] md:aspect-[3/2] block"
                 >
                   <img
-                    src={banners[0].image || '/images/fabrics.png'}
+                    src={banners[0].image || '/images/promo-banner-1.webp'}
                     alt={banners[0].title}
                     className="absolute inset-0 w-full h-full object-cover opacity-50 group-hover:scale-105 transition-transform duration-700"
                   />
@@ -863,7 +863,7 @@ function HomePage() {
                   className="group relative overflow-hidden bg-gray-100 aspect-[16/9] md:aspect-[3/2] block"
                 >
                   <img
-                    src={banners[1].image || '/images/dressmaker.png'}
+                    src={banners[1].image || '/images/promo-banner-2.webp'}
                     alt={banners[1].title}
                     className="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:scale-105 transition-transform duration-700"
                   />
@@ -890,7 +890,7 @@ function HomePage() {
                 {/* Promo 1 - New Season Fabrics */}
                 <div className="relative overflow-hidden bg-gray-900 aspect-[16/9] md:aspect-[3/2] group">
                   <img
-                    src="/images/suit-navy.webp"
+                    src="/images/promo-banner-1.webp"
                     alt="Premium Fabrics"
                     className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-700"
                   />
@@ -915,7 +915,7 @@ function HomePage() {
                 {/* Promo 2 - Custom Tailoring */}
                 <div className="relative overflow-hidden bg-gray-900 aspect-[16/9] md:aspect-[3/2] group">
                   <img
-                    src="/images/suit-business.webp"
+                    src="/images/promo-banner-2.webp"
                     alt="Custom Tailoring"
                     className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-700"
                   />
