@@ -4,7 +4,7 @@ import {
   heroBannersApi, bannersApi, carouselsApi, navbarOffersApi, popupOffersApi,
   menuItemsApi, discountCodesApi,
   subscribersApi, campaignsApi, deliveryApi, usersApi,
-  cardDetailsApi, policiesApi, settingsApi,
+  cardDetailsApi, policiesApi, settingsApi, portfolioApi,
 } from './admin-api'
 
 /* ── Types ── */
@@ -282,6 +282,21 @@ export interface AdminCardDetail {
   isActive: boolean
 }
 
+export interface AdminPortfolioItem {
+  id: string
+  title: string
+  description: string
+  image: string
+  tag: string
+  category: string
+  clientName: string
+  isFeatured: boolean
+  sortOrder: number
+  status: 'active' | 'draft' | 'archived'
+  createdAt: string
+  updatedAt: string
+}
+
 /* ── Default settings ── */
 const defaultSettings: AdminSettings = {
   storeName: '',
@@ -407,6 +422,11 @@ interface AdminContextType {
   addCardDetail: (c: Omit<AdminCardDetail, 'id'>) => Promise<boolean>
   updateCardDetail: (id: string, c: Partial<AdminCardDetail>) => Promise<boolean>
   deleteCardDetail: (id: string) => Promise<boolean>
+  // Portfolio
+  portfolioItems: AdminPortfolioItem[]
+  addPortfolioItem: (p: Omit<AdminPortfolioItem, 'id' | 'createdAt' | 'updatedAt'>) => Promise<boolean>
+  updatePortfolioItem: (id: string, p: Partial<AdminPortfolioItem>) => Promise<boolean>
+  deletePortfolioItem: (id: string) => Promise<boolean>
   // Settings
   settings: AdminSettings
   updateSettings: (s: Partial<AdminSettings>) => Promise<boolean>
@@ -432,6 +452,7 @@ export function AdminProvider({ children }: { children: ReactNode }) {
   const [policies, setPolicies] = useState<AdminPolicy[]>([])
   const [users, setUsers] = useState<AdminUser[]>([])
   const [cardDetails, setCardDetails] = useState<AdminCardDetail[]>([])
+  const [portfolioItems, setPortfolioItems] = useState<AdminPortfolioItem[]>([])
   const [settings, setSettings] = useState<AdminSettings>(defaultSettings)
 
   /* ── Fetch all data from Supabase via Netlify Functions on mount ── */
@@ -456,6 +477,7 @@ export function AdminProvider({ children }: { children: ReactNode }) {
         settingsApi.get(),       // 14
         menuItemsApi.list(),     // 15
         discountCodesApi.list(), // 16
+        portfolioApi.list(),     // 17
       ])
       if (cancelled) return
 
@@ -479,6 +501,7 @@ export function AdminProvider({ children }: { children: ReactNode }) {
       const s = val<Partial<AdminSettings>>(14)
       const mi = val<AdminMenuItem[]>(15)
       const dc = val<AdminOffer[]>(16)
+      const pf = val<AdminPortfolioItem[]>(17)
 
       if (p) setProducts(p)
       if (o) setOrders(o)
@@ -496,6 +519,7 @@ export function AdminProvider({ children }: { children: ReactNode }) {
       if (pol) setPolicies(pol)
       if (u) setUsers(u)
       if (cd) setCardDetails(cd)
+      if (pf) setPortfolioItems(pf)
       if (s) {
         setSettings((prev) => ({
           ...prev,
@@ -871,6 +895,29 @@ export function AdminProvider({ children }: { children: ReactNode }) {
     } catch (err) { console.error('Failed to delete card detail:', err); return false }
   }, [])
 
+  /* ── Portfolio ── */
+  const addPortfolioItem = useCallback(async (p: Omit<AdminPortfolioItem, 'id' | 'createdAt' | 'updatedAt'>): Promise<boolean> => {
+    try {
+      const created = await portfolioApi.create(p as unknown as Record<string, unknown>)
+      setPortfolioItems((prev) => [...prev, created as AdminPortfolioItem])
+      return true
+    } catch (err) { console.error('Failed to add portfolio item:', err); return false }
+  }, [])
+  const updatePortfolioItem = useCallback(async (id: string, p: Partial<AdminPortfolioItem>): Promise<boolean> => {
+    try {
+      const updated = await portfolioApi.update(id, p as unknown as Record<string, unknown>)
+      setPortfolioItems((prev) => prev.map((x) => x.id === id ? { ...x, ...(updated as Partial<AdminPortfolioItem>) } : x))
+      return true
+    } catch (err) { console.error('Failed to update portfolio item:', err); return false }
+  }, [])
+  const deletePortfolioItem = useCallback(async (id: string): Promise<boolean> => {
+    try {
+      await portfolioApi.remove(id)
+      setPortfolioItems((prev) => prev.filter((x) => x.id !== id))
+      return true
+    } catch (err) { console.error('Failed to delete portfolio item:', err); return false }
+  }, [])
+
   /* ── Settings ── */
   const updateSettings = useCallback(async (s: Partial<AdminSettings>): Promise<boolean> => {
     try {
@@ -902,6 +949,7 @@ export function AdminProvider({ children }: { children: ReactNode }) {
       policies, addPolicy, updatePolicy, deletePolicy,
       users, addUser, updateUser, deleteUser,
       cardDetails, addCardDetail, updateCardDetail, deleteCardDetail,
+      portfolioItems, addPortfolioItem, updatePortfolioItem, deletePortfolioItem,
       settings, updateSettings,
     }}>
       {children}
