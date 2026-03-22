@@ -184,6 +184,65 @@ export interface AdminUser {
   createdAt: string
 }
 
+export interface AdminSocialLink {
+  id: string
+  platform: string
+  url: string
+  label: string
+  isActive: boolean
+  sortOrder: number
+}
+
+export interface AdminFooterLink {
+  id: string
+  label: string
+  url: string
+  column: 'shop' | 'company' | 'support'
+  sortOrder: number
+}
+
+export interface AdminPaymentMethod {
+  id: string
+  label: string
+  isActive: boolean
+  sortOrder: number
+}
+
+export interface AdminAuthorInfo {
+  name: string
+  url: string
+  tagline: string
+}
+
+export interface AdminSeoPage {
+  id: string
+  name: string
+  path: string
+  title: string
+  description: string
+  keywords: string
+  ogTitle: string
+  ogDescription: string
+  ogImage: string
+  twitterCard: 'summary' | 'summary_large_image'
+  canonicalUrl: string
+  noIndex: boolean
+  noFollow: boolean
+  structuredData: string
+}
+
+export interface AdminSeoGlobal {
+  siteTitle: string
+  titleSeparator: string
+  defaultDescription: string
+  defaultKeywords: string
+  defaultOgImage: string
+  googleVerification: string
+  bingVerification: string
+  robotsTxt: string
+  sitemapEnabled: boolean
+}
+
 export interface AdminSettings {
   storeName: string
   storeEmail: string
@@ -193,13 +252,10 @@ export interface AdminSettings {
   freeDeliveryThreshold: number
   whatsappNumber: string
   address: string
-  socialLinks: {
-    instagram: string
-    tiktok: string
-    whatsapp: string
-    twitter: string
-    facebook: string
-  }
+  socialLinks: AdminSocialLink[]
+  footerLinks: AdminFooterLink[]
+  paymentMethods: AdminPaymentMethod[]
+  authorInfo: AdminAuthorInfo
   theme: {
     logoUrl: string
     faviconUrl: string
@@ -209,15 +265,11 @@ export interface AdminSettings {
     bodyFont: string
   }
   footerText: string
+  footerStoreHours: string
+  footerLocationName: string
+  footerLocationDetail: string
   seoPages: AdminSeoPage[]
-}
-
-export interface AdminSeoPage {
-  id: string
-  name: string
-  path: string
-  title: string
-  description: string
+  seoGlobal: AdminSeoGlobal
 }
 
 export interface AdminCardDetail {
@@ -238,7 +290,10 @@ const defaultSettings: AdminSettings = {
   freeDeliveryThreshold: 0,
   whatsappNumber: '',
   address: '',
-  socialLinks: { instagram: '', tiktok: '', whatsapp: '', twitter: '', facebook: '' },
+  socialLinks: [],
+  footerLinks: [],
+  paymentMethods: [],
+  authorInfo: { name: '', url: '', tagline: '' },
   theme: {
     logoUrl: '',
     faviconUrl: '',
@@ -248,7 +303,21 @@ const defaultSettings: AdminSettings = {
     bodyFont: 'Inter',
   },
   footerText: '',
+  footerStoreHours: '',
+  footerLocationName: '',
+  footerLocationDetail: '',
   seoPages: [],
+  seoGlobal: {
+    siteTitle: '',
+    titleSeparator: '—',
+    defaultDescription: '',
+    defaultKeywords: '',
+    defaultOgImage: '',
+    googleVerification: '',
+    bingVerification: '',
+    robotsTxt: '',
+    sitemapEnabled: true,
+  },
 }
 
 function genId(): string {
@@ -426,8 +495,13 @@ export function AdminProvider({ children }: { children: ReactNode }) {
         setSettings((prev) => ({
           ...prev,
           ...s,
-          socialLinks: { ...prev.socialLinks, ...(s.socialLinks as Record<string, string> || {}) },
+          socialLinks: Array.isArray(s.socialLinks) ? s.socialLinks as AdminSocialLink[] : prev.socialLinks,
+          footerLinks: Array.isArray(s.footerLinks) ? s.footerLinks as AdminFooterLink[] : prev.footerLinks,
+          paymentMethods: Array.isArray(s.paymentMethods) ? s.paymentMethods as AdminPaymentMethod[] : prev.paymentMethods,
+          authorInfo: { ...prev.authorInfo, ...(s.authorInfo as unknown as Record<string, string> || {}) },
           theme: { ...prev.theme, ...(s.theme as Record<string, string> || {}) },
+          seoGlobal: { ...prev.seoGlobal, ...(s.seoGlobal as unknown as Record<string, unknown> || {}) },
+          seoPages: Array.isArray(s.seoPages) ? s.seoPages as AdminSeoPage[] : prev.seoPages,
         }))
       }
       setLoading(false)
