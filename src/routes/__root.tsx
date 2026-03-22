@@ -617,6 +617,18 @@ function Footer() {
   const storePhone = settings?.storePhone || ''
   const storeEmail = settings?.storeEmail || ''
 
+  // Support column links
+  const supportLinks = (settings?.footerLinks || []).filter((l) => l.column === 'support')
+
+  /* Policy links with icons */
+  const policyLinks = [
+    { to: '/privacy-policy', label: 'Privacy Policy', icon: <Shield size={14} /> },
+    { to: '/terms-of-service', label: 'Terms of Service', icon: <FileText size={14} /> },
+    { to: '/refund-policy', label: 'Refund Policy', icon: <RotateCcw size={14} /> },
+    { to: '/shipping-policy', label: 'Shipping Policy', icon: <Truck size={14} /> },
+    { to: '/cookie-policy', label: 'Cookie Policy', icon: <Cookie size={14} /> },
+  ]
+
   const getSocialIcon = (platform: string) => {
     switch (platform.toLowerCase()) {
       case 'instagram': return <Instagram size={18} className="text-white" />
@@ -739,6 +751,18 @@ function Footer() {
                   </ul>
                 </div>
               )}
+              {supportLinks.length > 0 && (
+                <div className={categoryLinks.length > 0 ? 'mt-8' : ''}>
+                  <h4 className="text-sm font-bold uppercase text-white mb-4 tracking-wide">Support</h4>
+                  <ul className="space-y-3">
+                    {supportLinks.map((link) => (
+                      <li key={link.id}>
+                        <Link to={link.url} className="text-sm text-gray-400 hover:text-white transition-colors duration-200">{link.label}</Link>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
             </div>
 
             {/* Column 3: Visit Our Store */}
@@ -831,6 +855,29 @@ function Footer() {
               )}
             </div>
 
+          </div>
+        </div>
+
+        {/* Policy Links Bar */}
+        <div className="border-t border-gray-800/60">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
+            <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-2">
+              {policyLinks.map((link, i) => (
+                <span key={link.to} className="flex items-center gap-x-3">
+                  <Link to={link.to} className="text-xs text-gray-500 hover:text-gray-300 transition-colors">{link.label}</Link>
+                  {i < policyLinks.length - 1 && <span className="text-gray-700">|</span>}
+                </span>
+              ))}
+              <span className="flex items-center gap-x-3">
+                <span className="text-gray-700">|</span>
+                <button
+                  onClick={() => setCookieModalOpen(true)}
+                  className="text-xs text-gray-500 hover:text-gray-300 transition-colors"
+                >
+                  Cookie Preferences
+                </button>
+              </span>
+            </div>
           </div>
         </div>
 
