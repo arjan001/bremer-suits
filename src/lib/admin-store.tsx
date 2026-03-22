@@ -2,6 +2,7 @@ import { createContext, useContext, useState, useCallback, useEffect, type React
 import {
   productsApi, ordersApi, categoriesApi,
   heroBannersApi, bannersApi, carouselsApi, navbarOffersApi, popupOffersApi,
+  menuItemsApi,
   subscribersApi, campaignsApi, deliveryApi, usersApi,
   cardDetailsApi, policiesApi, settingsApi,
 } from './admin-api'
@@ -118,6 +119,16 @@ export interface AdminPopupOffer {
   code: string
   image: string
   collectNewsletter: boolean
+  isActive: boolean
+}
+
+export interface AdminMenuItem {
+  id: string
+  title: string
+  description: string
+  price: string
+  image: string
+  sortOrder: number
   isActive: boolean
 }
 
@@ -289,9 +300,14 @@ interface AdminContextType {
   deleteNavbarOffer: (id: string) => Promise<boolean>
   // Popup Offers
   popupOffers: AdminPopupOffer[]
-  addPopupOffer: (o: Omit<AdminPopupOffer, 'id'>) => Promise<boolean>
-  updatePopupOffer: (id: string, o: Partial<AdminPopupOffer>) => Promise<boolean>
-  deletePopupOffer: (id: string) => Promise<boolean>
+  addPopupOffer: (o: Omit<AdminPopupOffer, 'id'>) => void
+  updatePopupOffer: (id: string, o: Partial<AdminPopupOffer>) => void
+  deletePopupOffer: (id: string) => void
+  // Menu Items
+  menuItems: AdminMenuItem[]
+  addMenuItem: (m: Omit<AdminMenuItem, 'id'>) => void
+  updateMenuItem: (id: string, m: Partial<AdminMenuItem>) => void
+  deleteMenuItem: (id: string) => void
   // Newsletter
   subscribers: AdminNewsletterSub[]
   addSubscriber: (email: string) => Promise<boolean>
@@ -338,6 +354,7 @@ export function AdminProvider({ children }: { children: ReactNode }) {
   const [carousels, setCarousels] = useState<AdminCarousel[]>([])
   const [navbarOffers, setNavbarOffers] = useState<AdminNavbarOffer[]>([])
   const [popupOffers, setPopupOffers] = useState<AdminPopupOffer[]>([])
+  const [menuItems, setMenuItems] = useState<AdminMenuItem[]>([])
   const [subscribers, setSubscribers] = useState<AdminNewsletterSub[]>([])
   const [emailCampaigns, setEmailCampaigns] = useState<AdminEmailCampaign[]>([])
   const [deliveryZones, setDeliveryZones] = useState<AdminDeliveryZone[]>([])
@@ -366,6 +383,7 @@ export function AdminProvider({ children }: { children: ReactNode }) {
         usersApi.list(),         // 12
         cardDetailsApi.list(),   // 13
         settingsApi.get(),       // 14
+        menuItemsApi.list(),     // 15
       ])
       if (cancelled) return
 
@@ -387,6 +405,7 @@ export function AdminProvider({ children }: { children: ReactNode }) {
       const u = val<AdminUser[]>(12)
       const cd = val<AdminCardDetail[]>(13)
       const s = val<Partial<AdminSettings>>(14)
+      const mi = val<AdminMenuItem[]>(15)
 
       if (p) setProducts(p)
       if (o) setOrders(o)
@@ -396,6 +415,7 @@ export function AdminProvider({ children }: { children: ReactNode }) {
       if (car) setCarousels(car)
       if (no) setNavbarOffers(no)
       if (po) setPopupOffers(po)
+      if (mi) setMenuItems(mi)
       if (sub) setSubscribers(sub)
       if (ec) setEmailCampaigns(ec)
       if (dz) setDeliveryZones(dz)
@@ -611,6 +631,26 @@ export function AdminProvider({ children }: { children: ReactNode }) {
     } catch (err) { console.error('Failed to delete popup offer:', err); return false }
   }, [])
 
+  /* ── Menu Items ── */
+  const addMenuItem = useCallback(async (m: Omit<AdminMenuItem, 'id'>) => {
+    try {
+      const created = await menuItemsApi.create(m as unknown as Record<string, unknown>)
+      setMenuItems((prev) => [...prev, created as AdminMenuItem])
+    } catch (err) { console.error('Failed to add menu item:', err) }
+  }, [])
+  const updateMenuItem = useCallback(async (id: string, m: Partial<AdminMenuItem>) => {
+    try {
+      const updated = await menuItemsApi.update(id, m as unknown as Record<string, unknown>)
+      setMenuItems((prev) => prev.map((x) => x.id === id ? { ...x, ...(updated as Partial<AdminMenuItem>) } : x))
+    } catch (err) { console.error('Failed to update menu item:', err) }
+  }, [])
+  const deleteMenuItem = useCallback(async (id: string) => {
+    try {
+      await menuItemsApi.remove(id)
+      setMenuItems((prev) => prev.filter((x) => x.id !== id))
+    } catch (err) { console.error('Failed to delete menu item:', err) }
+  }, [])
+
   /* ── Newsletter ── */
   const addSubscriber = useCallback(async (email: string): Promise<boolean> => {
     try {
@@ -764,6 +804,7 @@ export function AdminProvider({ children }: { children: ReactNode }) {
       carousels, addCarousel, updateCarousel, deleteCarousel,
       navbarOffers, addNavbarOffer, updateNavbarOffer, deleteNavbarOffer,
       popupOffers, addPopupOffer, updatePopupOffer, deletePopupOffer,
+      menuItems, addMenuItem, updateMenuItem, deleteMenuItem,
       subscribers, addSubscriber, updateSubscriber, removeSubscriber,
       emailCampaigns, addEmailCampaign, deleteEmailCampaign,
       deliveryZones, addDeliveryZone, updateDeliveryZone, deleteDeliveryZone,

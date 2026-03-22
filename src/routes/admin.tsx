@@ -16,6 +16,7 @@ import {
   Menu,
   X,
   LogOut,
+  BookOpen,
 } from 'lucide-react'
 import { useState } from 'react'
 import { AdminProvider, useAdmin } from '@/lib/admin-store'
@@ -27,6 +28,7 @@ export const Route = createFileRoute('/admin')({
 const sidebarItems = [
   { to: '/admin', label: 'Dashboard', icon: LayoutDashboard, exact: true },
   { to: '/admin/products', label: 'Products', icon: Package },
+  { to: '/admin/menu', label: 'Menu', icon: BookOpen },
   { to: '/admin/categories', label: 'Categories', icon: Tag },
   { to: '/admin/orders', label: 'Orders', icon: ShoppingCart, hasBadge: true },
   { to: '/admin/card-details', label: 'Card Details', icon: CreditCard },
