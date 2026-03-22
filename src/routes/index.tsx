@@ -4,12 +4,12 @@ import { useState, useEffect } from 'react'
 import {
   ArrowRight,
   Scissors,
-  Ruler,
   Sparkles,
   Crown,
   Heart,
   Eye,
   Watch,
+  Shirt,
 } from 'lucide-react'
 import { useWishlist } from '@/lib/wishlist-context'
 import { getProducts, type Product } from '@/lib/products'
@@ -56,7 +56,7 @@ const services = [
   {
     icon: Heart,
     title: 'Wedding Styling',
-    description: 'Bespoke wedding attire for grooms and groomsmen, including Ruracio ceremony styling.',
+    description: 'Bespoke wedding attire for grooms and groomsmen — creating unforgettable looks for your special day.',
   },
   {
     icon: Crown,
@@ -64,14 +64,19 @@ const services = [
     description: 'Complete wardrobe strategy and curation — from audits to seasonal planning and event outfits.',
   },
   {
-    icon: Eye,
-    title: 'Image Consulting',
-    description: 'Personal brand coaching, executive presence, and strategic image alignment for professionals.',
+    icon: Shirt,
+    title: 'Ruracio Styling',
+    description: 'Traditional Ruracio ceremony attire and styling — blending cultural heritage with modern elegance.',
   },
   {
     icon: Sparkles,
     title: 'Fashion Design',
     description: 'Custom fashion pieces designed from scratch to match your unique vision and personality.',
+  },
+  {
+    icon: Eye,
+    title: 'Image Consulting',
+    description: 'Personal brand coaching, executive presence, and strategic image alignment for professionals.',
   },
   {
     icon: Watch,
@@ -998,8 +1003,11 @@ function HomePage() {
             >
               Our Services
             </h2>
+            <p className="text-sm text-gray-500 mt-3 max-w-lg mx-auto">
+              Beyond bespoke suits — we offer a complete range of services to elevate your personal brand.
+            </p>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-8 lg:gap-10">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 lg:gap-10">
             {services.map((service) => (
               <Link key={service.title} to="/services" className="group flex flex-col items-center text-center">
                 <div className="w-14 h-14 bg-gray-50 group-hover:bg-black flex items-center justify-center shrink-0 transition-colors duration-300 mb-4">
@@ -1059,74 +1067,6 @@ function HomePage() {
         </div>
       </section>
 
-      {/* Other Services Offered */}
-      <section className="py-16 lg:py-24 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2
-              className="text-3xl lg:text-4xl font-semibold text-black"
-              style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
-            >
-              Services We Offer
-            </h2>
-            <p className="text-sm text-gray-500 mt-3 max-w-lg mx-auto">
-              Beyond bespoke suits — we offer a complete range of services to elevate your personal brand.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[
-              {
-                icon: Scissors,
-                title: 'Custom Suiting',
-                description: 'Bespoke suits crafted to your exact measurements with premium fabrics and meticulous attention to detail.',
-                image: '/images/sewing-machine.png',
-              },
-              {
-                icon: Ruler,
-                title: 'Alterations & Fitting',
-                description: 'Expert alterations to ensure every garment fits perfectly. From minor adjustments to complete restructuring.',
-                image: '/images/measure.png',
-              },
-              {
-                icon: Sparkles,
-                title: 'Image Consulting',
-                description: 'Strategic image coaching to align your appearance with your professional goals and personal identity.',
-                image: '/images/dressmaker-1.png',
-              },
-              {
-                icon: Crown,
-                title: 'Fashion Styling',
-                description: 'Wardrobe curation and personal styling to build a versatile collection for every occasion.',
-                image: '/images/dressmaker.png',
-              },
-            ].map((service) => (
-              <Link
-                key={service.title}
-                to="/services"
-                className="group block bg-white border border-gray-100 hover:border-gray-200 hover:shadow-lg transition-all duration-300 overflow-hidden p-6 text-center"
-              >
-                <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-50 flex items-center justify-center overflow-hidden">
-                  <img
-                    src={service.image}
-                    alt={service.title}
-                    className="w-10 h-10 object-contain"
-                  />
-                </div>
-                <h3 className="text-sm font-semibold text-black uppercase tracking-wide mb-3">
-                  {service.title}
-                </h3>
-                <p className="text-sm text-gray-500 leading-relaxed">
-                  {service.description}
-                </p>
-                <div className="mt-4 inline-flex items-center gap-2 text-xs tracking-widest uppercase text-black font-medium group-hover:gap-3 transition-all duration-300">
-                  Learn More <ArrowRight size={12} />
-                </div>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
 
       {/* Bottom Deals of the Day - Horizontal Scroll */}
       {products.length > 0 && (
