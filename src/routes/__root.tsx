@@ -4,8 +4,8 @@ import { CartDrawer } from '@/components/CartDrawer'
 import { SeoHead } from '@/components/SeoHead'
 import { CartProvider } from '@/lib/cart-context'
 import { WishlistProvider } from '@/lib/wishlist-context'
-import { Phone, Mail, Instagram, Clock, Navigation, Globe, X } from 'lucide-react'
-import { useState, useEffect } from 'react'
+import { Phone, Mail, Instagram, Clock, Navigation, Globe, X, ChevronUp, Shield, FileText, Cookie, CreditCard, Truck, RotateCcw, ArrowRight } from 'lucide-react'
+import { useState, useEffect, useCallback } from 'react'
 
 import '../styles.css'
 
@@ -362,6 +362,189 @@ function SubscribeModal() {
   )
 }
 
+/* ── Cookie Consent Banner ── */
+function CookieConsent() {
+  const [visible, setVisible] = useState(false)
+
+  useEffect(() => {
+    try {
+      if (!localStorage.getItem('bremer-cookie-consent')) {
+        const timer = setTimeout(() => setVisible(true), 1500)
+        return () => clearTimeout(timer)
+      }
+    } catch { /* ignore */ }
+  }, [])
+
+  const acceptAll = () => {
+    try { localStorage.setItem('bremer-cookie-consent', 'all') } catch { /* ignore */ }
+    setVisible(false)
+  }
+
+  const acceptEssential = () => {
+    try { localStorage.setItem('bremer-cookie-consent', 'essential') } catch { /* ignore */ }
+    setVisible(false)
+  }
+
+  if (!visible) return null
+
+  return (
+    <div className="fixed bottom-0 left-0 right-0 z-[90] p-4 sm:p-6">
+      <div className="max-w-4xl mx-auto bg-white rounded-xl shadow-2xl border border-gray-100 p-5 sm:p-6">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+          <div className="flex items-start gap-3 flex-1">
+            <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center shrink-0 mt-0.5">
+              <Cookie size={20} className="text-gray-600" />
+            </div>
+            <div>
+              <p className="text-sm font-semibold text-black mb-1">We value your privacy</p>
+              <p className="text-xs text-gray-500 leading-relaxed">
+                We use cookies to enhance your experience, analyze site traffic, and personalize content. Read our{' '}
+                <Link to="/cookie-policy" className="underline text-black hover:text-gray-600 transition-colors">cookie policy</Link> to learn more.
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 shrink-0 w-full sm:w-auto">
+            <button
+              onClick={acceptEssential}
+              className="flex-1 sm:flex-none px-4 py-2.5 text-xs font-medium border border-gray-300 text-gray-700 hover:bg-gray-50 rounded-lg transition-colors"
+            >
+              Essential Only
+            </button>
+            <button
+              onClick={acceptAll}
+              className="flex-1 sm:flex-none px-5 py-2.5 text-xs font-medium bg-black text-white hover:bg-gray-800 rounded-lg transition-colors"
+            >
+              Accept All
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+/* ── Cookie Preferences Modal ── */
+function CookiePreferencesModal({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const [preferences, setPreferences] = useState({
+    essential: true,
+    functional: true,
+    analytics: false,
+    marketing: false,
+  })
+
+  useEffect(() => {
+    if (open) {
+      try {
+        const consent = localStorage.getItem('bremer-cookie-consent')
+        if (consent === 'all') {
+          setPreferences({ essential: true, functional: true, analytics: true, marketing: true })
+        } else {
+          setPreferences({ essential: true, functional: true, analytics: false, marketing: false })
+        }
+      } catch { /* ignore */ }
+    }
+  }, [open])
+
+  const savePreferences = () => {
+    const value = preferences.analytics && preferences.marketing ? 'all' : 'essential'
+    try { localStorage.setItem('bremer-cookie-consent', value) } catch { /* ignore */ }
+    onClose()
+  }
+
+  if (!open) return null
+
+  const cookieTypes = [
+    { key: 'essential' as const, label: 'Essential Cookies', desc: 'Required for the website to function. Cannot be disabled.', locked: true },
+    { key: 'functional' as const, label: 'Functional Cookies', desc: 'Remember your preferences like language and display settings.', locked: false },
+    { key: 'analytics' as const, label: 'Analytics Cookies', desc: 'Help us understand how visitors interact with our website.', locked: false },
+    { key: 'marketing' as const, label: 'Marketing Cookies', desc: 'Used to deliver relevant advertisements and measure campaigns.', locked: false },
+  ]
+
+  return (
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+      <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose} />
+      <div className="relative bg-white max-w-lg w-full rounded-xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-300">
+        {/* Header */}
+        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+          <div className="flex items-center gap-2.5">
+            <Cookie size={20} className="text-gray-700" />
+            <h3 className="text-lg font-bold text-black" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>Cookie Preferences</h3>
+          </div>
+          <button onClick={onClose} className="p-1 text-gray-400 hover:text-black transition-colors" aria-label="Close">
+            <X size={20} />
+          </button>
+        </div>
+
+        {/* Body */}
+        <div className="px-6 py-5 max-h-[60vh] overflow-y-auto">
+          <p className="text-sm text-gray-500 mb-5 leading-relaxed">
+            Manage your cookie preferences below. Essential cookies are always active as they are necessary for the website to function properly.
+          </p>
+          <div className="space-y-4">
+            {cookieTypes.map((ct) => (
+              <div key={ct.key} className="flex items-start justify-between gap-4 p-4 bg-gray-50 rounded-lg">
+                <div className="flex-1">
+                  <p className="text-sm font-semibold text-black">{ct.label}</p>
+                  <p className="text-xs text-gray-500 mt-0.5">{ct.desc}</p>
+                </div>
+                <label className="relative inline-flex items-center cursor-pointer shrink-0 mt-0.5">
+                  <input
+                    type="checkbox"
+                    checked={preferences[ct.key]}
+                    onChange={(e) => !ct.locked && setPreferences((p) => ({ ...p, [ct.key]: e.target.checked }))}
+                    disabled={ct.locked}
+                    className="sr-only peer"
+                  />
+                  <div className={`w-9 h-5 rounded-full transition-colors ${ct.locked ? 'bg-black' : 'bg-gray-300 peer-checked:bg-black'} peer-focus:ring-2 peer-focus:ring-black/20 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-transform peer-checked:after:translate-x-4`} />
+                </label>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div className="px-6 py-4 border-t border-gray-100 flex items-center justify-between gap-3">
+          <Link to="/cookie-policy" onClick={onClose} className="text-xs text-gray-500 underline hover:text-black transition-colors">
+            View full cookie policy
+          </Link>
+          <button
+            onClick={savePreferences}
+            className="px-6 py-2.5 bg-black text-white text-sm font-medium rounded-lg hover:bg-gray-800 transition-colors"
+          >
+            Save Preferences
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+/* ── Floating Back to Top Button ── */
+function BackToTopButton() {
+  const [visible, setVisible] = useState(false)
+
+  const handleScroll = useCallback(() => {
+    setVisible(window.scrollY > 400)
+  }, [])
+
+  useEffect(() => {
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [handleScroll])
+
+  if (!visible) return null
+
+  return (
+    <button
+      onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+      className="fixed bottom-6 right-6 z-[80] w-12 h-12 rounded-full bg-black text-white shadow-lg hover:bg-gray-800 flex items-center justify-center transition-all duration-300 hover:scale-110 group"
+      aria-label="Back to top"
+    >
+      <ChevronUp size={22} className="group-hover:-translate-y-0.5 transition-transform" />
+    </button>
+  )
+}
+
 /* ── Footer (Dynamic - powered by admin settings) ── */
 function Footer() {
   const [settings, setSettings] = useState<{
@@ -378,6 +561,9 @@ function Footer() {
     paymentMethods: Array<{ id: string; label: string; isActive: boolean; sortOrder: number }>
     authorInfo: { name: string; url: string; tagline: string }
   } | null>(null)
+  const [newsletterEmail, setNewsletterEmail] = useState('')
+  const [newsletterDone, setNewsletterDone] = useState(false)
+  const [cookieModalOpen, setCookieModalOpen] = useState(false)
 
   useEffect(() => {
     async function loadSettings() {
@@ -404,6 +590,17 @@ function Footer() {
     }
     loadSettings()
   }, [])
+
+  const handleNewsletter = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!newsletterEmail.trim()) return
+    fetch('/.netlify/functions/admin-newsletter?resource=subscribers', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: newsletterEmail.trim(), status: 'active', subscribed_at: new Date().toISOString() }),
+    }).catch(() => {})
+    setNewsletterDone(true)
+  }
 
   // Fallback values
   const storeName = settings?.storeName || 'Bremer Suits'
@@ -444,230 +641,324 @@ function Footer() {
     }
   }
 
+  /* Policy links with icons */
+  const policyLinks = [
+    { to: '/privacy-policy', label: 'Privacy Policy', icon: <Shield size={14} /> },
+    { to: '/terms-of-service', label: 'Terms of Service', icon: <FileText size={14} /> },
+    { to: '/refund-policy', label: 'Refund Policy', icon: <RotateCcw size={14} /> },
+    { to: '/shipping-policy', label: 'Shipping Policy', icon: <Truck size={14} /> },
+    { to: '/cookie-policy', label: 'Cookie Policy', icon: <Cookie size={14} /> },
+  ]
+
   return (
-    <footer className="bg-[#1a1a1a] text-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8">
-          {/* Brand Column */}
-          <div>
-            <div className="mb-5">
-              <h3
-                className="text-2xl font-bold tracking-wider"
-                style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
-              >
-                {storeName}
-              </h3>
-            </div>
-            <p className="text-sm text-gray-400 leading-relaxed mb-6 max-w-xs">
-              {footerText}
-            </p>
-            {activeSocials.length > 0 && (
-              <div className="flex gap-3">
-                {activeSocials.map((social) => (
-                  <a
-                    key={social.id}
-                    href={social.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-10 h-10 rounded-full flex items-center justify-center transition-transform hover:scale-110 border border-gray-700"
-                    style={getSocialBg(social.platform)}
-                    aria-label={social.platform}
-                  >
-                    {getSocialIcon(social.platform)}
-                  </a>
-                ))}
+    <>
+      <footer className="bg-[#1a1a1a] text-white">
+        {/* Newsletter Banner */}
+        <div className="border-b border-gray-800">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 lg:py-12">
+            <div className="flex flex-col lg:flex-row items-center justify-between gap-6 lg:gap-12">
+              <div className="text-center lg:text-left">
+                <h3
+                  className="text-xl lg:text-2xl font-bold text-white mb-1.5"
+                  style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
+                >
+                  Stay In Style
+                </h3>
+                <p className="text-sm text-gray-400">Subscribe for exclusive offers, new arrivals, and styling tips.</p>
               </div>
-            )}
-          </div>
-
-          {/* Footer Navigation Links */}
-          {hasFooterLinks ? (
-            <div>
-              {shopLinks.length > 0 && (
-                <div className="mb-6">
-                  <h4 className="text-sm font-bold uppercase text-white mb-4 tracking-wide">Shop</h4>
-                  <ul className="space-y-3">
-                    {shopLinks.map((link) => (
-                      <li key={link.id}>
-                        <Link to={link.url} className="text-sm text-gray-400 hover:text-white transition-colors duration-200">{link.label}</Link>
-                      </li>
-                    ))}
-                  </ul>
+              {newsletterDone ? (
+                <div className="flex items-center gap-2 text-sm text-green-400 font-medium">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                  Thank you for subscribing!
                 </div>
-              )}
-              {companyLinks.length > 0 && (
-                <div className="mb-6">
-                  <h4 className="text-sm font-bold uppercase text-white mb-4 tracking-wide">Company</h4>
-                  <ul className="space-y-3">
-                    {companyLinks.map((link) => (
-                      <li key={link.id}>
-                        <Link to={link.url} className="text-sm text-gray-400 hover:text-white transition-colors duration-200">{link.label}</Link>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-              {supportLinks.length > 0 && (
-                <div>
-                  <h4 className="text-sm font-bold uppercase text-white mb-4 tracking-wide">Support</h4>
-                  <ul className="space-y-3">
-                    {supportLinks.map((link) => (
-                      <li key={link.id}>
-                        <Link to={link.url} className="text-sm text-gray-400 hover:text-white transition-colors duration-200">{link.label}</Link>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+              ) : (
+                <form onSubmit={handleNewsletter} className="flex w-full max-w-md">
+                  <input
+                    type="email"
+                    value={newsletterEmail}
+                    onChange={(e) => setNewsletterEmail(e.target.value)}
+                    placeholder="Enter your email"
+                    required
+                    className="flex-1 px-4 py-3 bg-white/10 border border-gray-700 text-sm text-white placeholder:text-gray-500 focus:border-white focus:ring-1 focus:ring-white outline-none transition-colors rounded-l-lg"
+                  />
+                  <button
+                    type="submit"
+                    className="px-5 py-3 bg-white text-black text-sm font-semibold hover:bg-gray-200 transition-colors rounded-r-lg flex items-center gap-1.5 shrink-0"
+                  >
+                    Subscribe
+                    <ArrowRight size={14} />
+                  </button>
+                </form>
               )}
             </div>
-          ) : (
-            <div>
-              <h4 className="text-sm font-bold uppercase text-white mb-6 tracking-wide">Shop</h4>
-              <ul className="space-y-3">
-                {[
-                  { label: 'All Collections', to: '/collections' },
-                  { label: 'Services', to: '/services' },
-                  { label: 'About Us', to: '/about' },
-                  { label: 'Contact', to: '/contact' },
-                ].map((item) => (
-                  <li key={item.label}>
-                    <Link to={item.to} className="text-sm text-gray-400 hover:text-white transition-colors duration-200">{item.label}</Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-
-          {/* Visit Our Store */}
-          <div>
-            <h4 className="text-sm font-bold uppercase text-white mb-6 tracking-wide">Visit Our Store</h4>
-            <ul className="space-y-4">
-              {(locationName || settings?.address) && (
-                <li className="flex items-start gap-3">
-                  <Navigation size={16} className="text-gray-400 mt-0.5 shrink-0" />
-                  <div>
-                    {locationName && <span className="text-sm text-white font-medium">{locationName}</span>}
-                    {locationDetail && <><br /><span className="text-sm text-gray-400">{locationDetail}</span></>}
-                    {settings?.address && <><br /><span className="text-sm text-gray-400">{settings.address}</span></>}
-                  </div>
-                </li>
-              )}
-              {storePhone && (
-                <li className="flex items-start gap-3">
-                  <Phone size={16} className="text-gray-400 mt-0.5 shrink-0" />
-                  <a href={`tel:${storePhone}`} className="text-sm text-gray-400 hover:text-white transition-colors">{storePhone}</a>
-                </li>
-              )}
-              {storeEmail && (
-                <li className="flex items-start gap-3">
-                  <Mail size={16} className="text-gray-400 mt-0.5 shrink-0" />
-                  <a href={`mailto:${storeEmail}`} className="text-sm text-gray-400 hover:text-white transition-colors">{storeEmail}</a>
-                </li>
-              )}
-              {storeHours && (
-                <li className="flex items-start gap-3">
-                  <Clock size={16} className="text-gray-400 mt-0.5 shrink-0" />
-                  <div>
-                    {storeHours.split('\n').map((line, i) => (
-                      <span key={i} className="text-sm text-gray-400 block">{line}</span>
-                    ))}
-                  </div>
-                </li>
-              )}
-            </ul>
           </div>
+        </div>
 
-          {/* Follow Us + Payment */}
-          <div>
-            {activeSocials.length > 0 && (
-              <>
-                <h4 className="text-sm font-bold uppercase text-white mb-6 tracking-wide">Follow Us</h4>
-                <ul className="space-y-4">
+        {/* Main Footer Grid */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 lg:py-16">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8">
+            {/* Brand Column */}
+            <div>
+              <div className="mb-5">
+                <h3
+                  className="text-2xl font-bold tracking-wider"
+                  style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
+                >
+                  {storeName}
+                </h3>
+              </div>
+              <p className="text-sm text-gray-400 leading-relaxed mb-6 max-w-xs">
+                {footerText}
+              </p>
+              {activeSocials.length > 0 && (
+                <div className="flex gap-3">
                   {activeSocials.map((social) => (
-                    <li key={social.id}>
-                      <a
-                        href={social.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center gap-3 text-sm text-gray-400 hover:text-white transition-colors"
-                      >
-                        {getSocialIcon(social.platform)}
-                        {social.label || social.platform}
-                      </a>
+                    <a
+                      key={social.id}
+                      href={social.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-10 h-10 rounded-full flex items-center justify-center transition-transform hover:scale-110 border border-gray-700"
+                      style={getSocialBg(social.platform)}
+                      aria-label={social.platform}
+                    >
+                      {getSocialIcon(social.platform)}
+                    </a>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Footer Navigation Links */}
+            {hasFooterLinks ? (
+              <div>
+                {shopLinks.length > 0 && (
+                  <div className="mb-6">
+                    <h4 className="text-sm font-bold uppercase text-white mb-4 tracking-wide">Shop</h4>
+                    <ul className="space-y-3">
+                      {shopLinks.map((link) => (
+                        <li key={link.id}>
+                          <Link to={link.url} className="text-sm text-gray-400 hover:text-white transition-colors duration-200">{link.label}</Link>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                {companyLinks.length > 0 && (
+                  <div className="mb-6">
+                    <h4 className="text-sm font-bold uppercase text-white mb-4 tracking-wide">Company</h4>
+                    <ul className="space-y-3">
+                      {companyLinks.map((link) => (
+                        <li key={link.id}>
+                          <Link to={link.url} className="text-sm text-gray-400 hover:text-white transition-colors duration-200">{link.label}</Link>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                {supportLinks.length > 0 && (
+                  <div>
+                    <h4 className="text-sm font-bold uppercase text-white mb-4 tracking-wide">Support</h4>
+                    <ul className="space-y-3">
+                      {supportLinks.map((link) => (
+                        <li key={link.id}>
+                          <Link to={link.url} className="text-sm text-gray-400 hover:text-white transition-colors duration-200">{link.label}</Link>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div>
+                <h4 className="text-sm font-bold uppercase text-white mb-6 tracking-wide">Shop</h4>
+                <ul className="space-y-3">
+                  {[
+                    { label: 'All Collections', to: '/collections' },
+                    { label: 'Services', to: '/services' },
+                    { label: 'About Us', to: '/about' },
+                    { label: 'Contact', to: '/contact' },
+                  ].map((item) => (
+                    <li key={item.label}>
+                      <Link to={item.to} className="text-sm text-gray-400 hover:text-white transition-colors duration-200">{item.label}</Link>
                     </li>
                   ))}
                 </ul>
-              </>
-            )}
-
-            {paymentMethods.length > 0 && (
-              <div className={activeSocials.length > 0 ? 'mt-8' : ''}>
-                <h5 className="text-xs font-bold uppercase text-gray-500 mb-3 tracking-wider">We Accept</h5>
-                <div className="flex flex-wrap gap-2">
-                  {paymentMethods.map((pm) => (
-                    <span key={pm.id} className="px-3 py-1.5 border border-gray-600 rounded text-xs text-gray-300 font-medium">{pm.label}</span>
-                  ))}
-                </div>
               </div>
             )}
-          </div>
-        </div>
-      </div>
 
-      {/* Bottom Bar */}
-      <div className="border-t border-gray-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-4">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            <p className="text-xs text-gray-500">
-              &copy; {new Date().getFullYear()} {storeName}. All rights reserved.
-            </p>
-            <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
-              <Link to="/privacy-policy" className="text-xs text-gray-500 hover:text-gray-300 transition-colors">Privacy Policy</Link>
-              <Link to="/terms-of-service" className="text-xs text-gray-500 hover:text-gray-300 transition-colors">Terms of Service</Link>
-              <Link to="/refund-policy" className="text-xs text-gray-500 hover:text-gray-300 transition-colors">Refund Policy</Link>
-              <Link to="/shipping-policy" className="text-xs text-gray-500 hover:text-gray-300 transition-colors">Shipping Policy</Link>
+            {/* Visit Our Store */}
+            <div>
+              <h4 className="text-sm font-bold uppercase text-white mb-6 tracking-wide">Visit Our Store</h4>
+              <ul className="space-y-4">
+                {(locationName || settings?.address) && (
+                  <li className="flex items-start gap-3">
+                    <Navigation size={16} className="text-gray-400 mt-0.5 shrink-0" />
+                    <div>
+                      {locationName && <span className="text-sm text-white font-medium">{locationName}</span>}
+                      {locationDetail && <><br /><span className="text-sm text-gray-400">{locationDetail}</span></>}
+                      {settings?.address && <><br /><span className="text-sm text-gray-400">{settings.address}</span></>}
+                    </div>
+                  </li>
+                )}
+                {storePhone && (
+                  <li className="flex items-start gap-3">
+                    <Phone size={16} className="text-gray-400 mt-0.5 shrink-0" />
+                    <a href={`tel:${storePhone}`} className="text-sm text-gray-400 hover:text-white transition-colors">{storePhone}</a>
+                  </li>
+                )}
+                {storeEmail && (
+                  <li className="flex items-start gap-3">
+                    <Mail size={16} className="text-gray-400 mt-0.5 shrink-0" />
+                    <a href={`mailto:${storeEmail}`} className="text-sm text-gray-400 hover:text-white transition-colors">{storeEmail}</a>
+                  </li>
+                )}
+                {storeHours && (
+                  <li className="flex items-start gap-3">
+                    <Clock size={16} className="text-gray-400 mt-0.5 shrink-0" />
+                    <div>
+                      {storeHours.split('\n').map((line, i) => (
+                        <span key={i} className="text-sm text-gray-400 block">{line}</span>
+                      ))}
+                    </div>
+                  </li>
+                )}
+              </ul>
+            </div>
+
+            {/* Policies & Payment */}
+            <div>
+              <h4 className="text-sm font-bold uppercase text-white mb-6 tracking-wide">Policies & Info</h4>
+              <ul className="space-y-3">
+                {policyLinks.map((link) => (
+                  <li key={link.to}>
+                    <Link to={link.to} className="flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors duration-200">
+                      {link.icon}
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+                <li>
+                  <button
+                    onClick={() => setCookieModalOpen(true)}
+                    className="flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors duration-200"
+                  >
+                    <Cookie size={14} />
+                    Cookie Preferences
+                  </button>
+                </li>
+              </ul>
+
+              {paymentMethods.length > 0 && (
+                <div className="mt-8">
+                  <h5 className="text-xs font-bold uppercase text-gray-500 mb-3 tracking-wider">We Accept</h5>
+                  <div className="flex flex-wrap gap-2">
+                    {paymentMethods.map((pm) => (
+                      <span key={pm.id} className="px-3 py-1.5 border border-gray-600 rounded text-xs text-gray-300 font-medium flex items-center gap-1.5">
+                        <CreditCard size={12} className="text-gray-500" />
+                        {pm.label}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {activeSocials.length > 0 && (
+                <div className="mt-8">
+                  <h5 className="text-xs font-bold uppercase text-gray-500 mb-3 tracking-wider">Follow Us</h5>
+                  <div className="flex gap-2.5">
+                    {activeSocials.map((social) => (
+                      <a
+                        key={social.id}
+                        href={social.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="w-9 h-9 rounded-full flex items-center justify-center transition-transform hover:scale-110 border border-gray-700"
+                        style={getSocialBg(social.platform)}
+                        aria-label={social.label || social.platform}
+                      >
+                        {getSocialIcon(social.platform)}
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            {authorInfo.name ? (
+        </div>
+
+        {/* Policy Links Bar */}
+        <div className="border-t border-gray-800/60">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
+            <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-2">
+              {policyLinks.map((link, i) => (
+                <span key={link.to} className="flex items-center gap-x-3">
+                  <Link to={link.to} className="text-xs text-gray-500 hover:text-gray-300 transition-colors">{link.label}</Link>
+                  {i < policyLinks.length - 1 && <span className="text-gray-700">|</span>}
+                </span>
+              ))}
+              <span className="flex items-center gap-x-3">
+                <span className="text-gray-700">|</span>
+                <button
+                  onClick={() => setCookieModalOpen(true)}
+                  className="text-xs text-gray-500 hover:text-gray-300 transition-colors"
+                >
+                  Cookie Preferences
+                </button>
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom Bar */}
+        <div className="border-t border-gray-800">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <div className="flex flex-col md:flex-row justify-between items-center gap-4">
               <p className="text-xs text-gray-500">
-                {authorInfo.tagline || 'Designed & developed by'}{' '}
-                {authorInfo.url ? (
+                &copy; {new Date().getFullYear()} {storeName}. All rights reserved.
+              </p>
+              {authorInfo.name ? (
+                <p className="text-xs text-gray-500">
+                  {authorInfo.tagline || 'Designed & developed by'}{' '}
+                  {authorInfo.url ? (
+                    <a
+                      href={authorInfo.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-gray-400 underline hover:text-white transition-colors"
+                    >
+                      {authorInfo.name}
+                    </a>
+                  ) : (
+                    <span className="text-gray-400">{authorInfo.name}</span>
+                  )}
+                </p>
+              ) : (
+                <p className="text-xs text-gray-500">
+                  Designed &amp; developed by{' '}
                   <a
-                    href={authorInfo.url}
+                    href="https://oneplusafrica.com"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-gray-400 underline hover:text-white transition-colors"
                   >
-                    {authorInfo.name}
+                    OnePlusAfrica Tech Solutions
                   </a>
-                ) : (
-                  <span className="text-gray-400">{authorInfo.name}</span>
-                )}
-              </p>
-            ) : (
-              <p className="text-xs text-gray-500">
-                Designed &amp; developed by{' '}
-                <a
-                  href="https://oneplusafrica.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-gray-400 underline hover:text-white transition-colors"
-                >
-                  OnePlusAfrica Tech Solutions
-                </a>
-              </p>
-            )}
-            <button
-              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-              className="w-10 h-10 rounded-full bg-gray-700 hover:bg-gray-600 flex items-center justify-center transition-colors"
-              aria-label="Scroll to top"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m18 15-6-6-6 6"/></svg>
-            </button>
+                </p>
+              )}
+            </div>
           </div>
         </div>
-      </div>
-    </footer>
+      </footer>
+
+      {/* Cookie Preferences Modal */}
+      <CookiePreferencesModal open={cookieModalOpen} onClose={() => setCookieModalOpen(false)} />
+
+      {/* Cookie Consent Banner */}
+      <CookieConsent />
+
+      {/* Floating Back to Top */}
+      <BackToTopButton />
+    </>
   )
 }
