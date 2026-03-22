@@ -1,8 +1,10 @@
 import { Link, useRouter } from '@tanstack/react-router'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Menu, X, Search, Heart, ShoppingBag, Phone, Mail } from 'lucide-react'
 import { useCart } from '@/lib/cart-context'
 import { useWishlist } from '@/lib/wishlist-context'
+
+const BASE = '/.netlify/functions'
 
 const navLinks = [
   { to: '/', label: 'Home' },
@@ -16,26 +18,59 @@ const navLinks = [
 export function Header() {
   const [mobileOpen, setMobileOpen] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
+  const [navbarOfferTexts, setNavbarOfferTexts] = useState<string[]>([])
   const router = useRouter()
   const pathname = router.state.location.pathname
   const { totalItems, setCartOpen } = useCart()
   const { totalItems: wishlistCount } = useWishlist()
 
+  useEffect(() => {
+    async function loadNavbarOffers() {
+      try {
+        const res = await fetch(`${BASE}/admin-offers?type=navbar_offers`)
+        if (res.ok) {
+          const offers = (await res.json()) as Array<{ text: string; is_active: boolean }>
+          const activeTexts = offers
+            .filter((o) => o.is_active)
+            .flatMap((o) => o.text.split('|').map((t: string) => t.trim()).filter(Boolean))
+          if (activeTexts.length > 0) setNavbarOfferTexts(activeTexts)
+        }
+      } catch { /* ignore */ }
+    }
+    loadNavbarOffers()
+  }, [])
+
+  const hasMarquee = navbarOfferTexts.length > 0
+
   return (
     <>
-      {/* Top Promotional Banner */}
-      <div className="bg-black text-white text-center py-2 px-4 relative overflow-hidden">
-        <div className="flex items-center justify-center gap-6 text-xs tracking-wide">
-          <span className="hidden sm:inline-flex items-center gap-1.5">
-            <Phone size={12} />
-            By Appointment Only
-          </span>
-          <span className="font-medium">FREE CONSULTATION on your first visit</span>
-          <span className="hidden sm:inline-flex items-center gap-1.5">
-            <Mail size={12} />
-            hello@bremersuits.com
-          </span>
-        </div>
+      {/* Top Promotional Banner - Dynamic Marquee */}
+      <div className="bg-black text-white py-2 px-4 relative overflow-hidden">
+        {hasMarquee ? (
+          <div className="overflow-hidden whitespace-nowrap">
+            <div className="inline-flex animate-marquee">
+              {/* Duplicate the items for seamless loop */}
+              {[...navbarOfferTexts, ...navbarOfferTexts].map((text, i) => (
+                <span key={i} className="inline-flex items-center gap-2 mx-8 text-xs tracking-wide font-medium">
+                  <span className="w-1.5 h-1.5 rounded-full bg-white/40 shrink-0" />
+                  {text}
+                </span>
+              ))}
+            </div>
+          </div>
+        ) : (
+          <div className="flex items-center justify-center gap-6 text-xs tracking-wide">
+            <span className="hidden sm:inline-flex items-center gap-1.5">
+              <Phone size={12} />
+              By Appointment Only
+            </span>
+            <span className="font-medium">FREE CONSULTATION on your first visit</span>
+            <span className="hidden sm:inline-flex items-center gap-1.5">
+              <Mail size={12} />
+              hello@bremersuits.com
+            </span>
+          </div>
+        )}
       </div>
 
       {/* Main Navigation */}
