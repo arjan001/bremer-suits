@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { ArrowRight, Heart, ChevronLeft, ChevronRight, SlidersHorizontal, Grid3X3, LayoutGrid, X } from 'lucide-react'
+import { ArrowRight, Heart, ChevronLeft, ChevronRight, SlidersHorizontal, X, Grid3X3, LayoutGrid } from 'lucide-react'
 import { useState, useEffect, useRef, useMemo } from 'react'
 import { useWishlist } from '@/lib/wishlist-context'
 import { getProducts, type Product } from '@/lib/products'
@@ -17,6 +17,8 @@ export const Route = createFileRoute('/collections/')({
   component: Collections,
 })
 
+const PRODUCTS_PER_PAGE = 12
+
 function Collections() {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([])
   const { toggleItem, isInWishlist } = useWishlist()
@@ -27,7 +29,10 @@ function Collections() {
   const [sortBy, setSortBy] = useState('featured')
   const [selectedColors, setSelectedColors] = useState<string[]>([])
   const [selectedTags, setSelectedTags] = useState<string[]>([])
+  const [selectedFabrics, setSelectedFabrics] = useState<string[]>([])
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [gridCols, setGridCols] = useState<3 | 4>(3)
+  const [currentPage, setCurrentPage] = useState(1)
   const carouselRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -78,6 +83,15 @@ function Collections() {
     return Array.from(tags)
   }, [products])
 
+  // Extract all unique fabrics/brands
+  const allFabrics = useMemo(() => {
+    const fabrics = new Set<string>()
+    products.forEach((p) => {
+      if (p.fabric) fabrics.add(p.fabric)
+    })
+    return Array.from(fabrics)
+  }, [products])
+
   // Category names for sidebar
   const categoryNames = useMemo(() => {
     if (dynamicCategories.length > 0) return dynamicCategories.map((c) => c.name)
@@ -107,6 +121,10 @@ function Collections() {
       items = items.filter((p) => p.tag && selectedTags.includes(p.tag))
     }
 
+    if (selectedFabrics.length > 0) {
+      items = items.filter((p) => p.fabric && selectedFabrics.includes(p.fabric))
+    }
+
     // Sort
     switch (sortBy) {
       case 'price-low':
@@ -126,7 +144,19 @@ function Collections() {
     }
 
     return items
-  }, [products, selectedCategories, priceRange, selectedColors, selectedTags, sortBy])
+  }, [products, selectedCategories, priceRange, selectedColors, selectedTags, selectedFabrics, sortBy])
+
+  // Pagination
+  const totalPages = Math.ceil(filteredItems.length / PRODUCTS_PER_PAGE)
+  const paginatedItems = filteredItems.slice(
+    (currentPage - 1) * PRODUCTS_PER_PAGE,
+    currentPage * PRODUCTS_PER_PAGE
+  )
+
+  // Reset to page 1 when filters change
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [selectedCategories, priceRange, selectedColors, selectedTags, selectedFabrics, sortBy])
 
   const toggleCategory = (name: string) => {
     setSelectedCategories((prev) =>
@@ -146,6 +176,12 @@ function Collections() {
     )
   }
 
+  const toggleFabric = (name: string) => {
+    setSelectedFabrics((prev) =>
+      prev.includes(name) ? prev.filter((f) => f !== name) : [...prev, name]
+    )
+  }
+
   const scrollCarousel = (dir: 'left' | 'right') => {
     if (carouselRef.current) {
       const scrollAmount = 200
@@ -156,12 +192,13 @@ function Collections() {
     }
   }
 
-  const activeFilterCount = selectedCategories.length + selectedColors.length + selectedTags.length + (priceRange[0] > 0 || priceRange[1] < maxPrice ? 1 : 0)
+  const activeFilterCount = selectedCategories.length + selectedColors.length + selectedTags.length + selectedFabrics.length + (priceRange[0] > 0 || priceRange[1] < maxPrice ? 1 : 0)
 
   const clearAllFilters = () => {
     setSelectedCategories([])
     setSelectedColors([])
     setSelectedTags([])
+    setSelectedFabrics([])
     setPriceRange([0, maxPrice])
   }
 
@@ -176,7 +213,7 @@ function Collections() {
             className="w-full h-full object-cover opacity-40"
           />
         </div>
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24 text-center">
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 lg:py-20 text-center">
           <h1
             className="text-4xl lg:text-6xl text-white mb-2 italic"
             style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
@@ -186,8 +223,8 @@ function Collections() {
         </div>
       </section>
 
-      {/* Category Carousel */}
-      {dynamicCategories.length > 0 && (
+      {/* Category Carousel — always show if categories exist */}
+      {(dynamicCategories.length > 0 || categoryNames.length > 0) && (
         <section className="bg-white border-b border-gray-100">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
             <div className="relative">
@@ -199,37 +236,87 @@ function Collections() {
               </button>
               <div
                 ref={carouselRef}
-                className="flex gap-6 overflow-x-auto scrollbar-hide px-6 snap-x snap-mandatory"
+                className="flex gap-6 lg:gap-8 overflow-x-auto scrollbar-hide px-6 snap-x snap-mandatory justify-center"
                 style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
               >
-                {dynamicCategories.map((cat) => (
-                  <button
-                    key={cat.slug}
-                    onClick={() => toggleCategory(cat.name)}
-                    className={`flex flex-col items-center gap-2 shrink-0 snap-start transition-all duration-200 ${
-                      selectedCategories.includes(cat.name) ? 'opacity-100' : 'opacity-70 hover:opacity-100'
-                    }`}
-                  >
-                    <div className={`w-20 h-20 lg:w-24 lg:h-24 rounded-full overflow-hidden bg-gray-100 ring-2 transition-all duration-200 ${
-                      selectedCategories.includes(cat.name) ? 'ring-black' : 'ring-transparent'
-                    }`}>
-                      {cat.image ? (
-                        <img
-                          src={cat.image}
-                          alt={cat.name}
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center text-gray-300 text-xs">
-                          {cat.name.charAt(0)}
-                        </div>
-                      )}
-                    </div>
-                    <span className="text-[10px] lg:text-xs text-center font-medium text-gray-700 max-w-[90px] truncate">
-                      {cat.name}
-                    </span>
-                  </button>
-                ))}
+                {/* "All" button */}
+                <button
+                  onClick={() => setSelectedCategories([])}
+                  className={`flex flex-col items-center gap-2 shrink-0 snap-start transition-all duration-200 ${
+                    selectedCategories.length === 0 ? 'opacity-100' : 'opacity-60 hover:opacity-100'
+                  }`}
+                >
+                  <div className={`w-16 h-16 lg:w-20 lg:h-20 rounded-full overflow-hidden bg-gray-100 ring-2 transition-all duration-200 flex items-center justify-center ${
+                    selectedCategories.length === 0 ? 'ring-black' : 'ring-transparent'
+                  }`}>
+                    <LayoutGrid size={20} className="text-gray-500" />
+                  </div>
+                  <span className="text-[10px] lg:text-xs text-center font-medium text-gray-700">
+                    All
+                  </span>
+                </button>
+
+                {dynamicCategories.length > 0 ? (
+                  dynamicCategories.map((cat) => (
+                    <button
+                      key={cat.slug}
+                      onClick={() => {
+                        if (selectedCategories.length === 1 && selectedCategories[0] === cat.name) {
+                          setSelectedCategories([])
+                        } else {
+                          setSelectedCategories([cat.name])
+                        }
+                      }}
+                      className={`flex flex-col items-center gap-2 shrink-0 snap-start transition-all duration-200 ${
+                        selectedCategories.includes(cat.name) ? 'opacity-100' : 'opacity-60 hover:opacity-100'
+                      }`}
+                    >
+                      <div className={`w-16 h-16 lg:w-20 lg:h-20 rounded-full overflow-hidden bg-gray-100 ring-2 transition-all duration-200 ${
+                        selectedCategories.includes(cat.name) ? 'ring-black' : 'ring-transparent'
+                      }`}>
+                        {cat.image ? (
+                          <img
+                            src={cat.image}
+                            alt={cat.name}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-gray-400 text-sm font-bold">
+                            {cat.name.charAt(0)}
+                          </div>
+                        )}
+                      </div>
+                      <span className="text-[10px] lg:text-xs text-center font-medium text-gray-700 max-w-[80px] truncate">
+                        {cat.name}
+                      </span>
+                    </button>
+                  ))
+                ) : (
+                  categoryNames.map((name) => (
+                    <button
+                      key={name}
+                      onClick={() => {
+                        if (selectedCategories.length === 1 && selectedCategories[0] === name) {
+                          setSelectedCategories([])
+                        } else {
+                          setSelectedCategories([name])
+                        }
+                      }}
+                      className={`flex flex-col items-center gap-2 shrink-0 snap-start transition-all duration-200 ${
+                        selectedCategories.includes(name) ? 'opacity-100' : 'opacity-60 hover:opacity-100'
+                      }`}
+                    >
+                      <div className={`w-16 h-16 lg:w-20 lg:h-20 rounded-full overflow-hidden bg-gray-100 ring-2 transition-all duration-200 flex items-center justify-center ${
+                        selectedCategories.includes(name) ? 'ring-black' : 'ring-transparent'
+                      }`}>
+                        <span className="text-gray-400 text-sm font-bold">{name.charAt(0)}</span>
+                      </div>
+                      <span className="text-[10px] lg:text-xs text-center font-medium text-gray-700 max-w-[80px] truncate">
+                        {name}
+                      </span>
+                    </button>
+                  ))
+                )}
               </div>
               <button
                 onClick={() => scrollCarousel('right')}
@@ -284,6 +371,9 @@ function Collections() {
                     allColors={allColors}
                     selectedColors={selectedColors}
                     toggleColor={toggleColor}
+                    allFabrics={allFabrics}
+                    selectedFabrics={selectedFabrics}
+                    toggleFabric={toggleFabric}
                     activeFilterCount={activeFilterCount}
                     clearAllFilters={clearAllFilters}
                   />
@@ -292,7 +382,7 @@ function Collections() {
             )}
 
             {/* Desktop Sidebar */}
-            <aside className="hidden lg:block w-64 shrink-0">
+            <aside className="hidden lg:block w-60 shrink-0">
               <SidebarContent
                 categoryNames={categoryNames}
                 selectedCategories={selectedCategories}
@@ -306,6 +396,9 @@ function Collections() {
                 allColors={allColors}
                 selectedColors={selectedColors}
                 toggleColor={toggleColor}
+                allFabrics={allFabrics}
+                selectedFabrics={selectedFabrics}
+                toggleFabric={toggleFabric}
                 activeFilterCount={activeFilterCount}
                 clearAllFilters={clearAllFilters}
               />
@@ -314,12 +407,31 @@ function Collections() {
             {/* Product Grid Area */}
             <div className="flex-1 min-w-0">
               {/* Top bar */}
-              <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center justify-between mb-6 pb-4 border-b border-gray-100">
                 <div>
-                  <h2 className="text-sm font-bold uppercase tracking-wider text-black">Collections</h2>
-                  <p className="text-xs text-gray-400 mt-0.5">{filteredItems.length} products</p>
+                  <h2 className="text-sm font-bold uppercase tracking-wider text-black">
+                    {selectedCategories.length === 1 ? selectedCategories[0] : 'All Collections'}
+                  </h2>
+                  <p className="text-xs text-gray-400 mt-0.5">{filteredItems.length} product{filteredItems.length !== 1 ? 's' : ''}</p>
                 </div>
                 <div className="flex items-center gap-3">
+                  {/* Grid toggle - desktop only */}
+                  <div className="hidden lg:flex items-center border border-gray-200 rounded">
+                    <button
+                      onClick={() => setGridCols(3)}
+                      className={`p-1.5 ${gridCols === 3 ? 'bg-gray-100 text-black' : 'text-gray-400 hover:text-black'}`}
+                      aria-label="3 columns"
+                    >
+                      <Grid3X3 size={16} />
+                    </button>
+                    <button
+                      onClick={() => setGridCols(4)}
+                      className={`p-1.5 ${gridCols === 4 ? 'bg-gray-100 text-black' : 'text-gray-400 hover:text-black'}`}
+                      aria-label="4 columns"
+                    >
+                      <LayoutGrid size={16} />
+                    </button>
+                  </div>
                   <select
                     value={sortBy}
                     onChange={(e) => setSortBy(e.target.value)}
@@ -349,6 +461,12 @@ function Collections() {
                       <button onClick={() => toggleTag(t)} className="text-gray-400 hover:text-black"><X size={12} /></button>
                     </span>
                   ))}
+                  {selectedFabrics.map((f) => (
+                    <span key={f} className="inline-flex items-center gap-1 px-3 py-1 bg-gray-100 text-xs text-gray-700 rounded-full">
+                      {f}
+                      <button onClick={() => toggleFabric(f)} className="text-gray-400 hover:text-black"><X size={12} /></button>
+                    </span>
+                  ))}
                   {selectedColors.map((c) => (
                     <span key={c} className="inline-flex items-center gap-1 px-3 py-1 bg-gray-100 text-xs text-gray-700 rounded-full">
                       {c}
@@ -362,106 +480,146 @@ function Collections() {
               )}
 
               {/* Products Grid */}
-              {filteredItems.length > 0 ? (
-                <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-5">
-                  {filteredItems.map((item) => {
-                    const inWishlist = isInWishlist(item.id)
-                    return (
-                      <div
-                        key={item.id}
-                        className="group bg-white border border-gray-100 hover:border-gray-200 hover:shadow-lg transition-all duration-300 overflow-hidden"
-                      >
-                        <Link
-                          to="/collections/$slug"
-                          params={{ slug: item.id }}
-                          className="block"
+              {paginatedItems.length > 0 ? (
+                <>
+                  <div className={`grid grid-cols-2 gap-4 lg:gap-5 ${
+                    gridCols === 4 ? 'lg:grid-cols-4' : 'lg:grid-cols-3'
+                  }`}>
+                    {paginatedItems.map((item) => {
+                      const inWishlist = isInWishlist(item.id)
+                      return (
+                        <div
+                          key={item.id}
+                          className="group bg-white border border-gray-100 hover:border-gray-200 hover:shadow-lg transition-all duration-300 overflow-hidden"
                         >
-                          <div className="relative overflow-hidden aspect-[3/4] bg-gray-50">
-                            <img
-                              src={item.image}
-                              alt={item.title}
-                              className="w-full h-full object-cover product-img-zoom"
-                            />
-                            {item.tag && (
-                              <span className="absolute top-3 left-3 px-3 py-1 bg-black text-white text-[10px] tracking-wider uppercase font-semibold">
-                                {item.tag}
-                              </span>
-                            )}
-                            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
-                            {/* Wishlist button */}
-                            <button
-                              onClick={(e) => {
-                                e.preventDefault()
-                                e.stopPropagation()
-                                toggleItem(item.id)
-                              }}
-                              className={`absolute top-3 right-3 p-2 rounded-full bg-white/80 backdrop-blur-sm transition-all duration-200 z-10 ${
-                                inWishlist
-                                  ? 'text-red-500'
-                                  : 'text-gray-400 hover:text-red-400'
-                              }`}
-                              aria-label={inWishlist ? 'Remove from wishlist' : 'Add to wishlist'}
-                            >
-                              <Heart size={16} className={inWishlist ? 'fill-red-500' : ''} />
-                            </button>
-                            {/* View Product overlay */}
-                            <div className="absolute bottom-0 left-0 right-0 p-3 translate-y-full group-hover:translate-y-0 transition-transform duration-300 z-10">
-                              <span className="flex items-center justify-center gap-2 w-full py-2.5 bg-black text-white text-center text-xs tracking-widest uppercase font-semibold">
-                                View Product
-                                <ArrowRight size={14} />
-                              </span>
-                            </div>
-                          </div>
-                        </Link>
-
-                        <div className="p-4">
                           <Link
                             to="/collections/$slug"
                             params={{ slug: item.id }}
                             className="block"
                           >
-                            <h3 className="text-sm font-semibold text-black mb-1.5 line-clamp-1">
-                              {item.title}
-                            </h3>
-                            <div className="flex items-center gap-2">
-                              {item.salePrice ? (
-                                <>
-                                  <span className="text-sm font-bold text-black">{item.salePrice}</span>
-                                  {item.originalPrice && (
-                                    <span className="text-xs text-gray-400 line-through">{item.originalPrice}</span>
-                                  )}
-                                </>
-                              ) : (
-                                <>
-                                  <span className="text-sm font-bold text-black">{item.price}</span>
-                                  {item.originalPrice && item.originalPrice !== item.price && (
-                                    <span className="text-xs text-gray-400 line-through">{item.originalPrice}</span>
-                                  )}
-                                </>
+                            <div className="relative overflow-hidden aspect-[3/4] bg-gray-50">
+                              <img
+                                src={item.image}
+                                alt={item.title}
+                                className="w-full h-full object-cover product-img-zoom"
+                              />
+                              {item.tag && (
+                                <span className="absolute top-3 left-3 px-3 py-1 bg-black text-white text-[10px] tracking-wider uppercase font-semibold">
+                                  {item.tag}
+                                </span>
                               )}
+                              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
+                              {/* Wishlist button */}
+                              <button
+                                onClick={(e) => {
+                                  e.preventDefault()
+                                  e.stopPropagation()
+                                  toggleItem(item.id)
+                                }}
+                                className={`absolute top-3 right-3 p-2 rounded-full bg-white/80 backdrop-blur-sm transition-all duration-200 z-10 ${
+                                  inWishlist
+                                    ? 'text-red-500'
+                                    : 'text-gray-400 hover:text-red-400'
+                                }`}
+                                aria-label={inWishlist ? 'Remove from wishlist' : 'Add to wishlist'}
+                              >
+                                <Heart size={16} className={inWishlist ? 'fill-red-500' : ''} />
+                              </button>
+                              {/* View Product overlay */}
+                              <div className="absolute bottom-0 left-0 right-0 p-3 translate-y-full group-hover:translate-y-0 transition-transform duration-300 z-10">
+                                <span className="flex items-center justify-center gap-2 w-full py-2.5 bg-black text-white text-center text-xs tracking-widest uppercase font-semibold">
+                                  View Product
+                                  <ArrowRight size={14} />
+                                </span>
+                              </div>
                             </div>
                           </Link>
-                          {/* Color swatches */}
-                          {item.colors.length > 0 && (
-                            <div className="flex gap-1.5 mt-2.5">
-                              {item.colors.slice(0, 4).map((c) => (
-                                <span
-                                  key={c.name}
-                                  className="w-3.5 h-3.5 rounded-full ring-1 ring-gray-200"
-                                  style={{ backgroundColor: c.value }}
-                                  title={c.name}
-                                />
-                              ))}
-                              {item.colors.length > 4 && (
-                                <span className="text-[10px] text-gray-400 ml-0.5 self-center">+{item.colors.length - 4}</span>
-                              )}
-                            </div>
-                          )}
+
+                          <div className="p-4">
+                            <Link
+                              to="/collections/$slug"
+                              params={{ slug: item.id }}
+                              className="block"
+                            >
+                              <h3 className="text-sm font-semibold text-black mb-1.5 line-clamp-1">
+                                {item.title}
+                              </h3>
+                              <div className="flex items-center gap-2">
+                                {item.salePrice ? (
+                                  <>
+                                    <span className="text-sm font-bold text-black">{item.salePrice}</span>
+                                    {item.originalPrice && (
+                                      <span className="text-xs text-gray-400 line-through">{item.originalPrice}</span>
+                                    )}
+                                  </>
+                                ) : (
+                                  <>
+                                    <span className="text-sm font-bold text-black">{item.price}</span>
+                                    {item.originalPrice && item.originalPrice !== item.price && (
+                                      <span className="text-xs text-gray-400 line-through">{item.originalPrice}</span>
+                                    )}
+                                  </>
+                                )}
+                              </div>
+                            </Link>
+                            {/* Color swatches */}
+                            {item.colors.length > 0 && (
+                              <div className="flex gap-1.5 mt-2.5">
+                                {item.colors.slice(0, 4).map((c) => (
+                                  <span
+                                    key={c.name}
+                                    className="w-3.5 h-3.5 rounded-full ring-1 ring-gray-200"
+                                    style={{ backgroundColor: c.value }}
+                                    title={c.name}
+                                  />
+                                ))}
+                                {item.colors.length > 4 && (
+                                  <span className="text-[10px] text-gray-400 ml-0.5 self-center">+{item.colors.length - 4}</span>
+                                )}
+                              </div>
+                            )}
+                          </div>
                         </div>
-                      </div>
-                    )
-                  })}
-                </div>
+                      )
+                    })}
+                  </div>
+
+                  {/* Pagination */}
+                  {totalPages > 1 && (
+                    <div className="flex items-center justify-center gap-2 mt-10">
+                      <button
+                        onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                        disabled={currentPage === 1}
+                        className="w-9 h-9 flex items-center justify-center border border-gray-200 text-gray-500 hover:border-black hover:text-black transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                      >
+                        <ChevronLeft size={16} />
+                      </button>
+                      {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                        <button
+                          key={page}
+                          onClick={() => {
+                            setCurrentPage(page)
+                            window.scrollTo({ top: 0, behavior: 'smooth' })
+                          }}
+                          className={`w-9 h-9 flex items-center justify-center text-xs font-semibold transition-colors ${
+                            page === currentPage
+                              ? 'bg-black text-white'
+                              : 'border border-gray-200 text-gray-500 hover:border-black hover:text-black'
+                          }`}
+                        >
+                          {page}
+                        </button>
+                      ))}
+                      <button
+                        onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                        disabled={currentPage === totalPages}
+                        className="w-9 h-9 flex items-center justify-center border border-gray-200 text-gray-500 hover:border-black hover:text-black transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                      >
+                        <ChevronRight size={16} />
+                      </button>
+                    </div>
+                  )}
+                </>
               ) : (
                 <div className="text-center py-16">
                   <div className="w-20 h-20 rounded-full bg-gray-50 flex items-center justify-center mx-auto mb-4">
@@ -529,6 +687,9 @@ function SidebarContent({
   allColors,
   selectedColors,
   toggleColor,
+  allFabrics,
+  selectedFabrics,
+  toggleFabric,
   activeFilterCount,
   clearAllFilters,
 }: {
@@ -544,6 +705,9 @@ function SidebarContent({
   allColors: { name: string; value: string }[]
   selectedColors: string[]
   toggleColor: (name: string) => void
+  allFabrics: string[]
+  selectedFabrics: string[]
+  toggleFabric: (name: string) => void
   activeFilterCount: number
   clearAllFilters: () => void
 }) {
@@ -551,7 +715,7 @@ function SidebarContent({
     <div className="space-y-6 p-5 lg:p-0">
       {/* Categories */}
       {categoryNames.length > 0 && (
-        <div>
+        <div className="pb-5 border-b border-gray-100">
           <h3 className="text-xs font-bold uppercase tracking-wider text-black mb-3">Categories</h3>
           <div className="space-y-2">
             {categoryNames.map((name) => (
@@ -570,7 +734,7 @@ function SidebarContent({
       )}
 
       {/* Price Range */}
-      <div>
+      <div className="pb-5 border-b border-gray-100">
         <h3 className="text-xs font-bold uppercase tracking-wider text-black mb-3">Price</h3>
         <div className="space-y-3">
           <input
@@ -582,7 +746,7 @@ function SidebarContent({
             className="w-full h-1 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-black"
           />
           <div className="flex items-center justify-between text-xs text-gray-500">
-            <span>${priceRange[0]} USD</span>
+            <span>From ${priceRange[0]} USD</span>
             <span>${priceRange[1]} USD</span>
           </div>
         </div>
@@ -590,7 +754,7 @@ function SidebarContent({
 
       {/* Tags */}
       {allTags.length > 0 && (
-        <div>
+        <div className="pb-5 border-b border-gray-100">
           <h3 className="text-xs font-bold uppercase tracking-wider text-black mb-3">Tag</h3>
           <div className="flex flex-wrap gap-2">
             {allTags.map((tag) => (
@@ -610,9 +774,29 @@ function SidebarContent({
         </div>
       )}
 
+      {/* Brand / Fabric */}
+      {allFabrics.length > 0 && (
+        <div className="pb-5 border-b border-gray-100">
+          <h3 className="text-xs font-bold uppercase tracking-wider text-black mb-3">Brand</h3>
+          <div className="space-y-2 max-h-40 overflow-y-auto">
+            {allFabrics.map((fabric) => (
+              <label key={fabric} className="flex items-center gap-2.5 cursor-pointer group">
+                <input
+                  type="checkbox"
+                  checked={selectedFabrics.includes(fabric)}
+                  onChange={() => toggleFabric(fabric)}
+                  className="w-4 h-4 rounded border-gray-300 text-black focus:ring-black accent-black"
+                />
+                <span className="text-sm text-gray-600 group-hover:text-black transition-colors">{fabric}</span>
+              </label>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Colors */}
       {allColors.length > 0 && (
-        <div>
+        <div className="pb-5 border-b border-gray-100">
           <h3 className="text-xs font-bold uppercase tracking-wider text-black mb-3">Color</h3>
           <div className="flex flex-wrap gap-2">
             {allColors.map((color) => (

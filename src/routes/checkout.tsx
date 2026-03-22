@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { X, Minus, Plus, CreditCard, Phone, MessageCircle, Lock, ShieldCheck } from 'lucide-react'
+import { X, Minus, Plus, CreditCard, Phone, MessageCircle, Lock, ShieldCheck, ChevronRight, Package, MapPin, Wallet, CheckCircle, Truck } from 'lucide-react'
 import { useState } from 'react'
 import { useCart } from '@/lib/cart-context'
 import { PaymentModal } from '@/components/PaymentModal'
@@ -23,8 +23,15 @@ const deliveryLocations = [
   'Other (specify in address)',
 ]
 
+const steps = [
+  { id: 1, label: 'Cart Review', icon: Package },
+  { id: 2, label: 'Details', icon: MapPin },
+  { id: 3, label: 'Payment', icon: Wallet },
+]
+
 function Checkout() {
   const { items, removeItem, updateQuantity, subtotal, clearCart } = useCart()
+  const [currentStep, setCurrentStep] = useState(1)
   const [formData, setFormData] = useState({
     fullName: '',
     phone: '',
@@ -42,30 +49,52 @@ function Checkout() {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>,
   ) => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }))
+    if (formError) setFormError('')
   }
 
   const validateForm = (): boolean => {
-    if (!formData.fullName || !formData.phone || !formData.deliveryLocation || !formData.deliveryAddress) {
-      setFormError('Please fill in all required fields before proceeding to payment.')
+    if (!formData.fullName.trim()) {
+      setFormError('Please enter your full name.')
+      return false
+    }
+    if (!formData.phone.trim()) {
+      setFormError('Please enter your phone number.')
+      return false
+    }
+    if (!formData.deliveryLocation) {
+      setFormError('Please select a delivery location.')
+      return false
+    }
+    if (!formData.deliveryAddress.trim()) {
+      setFormError('Please enter your delivery address.')
       return false
     }
     setFormError('')
     return true
   }
 
+  const goToStep = (step: number) => {
+    if (step === 2 && items.length === 0) return
+    if (step === 3 && !validateForm()) return
+    setCurrentStep(step)
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
   const openPaymentModal = (method: 'card' | 'mpesa') => {
-    if (!validateForm()) return
+    if (!validateForm()) {
+      setCurrentStep(2)
+      return
+    }
     setPaymentMethod(method)
     setPaymentModalOpen(true)
   }
 
   const handleSubmit = (e: React.FormEvent, method: string) => {
     e.preventDefault()
-    if (!formData.fullName || !formData.phone || !formData.deliveryLocation || !formData.deliveryAddress) {
-      setFormError('Please fill in all required fields before proceeding to payment.')
+    if (!validateForm()) {
+      setCurrentStep(2)
       return
     }
-    setFormError('')
 
     if (method === 'card' || method === 'mpesa') {
       setPaymentMethod(method as 'card' | 'mpesa')
@@ -122,39 +151,53 @@ function Checkout() {
     clearCart()
   }
 
+  // Order Success State
   if (orderPlaced) {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center px-4">
-        <div className="text-center max-w-md">
-          <div className="w-16 h-16 bg-black rounded-full flex items-center justify-center mx-auto mb-6">
-            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <polyline points="20 6 9 17 4 12" />
-            </svg>
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
+        <div className="text-center max-w-lg bg-white p-10 lg:p-14 border border-gray-100">
+          <div className="w-20 h-20 bg-black rounded-full flex items-center justify-center mx-auto mb-8">
+            <CheckCircle size={36} className="text-white" />
           </div>
           <h1
-            className="text-3xl font-bold text-black mb-3"
+            className="text-3xl lg:text-4xl font-bold text-black mb-3"
             style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
           >
-            Order Placed
+            Order Confirmed
           </h1>
-          <p className="text-gray-500 text-sm leading-relaxed mb-8">
-            Thank you for your order! We will confirm your order and arrange delivery shortly. You'll receive a confirmation via phone or email.
+          <p className="text-gray-500 text-sm leading-relaxed mb-4">
+            Thank you for choosing Bremer Suits!
           </p>
-          <Link
-            to="/collections"
-            className="inline-flex items-center px-8 py-3.5 text-xs tracking-[0.2em] uppercase bg-black text-white hover:bg-gray-800 transition-colors duration-300 font-semibold"
-          >
-            Continue Shopping
-          </Link>
+          <p className="text-gray-400 text-sm leading-relaxed mb-10">
+            We will confirm your order and arrange delivery shortly. You'll receive a confirmation via phone or email.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <Link
+              to="/collections"
+              className="inline-flex items-center justify-center px-8 py-3.5 text-xs tracking-[0.2em] uppercase bg-black text-white hover:bg-gray-800 transition-colors duration-300 font-semibold"
+            >
+              Continue Shopping
+            </Link>
+            <Link
+              to="/"
+              className="inline-flex items-center justify-center px-8 py-3.5 text-xs tracking-[0.2em] uppercase border border-gray-200 text-gray-600 hover:border-black hover:text-black transition-colors duration-300 font-medium"
+            >
+              Back to Home
+            </Link>
+          </div>
         </div>
       </div>
     )
   }
 
+  // Empty Cart State
   if (items.length === 0) {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center px-4">
-        <div className="text-center max-w-md">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
+        <div className="text-center max-w-md bg-white p-10 border border-gray-100">
+          <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-gray-50 flex items-center justify-center">
+            <Package size={28} className="text-gray-300" />
+          </div>
           <h1
             className="text-3xl font-bold text-black mb-3"
             style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
@@ -176,250 +219,358 @@ function Checkout() {
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-gray-50">
       {/* Breadcrumb */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-        <nav className="flex items-center gap-2 text-sm text-gray-400">
-          <Link to="/" className="hover:text-black transition-colors">Home</Link>
-          <span>/</span>
-          <Link to="/collections" className="hover:text-black transition-colors">Shop</Link>
-          <span>/</span>
-          <span className="text-black font-medium">Checkout</span>
-        </nav>
+      <div className="bg-white border-b border-gray-100">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+          <nav className="flex items-center gap-2 text-sm text-gray-400">
+            <Link to="/" className="hover:text-black transition-colors">Home</Link>
+            <ChevronRight size={14} />
+            <Link to="/collections" className="hover:text-black transition-colors">Shop</Link>
+            <ChevronRight size={14} />
+            <span className="text-black font-medium">Checkout</span>
+          </nav>
+        </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
-        <h1
-          className="text-3xl lg:text-4xl font-bold text-black mb-10"
-          style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
-        >
-          Checkout
-        </h1>
-
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-10 lg:gap-16">
-          {/* Left Column - Form */}
-          <div className="lg:col-span-3">
-            <form
-              onSubmit={(e) => handleSubmit(e, 'card')}
-              id="checkout-form"
-            >
-              {/* Customer Information */}
-              <div className="mb-10">
-                <h2 className="text-lg font-bold text-black mb-5">Customer Information</h2>
-
-                <div className="space-y-5">
-                  <div>
-                    <label className="block text-sm font-semibold text-black mb-2">
-                      Full Name <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      name="fullName"
-                      value={formData.fullName}
-                      onChange={handleInputChange}
-                      placeholder="Jane Doe"
-                      required
-                      className="w-full px-4 py-3 bg-white border border-gray-200 text-sm focus:border-black focus:ring-1 focus:ring-black outline-none transition-colors"
-                    />
+      {/* Progress Steps */}
+      <div className="bg-white border-b border-gray-100">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          <div className="flex items-center justify-between">
+            {steps.map((step, index) => (
+              <div key={step.id} className="flex items-center flex-1">
+                <button
+                  onClick={() => {
+                    if (step.id < currentStep) goToStep(step.id)
+                  }}
+                  className={`flex items-center gap-2.5 ${
+                    step.id < currentStep ? 'cursor-pointer' : step.id === currentStep ? '' : 'cursor-default'
+                  }`}
+                >
+                  <div className={`w-9 h-9 rounded-full flex items-center justify-center transition-colors text-sm font-bold ${
+                    step.id < currentStep
+                      ? 'bg-black text-white'
+                      : step.id === currentStep
+                        ? 'bg-black text-white'
+                        : 'bg-gray-100 text-gray-400'
+                  }`}>
+                    {step.id < currentStep ? (
+                      <CheckCircle size={18} />
+                    ) : (
+                      <step.icon size={16} />
+                    )}
                   </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                    <div>
-                      <label className="block text-sm font-semibold text-black mb-2">
-                        Phone Number <span className="text-red-500">*</span>
-                      </label>
-                      <input
-                        type="tel"
-                        name="phone"
-                        value={formData.phone}
-                        onChange={handleInputChange}
-                        placeholder="(555) 000-0000"
-                        required
-                        className="w-full px-4 py-3 bg-white border border-gray-200 text-sm focus:border-black focus:ring-1 focus:ring-black outline-none transition-colors"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-semibold text-black mb-2">
-                        Email <span className="text-gray-400 font-normal">(optional)</span>
-                      </label>
-                      <input
-                        type="email"
-                        name="email"
-                        value={formData.email}
-                        onChange={handleInputChange}
-                        placeholder="jane@example.com"
-                        className="w-full px-4 py-3 bg-white border border-gray-200 text-sm focus:border-black focus:ring-1 focus:ring-black outline-none transition-colors"
-                      />
-                    </div>
-                  </div>
-                </div>
+                  <span className={`hidden sm:block text-xs font-semibold uppercase tracking-wider ${
+                    step.id <= currentStep ? 'text-black' : 'text-gray-400'
+                  }`}>
+                    {step.label}
+                  </span>
+                </button>
+                {index < steps.length - 1 && (
+                  <div className={`flex-1 h-px mx-4 ${
+                    step.id < currentStep ? 'bg-black' : 'bg-gray-200'
+                  }`} />
+                )}
               </div>
-
-              {/* Delivery */}
-              <div className="mb-10">
-                <h2 className="text-lg font-bold text-black mb-5">Delivery</h2>
-
-                <div className="space-y-5">
-                  <div>
-                    <label className="block text-sm font-semibold text-black mb-2">
-                      Delivery Location <span className="text-red-500">*</span>
-                    </label>
-                    <select
-                      name="deliveryLocation"
-                      value={formData.deliveryLocation}
-                      onChange={handleInputChange}
-                      required
-                      className="w-full px-4 py-3 bg-white border border-gray-200 text-sm focus:border-black focus:ring-1 focus:ring-black outline-none transition-colors appearance-none"
-                    >
-                      {deliveryLocations.map((loc) => (
-                        <option key={loc} value={loc === 'Select delivery location' ? '' : loc}>
-                          {loc}
-                        </option>
-                      ))}
-                    </select>
-                    <p className="text-xs text-gray-400 mt-1.5">Please select a delivery location to proceed</p>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-semibold text-black mb-2">
-                      Delivery Address <span className="text-red-500">*</span>
-                    </label>
-                    <textarea
-                      name="deliveryAddress"
-                      value={formData.deliveryAddress}
-                      onChange={handleInputChange}
-                      placeholder="Building name, street, area..."
-                      required
-                      rows={3}
-                      className="w-full px-4 py-3 bg-white border border-gray-200 text-sm focus:border-black focus:ring-1 focus:ring-black outline-none transition-colors resize-y"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-semibold text-black mb-2">
-                      Order Notes <span className="text-gray-400 font-normal">(optional)</span>
-                    </label>
-                    <textarea
-                      name="orderNotes"
-                      value={formData.orderNotes}
-                      onChange={handleInputChange}
-                      placeholder="Any special instructions..."
-                      rows={3}
-                      className="w-full px-4 py-3 bg-white border border-gray-200 text-sm focus:border-black focus:ring-1 focus:ring-black outline-none transition-colors resize-y"
-                    />
-                  </div>
-                </div>
-              </div>
-            </form>
+            ))}
           </div>
+        </div>
+      </div>
 
-          {/* Right Column - Order Summary */}
-          <div className="lg:col-span-2">
-            <div className="bg-gray-50 border border-gray-100 p-6 lg:p-8 sticky top-24">
-              <h2 className="text-lg font-bold text-black mb-6">Order Summary</h2>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
+          {/* Left Column - Main Content */}
+          <div className="lg:col-span-7">
+            {/* Step 1: Cart Review */}
+            {currentStep === 1 && (
+              <div className="bg-white border border-gray-100 p-6 lg:p-8">
+                <h2
+                  className="text-2xl font-bold text-black mb-6"
+                  style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
+                >
+                  Review Your Order
+                </h2>
 
-              {/* Cart Items */}
-              <div className="space-y-5 mb-6">
-                {items.map((item) => (
-                  <div key={item.id} className="flex gap-4">
-                    <div className="w-16 h-20 bg-gray-100 shrink-0 overflow-hidden">
-                      <img
-                        src={item.image}
-                        alt={item.title}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-start justify-between gap-2">
-                        <div>
-                          <h3 className="text-sm font-semibold text-black leading-tight">
-                            {item.title}
-                          </h3>
-                          {(item.selectedColor || item.selectedSize) && (
-                            <p className="text-xs text-gray-400 mt-0.5">
-                              {[item.selectedColor, item.selectedSize].filter(Boolean).join(' / ')}
-                            </p>
-                          )}
-                          <p className="text-sm text-gray-500 mt-0.5">
-                            ${item.price.toLocaleString()}
-                          </p>
+                <div className="divide-y divide-gray-100">
+                  {items.map((item) => (
+                    <div key={item.id} className="flex gap-4 lg:gap-6 py-5 first:pt-0 last:pb-0">
+                      <Link to="/collections/$slug" params={{ slug: item.id }} className="shrink-0">
+                        <div className="w-20 h-24 lg:w-24 lg:h-28 bg-gray-50 overflow-hidden">
+                          <img
+                            src={item.image}
+                            alt={item.title}
+                            className="w-full h-full object-cover"
+                          />
                         </div>
-                        <div className="flex items-center gap-3">
-                          <span className="text-sm font-medium text-black whitespace-nowrap">
-                            ${(item.price * item.quantity).toLocaleString()}
-                          </span>
+                      </Link>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-start justify-between gap-2 mb-1">
+                          <div>
+                            <h3 className="text-sm font-semibold text-black leading-tight">
+                              {item.title}
+                            </h3>
+                            {(item.selectedColor || item.selectedSize) && (
+                              <p className="text-xs text-gray-400 mt-1">
+                                {[item.selectedColor, item.selectedSize].filter(Boolean).join(' / ')}
+                              </p>
+                            )}
+                            {item.category && (
+                              <p className="text-[11px] text-gray-400 mt-0.5 uppercase tracking-wide">{item.category}</p>
+                            )}
+                          </div>
                           <button
                             onClick={() => removeItem(item.id)}
-                            className="text-gray-300 hover:text-black transition-colors shrink-0"
+                            className="text-gray-300 hover:text-red-500 transition-colors shrink-0 p-1"
                             aria-label={`Remove ${item.title}`}
                           >
-                            <X size={14} />
+                            <X size={16} />
                           </button>
                         </div>
-                      </div>
-                      <div className="flex items-center gap-0 mt-2 border border-gray-200 w-fit bg-white">
-                        <button
-                          onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                          className="w-7 h-7 flex items-center justify-center text-gray-500 hover:text-black transition-colors"
-                          aria-label="Decrease quantity"
-                        >
-                          <Minus size={12} />
-                        </button>
-                        <span className="w-7 h-7 flex items-center justify-center text-xs font-medium text-black border-x border-gray-200">
-                          {item.quantity}
-                        </span>
-                        <button
-                          onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                          className="w-7 h-7 flex items-center justify-center text-gray-500 hover:text-black transition-colors"
-                          aria-label="Increase quantity"
-                        >
-                          <Plus size={12} />
-                        </button>
+                        <p className="text-sm text-gray-600 font-medium mt-1">
+                          ${item.price.toLocaleString()} each
+                        </p>
+                        <div className="flex items-center justify-between mt-3">
+                          <div className="flex items-center gap-0 border border-gray-200 bg-gray-50">
+                            <button
+                              onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                              className="w-8 h-8 flex items-center justify-center text-gray-500 hover:text-black hover:bg-white transition-colors"
+                              aria-label="Decrease quantity"
+                            >
+                              <Minus size={13} />
+                            </button>
+                            <span className="w-10 h-8 flex items-center justify-center text-xs font-semibold text-black border-x border-gray-200 bg-white">
+                              {item.quantity}
+                            </span>
+                            <button
+                              onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                              className="w-8 h-8 flex items-center justify-center text-gray-500 hover:text-black hover:bg-white transition-colors"
+                              aria-label="Increase quantity"
+                            >
+                              <Plus size={13} />
+                            </button>
+                          </div>
+                          <span className="text-sm font-bold text-black">
+                            ${(item.price * item.quantity).toLocaleString()}
+                          </span>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
 
-              {/* Totals */}
-              <div className="border-t border-gray-200 pt-4 space-y-2">
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-500">Subtotal</span>
-                  <span className="font-medium text-black">${subtotal.toLocaleString()}</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-500">Delivery</span>
-                  <span className="text-gray-400">&mdash;</span>
-                </div>
-                <div className="flex justify-between text-base font-bold text-black pt-2 border-t border-gray-200">
-                  <span>Total</span>
-                  <span>${subtotal.toLocaleString()}</span>
+                <div className="mt-6 pt-6 border-t border-gray-100 flex items-center justify-between">
+                  <Link
+                    to="/collections"
+                    className="text-xs text-gray-500 hover:text-black transition-colors font-medium uppercase tracking-wider"
+                  >
+                    Continue Shopping
+                  </Link>
+                  <button
+                    onClick={() => goToStep(2)}
+                    className="inline-flex items-center gap-2 px-8 py-3.5 text-xs tracking-[0.2em] uppercase bg-black text-white hover:bg-gray-800 transition-colors duration-300 font-semibold"
+                  >
+                    Proceed to Details
+                    <ChevronRight size={14} />
+                  </button>
                 </div>
               </div>
+            )}
 
-              {/* Payment Methods */}
-              <div className="mt-6">
-                <div className="flex items-center gap-2 mb-4">
-                  <Lock size={13} className="text-gray-400" />
-                  <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Secure Payment</span>
-                </div>
+            {/* Step 2: Customer & Delivery Details */}
+            {currentStep === 2 && (
+              <div className="bg-white border border-gray-100 p-6 lg:p-8">
+                <h2
+                  className="text-2xl font-bold text-black mb-8"
+                  style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
+                >
+                  Your Details
+                </h2>
 
                 {formError && (
-                  <div className="p-3 bg-red-50 border border-red-100 rounded-lg mb-4">
+                  <div className="p-4 bg-red-50 border border-red-100 mb-6">
                     <p className="text-sm text-red-600">{formError}</p>
                   </div>
                 )}
+
+                <form onSubmit={(e) => { e.preventDefault(); goToStep(3) }} id="checkout-form">
+                  {/* Customer Information */}
+                  <div className="mb-8">
+                    <h3 className="text-sm font-bold text-black mb-4 uppercase tracking-wider flex items-center gap-2">
+                      <span className="w-6 h-6 bg-black text-white text-[10px] rounded-full flex items-center justify-center font-bold">1</span>
+                      Customer Information
+                    </h3>
+
+                    <div className="space-y-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                          Full Name <span className="text-red-500">*</span>
+                        </label>
+                        <input
+                          type="text"
+                          name="fullName"
+                          value={formData.fullName}
+                          onChange={handleInputChange}
+                          placeholder="e.g. John Kamau"
+                          required
+                          className="w-full px-4 py-3 bg-gray-50 border border-gray-200 text-sm focus:border-black focus:ring-1 focus:ring-black focus:bg-white outline-none transition-all"
+                        />
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                            Phone Number <span className="text-red-500">*</span>
+                          </label>
+                          <input
+                            type="tel"
+                            name="phone"
+                            value={formData.phone}
+                            onChange={handleInputChange}
+                            placeholder="0793 880 642"
+                            required
+                            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 text-sm focus:border-black focus:ring-1 focus:ring-black focus:bg-white outline-none transition-all"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                            Email <span className="text-gray-400 font-normal text-xs">(optional)</span>
+                          </label>
+                          <input
+                            type="email"
+                            name="email"
+                            value={formData.email}
+                            onChange={handleInputChange}
+                            placeholder="john@example.com"
+                            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 text-sm focus:border-black focus:ring-1 focus:ring-black focus:bg-white outline-none transition-all"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Delivery */}
+                  <div className="mb-8">
+                    <h3 className="text-sm font-bold text-black mb-4 uppercase tracking-wider flex items-center gap-2">
+                      <span className="w-6 h-6 bg-black text-white text-[10px] rounded-full flex items-center justify-center font-bold">2</span>
+                      Delivery Details
+                    </h3>
+
+                    <div className="space-y-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                          Delivery Location <span className="text-red-500">*</span>
+                        </label>
+                        <select
+                          name="deliveryLocation"
+                          value={formData.deliveryLocation}
+                          onChange={handleInputChange}
+                          required
+                          className="w-full px-4 py-3 bg-gray-50 border border-gray-200 text-sm focus:border-black focus:ring-1 focus:ring-black focus:bg-white outline-none transition-all appearance-none"
+                        >
+                          {deliveryLocations.map((loc) => (
+                            <option key={loc} value={loc === 'Select delivery location' ? '' : loc}>
+                              {loc}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                          Delivery Address <span className="text-red-500">*</span>
+                        </label>
+                        <textarea
+                          name="deliveryAddress"
+                          value={formData.deliveryAddress}
+                          onChange={handleInputChange}
+                          placeholder="Building name, street, area..."
+                          required
+                          rows={3}
+                          className="w-full px-4 py-3 bg-gray-50 border border-gray-200 text-sm focus:border-black focus:ring-1 focus:ring-black focus:bg-white outline-none transition-all resize-y"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                          Order Notes <span className="text-gray-400 font-normal text-xs">(optional)</span>
+                        </label>
+                        <textarea
+                          name="orderNotes"
+                          value={formData.orderNotes}
+                          onChange={handleInputChange}
+                          placeholder="Any special instructions for your order..."
+                          rows={2}
+                          className="w-full px-4 py-3 bg-gray-50 border border-gray-200 text-sm focus:border-black focus:ring-1 focus:ring-black focus:bg-white outline-none transition-all resize-y"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-between pt-4 border-t border-gray-100">
+                    <button
+                      type="button"
+                      onClick={() => goToStep(1)}
+                      className="text-xs text-gray-500 hover:text-black transition-colors font-medium uppercase tracking-wider"
+                    >
+                      Back to Cart
+                    </button>
+                    <button
+                      type="submit"
+                      className="inline-flex items-center gap-2 px-8 py-3.5 text-xs tracking-[0.2em] uppercase bg-black text-white hover:bg-gray-800 transition-colors duration-300 font-semibold"
+                    >
+                      Continue to Payment
+                      <ChevronRight size={14} />
+                    </button>
+                  </div>
+                </form>
+              </div>
+            )}
+
+            {/* Step 3: Payment */}
+            {currentStep === 3 && (
+              <div className="bg-white border border-gray-100 p-6 lg:p-8">
+                <h2
+                  className="text-2xl font-bold text-black mb-6"
+                  style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
+                >
+                  Choose Payment Method
+                </h2>
+
+                {/* Order Review Summary */}
+                <div className="bg-gray-50 p-5 mb-8 border border-gray-100">
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-3">Delivering to</h4>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                      <p className="text-sm font-semibold text-black">{formData.fullName}</p>
+                      <p className="text-xs text-gray-500 mt-0.5">{formData.phone}</p>
+                      {formData.email && <p className="text-xs text-gray-500">{formData.email}</p>}
+                    </div>
+                    <div>
+                      <p className="text-xs font-semibold text-black">{formData.deliveryLocation}</p>
+                      <p className="text-xs text-gray-500 mt-0.5">{formData.deliveryAddress}</p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => goToStep(2)}
+                    className="text-xs text-black font-medium underline mt-3 hover:no-underline"
+                  >
+                    Edit details
+                  </button>
+                </div>
 
                 <div className="space-y-3">
                   {/* Card Payment */}
                   <button
                     type="button"
                     onClick={() => openPaymentModal('card')}
-                    className="group flex items-center w-full py-3.5 px-4 bg-[#1a1a1a] text-white text-sm font-semibold rounded-lg hover:bg-black transition-all duration-300 shadow-md hover:shadow-lg"
+                    className="group flex items-center w-full py-4 px-5 bg-[#1a1a1a] text-white text-sm font-semibold hover:bg-black transition-all duration-300 shadow-sm hover:shadow-md"
                   >
-                    <CreditCard size={18} className="shrink-0" />
-                    <span className="ml-2.5">Pay with Card</span>
-                    <span className="ml-auto flex items-center gap-1.5">
+                    <CreditCard size={20} className="shrink-0" />
+                    <div className="ml-3 text-left">
+                      <span className="block">Pay with Card</span>
+                      <span className="block text-[10px] text-white/50 font-normal mt-0.5">Visa, Mastercard accepted</span>
+                    </div>
+                    <span className="ml-auto flex items-center gap-2">
                       <VisaBadge />
                       <MastercardBadge />
                     </span>
@@ -429,28 +580,34 @@ function Checkout() {
                   <button
                     type="button"
                     onClick={() => openPaymentModal('mpesa')}
-                    className="group flex items-center w-full py-3.5 px-4 bg-[#4CAF50] text-white text-sm font-semibold rounded-lg hover:bg-[#43A047] transition-all duration-300 shadow-md hover:shadow-lg"
+                    className="group flex items-center w-full py-4 px-5 bg-[#4CAF50] text-white text-sm font-semibold hover:bg-[#43A047] transition-all duration-300 shadow-sm hover:shadow-md"
                   >
-                    <Phone size={18} className="shrink-0" />
-                    <span className="ml-2.5">Pay with M-PESA</span>
+                    <Phone size={20} className="shrink-0" />
+                    <div className="ml-3 text-left">
+                      <span className="block">Pay with M-PESA</span>
+                      <span className="block text-[10px] text-white/50 font-normal mt-0.5">Instant mobile payment</span>
+                    </div>
                     <span className="ml-auto">
                       <MpesaBadge />
                     </span>
                   </button>
 
-                  <div className="flex items-center gap-3 py-1">
+                  <div className="flex items-center gap-3 py-2">
                     <div className="flex-1 border-t border-gray-200" />
-                    <span className="text-xs text-gray-400">or</span>
+                    <span className="text-xs text-gray-400 uppercase tracking-wider">or</span>
                     <div className="flex-1 border-t border-gray-200" />
                   </div>
 
                   {/* WhatsApp Order */}
                   <button
                     onClick={(e) => handleSubmit(e, 'whatsapp')}
-                    className="group flex items-center w-full py-3.5 px-4 bg-white border border-gray-200 text-gray-600 text-sm font-medium rounded-lg hover:border-[#25D366] hover:text-[#25D366] transition-all duration-300"
+                    className="group flex items-center w-full py-4 px-5 bg-white border border-gray-200 text-gray-600 text-sm font-medium hover:border-[#25D366] hover:text-[#25D366] transition-all duration-300"
                   >
-                    <MessageCircle size={18} className="shrink-0" />
-                    <span className="ml-2.5">Complete via WhatsApp</span>
+                    <MessageCircle size={20} className="shrink-0" />
+                    <div className="ml-3 text-left">
+                      <span className="block">Complete via WhatsApp</span>
+                      <span className="block text-[10px] text-gray-400 font-normal mt-0.5">We'll confirm your order on WhatsApp</span>
+                    </div>
                     <svg viewBox="0 0 36 12" width="36" height="12" className="ml-auto" aria-label="WhatsApp">
                       <rect width="36" height="12" rx="3" fill="#25D366" />
                       <g transform="translate(3, 1) scale(0.4)">
@@ -460,27 +617,97 @@ function Checkout() {
                   </button>
                 </div>
 
-                {/* Trust indicators */}
-                <div className="mt-5 pt-4 border-t border-gray-100">
-                  <div className="flex items-center justify-center gap-4">
-                    <div className="flex items-center gap-1.5">
-                      <Lock size={11} className="text-gray-300" />
-                      <span className="text-[10px] text-gray-400">SSL Encrypted</span>
+                <div className="flex items-center justify-between mt-6 pt-4 border-t border-gray-100">
+                  <button
+                    onClick={() => goToStep(2)}
+                    className="text-xs text-gray-500 hover:text-black transition-colors font-medium uppercase tracking-wider"
+                  >
+                    Back to Details
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Right Column - Order Summary (always visible) */}
+          <div className="lg:col-span-5">
+            <div className="bg-white border border-gray-100 p-6 lg:p-8 sticky top-24">
+              <h2 className="text-lg font-bold text-black mb-6 flex items-center justify-between">
+                <span>Order Summary</span>
+                <span className="text-xs font-normal text-gray-400">{items.length} {items.length === 1 ? 'item' : 'items'}</span>
+              </h2>
+
+              {/* Compact Cart Items */}
+              <div className="space-y-4 mb-6 max-h-[320px] overflow-y-auto pr-1">
+                {items.map((item) => (
+                  <div key={item.id} className="flex gap-3">
+                    <div className="w-14 h-16 bg-gray-50 shrink-0 overflow-hidden">
+                      <img
+                        src={item.image}
+                        alt={item.title}
+                        className="w-full h-full object-cover"
+                      />
                     </div>
-                    <div className="w-px h-3 bg-gray-200" />
-                    <div className="flex items-center gap-1.5">
-                      <ShieldCheck size={11} className="text-gray-300" />
-                      <span className="text-[10px] text-gray-400">Secure Checkout</span>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-sm font-medium text-black leading-tight truncate">
+                        {item.title}
+                      </h3>
+                      {(item.selectedColor || item.selectedSize) && (
+                        <p className="text-[11px] text-gray-400 mt-0.5">
+                          {[item.selectedColor, item.selectedSize].filter(Boolean).join(' / ')}
+                        </p>
+                      )}
+                      <div className="flex items-center justify-between mt-1">
+                        <span className="text-xs text-gray-500">Qty: {item.quantity}</span>
+                        <span className="text-sm font-semibold text-black">
+                          ${(item.price * item.quantity).toLocaleString()}
+                        </span>
+                      </div>
                     </div>
                   </div>
-                  <div className="flex items-center justify-center gap-3 mt-3">
-                    <VisaLogo size={40} />
-                    <MastercardLogo size={40} />
-                    <MpesaLogo size={40} />
+                ))}
+              </div>
+
+              {/* Totals */}
+              <div className="border-t border-gray-100 pt-4 space-y-2.5">
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-500">Subtotal</span>
+                  <span className="font-medium text-black">${subtotal.toLocaleString()}</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-500">Delivery</span>
+                  <span className="text-xs text-gray-400 italic">Calculated at confirmation</span>
+                </div>
+                <div className="flex justify-between text-lg font-bold text-black pt-3 border-t border-gray-100">
+                  <span>Total</span>
+                  <span>${subtotal.toLocaleString()}</span>
+                </div>
+              </div>
+
+              {/* Trust Indicators */}
+              <div className="mt-6 pt-5 border-t border-gray-100">
+                <div className="grid grid-cols-2 gap-3 mb-4">
+                  <div className="flex items-center gap-2 bg-gray-50 p-2.5">
+                    <Lock size={13} className="text-gray-400 shrink-0" />
+                    <span className="text-[10px] text-gray-500 font-medium">SSL Encrypted</span>
                   </div>
-                  <p className="text-[10px] text-gray-400 text-center mt-3">
-                    We will confirm your order and arrange delivery
-                  </p>
+                  <div className="flex items-center gap-2 bg-gray-50 p-2.5">
+                    <ShieldCheck size={13} className="text-gray-400 shrink-0" />
+                    <span className="text-[10px] text-gray-500 font-medium">Secure Checkout</span>
+                  </div>
+                  <div className="flex items-center gap-2 bg-gray-50 p-2.5">
+                    <Truck size={13} className="text-gray-400 shrink-0" />
+                    <span className="text-[10px] text-gray-500 font-medium">Fast Delivery</span>
+                  </div>
+                  <div className="flex items-center gap-2 bg-gray-50 p-2.5">
+                    <CheckCircle size={13} className="text-gray-400 shrink-0" />
+                    <span className="text-[10px] text-gray-500 font-medium">Quality Guarantee</span>
+                  </div>
+                </div>
+                <div className="flex items-center justify-center gap-3">
+                  <VisaLogo size={40} />
+                  <MastercardLogo size={40} />
+                  <MpesaLogo size={40} />
                 </div>
               </div>
             </div>

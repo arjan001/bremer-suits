@@ -3,14 +3,13 @@ import { allBlogs } from 'content-collections'
 import { useState, useEffect } from 'react'
 import {
   ArrowRight,
-  Truck,
-  ShieldCheck,
-  RotateCcw,
   Scissors,
   Ruler,
   Sparkles,
   Crown,
   Heart,
+  Eye,
+  Watch,
 } from 'lucide-react'
 import { useWishlist } from '@/lib/wishlist-context'
 import { getProducts, type Product } from '@/lib/products'
@@ -50,19 +49,34 @@ export const Route = createFileRoute('/')({
 
 const services = [
   {
-    icon: Truck,
-    title: 'Nationwide Delivery',
-    description: 'Complimentary delivery on all bespoke orders. Dispatch within 4-6 weeks of final fitting.',
+    icon: Scissors,
+    title: 'High-End Tailoring',
+    description: 'Custom suits and ready-made premium pieces crafted by master tailors with the finest fabrics.',
   },
   {
-    icon: ShieldCheck,
-    title: 'Quality Guaranteed',
-    description: 'Every piece is handcrafted with premium fabrics and comes with our fit guarantee.',
+    icon: Heart,
+    title: 'Wedding Styling',
+    description: 'Bespoke wedding attire for grooms and groomsmen, including Ruracio ceremony styling.',
   },
   {
-    icon: RotateCcw,
-    title: 'Perfect Fit Promise',
-    description: 'Complimentary alterations within the first year to ensure your perfect fit endures.',
+    icon: Crown,
+    title: 'Personal Styling',
+    description: 'Complete wardrobe strategy and curation — from audits to seasonal planning and event outfits.',
+  },
+  {
+    icon: Eye,
+    title: 'Image Consulting',
+    description: 'Personal brand coaching, executive presence, and strategic image alignment for professionals.',
+  },
+  {
+    icon: Sparkles,
+    title: 'Fashion Design',
+    description: 'Custom fashion pieces designed from scratch to match your unique vision and personality.',
+  },
+  {
+    icon: Watch,
+    title: 'Male Accessories',
+    description: 'Curated ties, cufflinks, pocket squares, belts, and watches to complete your look.',
   },
 ]
 
@@ -873,14 +887,14 @@ function HomePage() {
             ) : (
               /* Default static banners */
               <>
-                {/* Promo 1 */}
+                {/* Promo 1 - New Season Fabrics */}
                 <div className="relative overflow-hidden bg-gray-900 aspect-[16/9] md:aspect-[3/2] group">
                   <img
-                    src="/images/fabrics.png"
+                    src="/images/suit-navy.webp"
                     alt="Premium Fabrics"
-                    className="absolute inset-0 w-full h-full object-cover opacity-50 group-hover:scale-105 transition-transform duration-700"
+                    className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-700"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-transparent" />
                   <div className="relative h-full flex flex-col justify-center p-8 lg:p-12">
                     <p className="text-xs tracking-widest uppercase text-white/60 mb-2">Premium Selection</p>
                     <h3
@@ -898,24 +912,25 @@ function HomePage() {
                   </div>
                 </div>
 
-                {/* Promo 2 */}
-                <div className="relative overflow-hidden bg-gray-100 aspect-[16/9] md:aspect-[3/2] group">
+                {/* Promo 2 - Custom Tailoring */}
+                <div className="relative overflow-hidden bg-gray-900 aspect-[16/9] md:aspect-[3/2] group">
                   <img
-                    src="/images/sewing-machine.png"
+                    src="/images/suit-business.webp"
                     alt="Custom Tailoring"
-                    className="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:scale-105 transition-transform duration-700"
+                    className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-700"
                   />
+                  <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-transparent" />
                   <div className="relative h-full flex flex-col justify-center p-8 lg:p-12">
-                    <p className="text-xs tracking-widest uppercase text-gray-500 mb-2">Bespoke Service</p>
+                    <p className="text-xs tracking-widest uppercase text-white/60 mb-2">Bespoke Service</p>
                     <h3
-                      className="text-2xl lg:text-3xl font-bold text-black mb-3"
+                      className="text-2xl lg:text-3xl font-bold text-white mb-3"
                       style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
                     >
                       Custom Tailoring
                     </h3>
                     <Link
                       to="/services"
-                      className="inline-flex items-center gap-2 text-xs tracking-widest uppercase text-black font-semibold hover:gap-3 transition-all duration-300 mt-2"
+                      className="inline-flex items-center gap-2 text-xs tracking-widest uppercase text-white font-semibold hover:gap-3 transition-all duration-300 mt-2"
                     >
                       Learn More <ArrowRight size={14} />
                     </Link>
@@ -970,25 +985,43 @@ function HomePage() {
         </div>
       </section>
 
-      {/* Services Strip */}
-      <section className="border-t border-b border-gray-100 py-12 lg:py-16 bg-white">
+      {/* Our Services */}
+      <section className="border-t border-b border-gray-100 py-16 lg:py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12">
+          <div className="text-center mb-12">
+            <p className="text-xs tracking-[0.3em] uppercase text-[#5b7b9a] mb-2 font-semibold">
+              What We Do
+            </p>
+            <h2
+              className="text-3xl lg:text-4xl font-semibold text-black"
+              style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
+            >
+              Our Services
+            </h2>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-8 lg:gap-10">
             {services.map((service) => (
-              <div key={service.title} className="flex items-start gap-4 text-center md:text-left md:flex-row flex-col items-center md:items-start">
-                <div className="w-12 h-12 bg-gray-50 flex items-center justify-center shrink-0">
-                  <service.icon size={22} className="text-black" strokeWidth={1.5} />
+              <Link key={service.title} to="/services" className="group flex flex-col items-center text-center">
+                <div className="w-14 h-14 bg-gray-50 group-hover:bg-black flex items-center justify-center shrink-0 transition-colors duration-300 mb-4">
+                  <service.icon size={24} className="text-black group-hover:text-white transition-colors duration-300" strokeWidth={1.5} />
                 </div>
-                <div>
-                  <h3 className="text-sm font-semibold text-black mb-1 uppercase tracking-wide">
-                    {service.title}
-                  </h3>
-                  <p className="text-xs text-gray-500 leading-relaxed">
-                    {service.description}
-                  </p>
-                </div>
-              </div>
+                <h3 className="text-sm font-semibold text-black mb-2 uppercase tracking-wide">
+                  {service.title}
+                </h3>
+                <p className="text-xs text-gray-500 leading-relaxed max-w-xs">
+                  {service.description}
+                </p>
+              </Link>
             ))}
+          </div>
+          <div className="text-center mt-10">
+            <Link
+              to="/services"
+              className="inline-flex items-center gap-2 px-8 py-3.5 text-xs tracking-[0.2em] uppercase bg-black text-white hover:bg-gray-800 transition-colors duration-300 font-semibold"
+            >
+              View All Services
+              <ArrowRight size={14} />
+            </Link>
           </div>
         </div>
       </section>
