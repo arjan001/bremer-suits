@@ -708,6 +708,7 @@ function Footer() {
 
   /* Policy links with icons */
   const policyLinks = [
+    { to: '/faq', label: 'FAQ', icon: <FileText size={14} /> },
     { to: '/privacy-policy', label: 'Privacy Policy', icon: <Shield size={14} /> },
     { to: '/terms-of-service', label: 'Terms of Service', icon: <FileText size={14} /> },
     { to: '/refund-policy', label: 'Refund Policy', icon: <RotateCcw size={14} /> },
@@ -857,6 +858,7 @@ function Footer() {
             <div>
               <h4 className="text-sm font-bold uppercase text-white mb-6 tracking-wide">Policies</h4>
               <ul className="space-y-3">
+                <li><Link to="/faq" className="text-sm text-gray-400 hover:text-white transition-colors duration-200">FAQ</Link></li>
                 <li><Link to="/privacy-policy" className="text-sm text-gray-400 hover:text-white transition-colors duration-200">Privacy Policy</Link></li>
                 <li><Link to="/terms-of-service" className="text-sm text-gray-400 hover:text-white transition-colors duration-200">Terms of Service</Link></li>
                 <li><Link to="/refund-policy" className="text-sm text-gray-400 hover:text-white transition-colors duration-200">Refund Policy</Link></li>
