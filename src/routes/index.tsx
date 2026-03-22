@@ -319,7 +319,6 @@ function HomePage() {
       </section>
 
       {/* Shop by Collection - Card layout */}
-      {collections.length > 0 && (
       <section className="py-16 lg:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
@@ -334,6 +333,7 @@ function HomePage() {
             </p>
           </div>
 
+          {collections.length > 0 ? (
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
             {collections.map((collection) => (
               <Link
@@ -363,12 +363,21 @@ function HomePage() {
               </Link>
             ))}
           </div>
+          ) : (
+            <div className="text-center py-16">
+              <div className="w-20 h-20 rounded-full bg-gray-50 flex items-center justify-center mx-auto mb-4">
+                <Sparkles size={32} className="text-gray-300" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-600 mb-2">No collections available yet</h3>
+              <p className="text-sm text-gray-400 max-w-md mx-auto">
+                Our collections are being curated. Please check back later for new arrivals.
+              </p>
+            </div>
+          )}
         </div>
       </section>
-      )}
 
-      {/* Our Specials - From Menu Items (separate from products) */}
-      {(hasMenuItems || products.length > 0) && (
+      {/* Our Specials - Dynamic from products */}
       <section className="py-16 lg:py-24 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
@@ -383,6 +392,7 @@ function HomePage() {
             </h2>
           </div>
 
+          {products.length > 0 ? (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-start">
             {/* Left: Featured Image */}
             <div className="aspect-[3/4] overflow-hidden bg-gray-100">
@@ -449,9 +459,19 @@ function HomePage() {
               </div>
             </div>
           </div>
+          ) : (
+            <div className="text-center py-16">
+              <div className="w-20 h-20 rounded-full bg-gray-50 flex items-center justify-center mx-auto mb-4">
+                <Scissors size={32} className="text-gray-300" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-600 mb-2">No specials available right now</h3>
+              <p className="text-sm text-gray-400 max-w-md mx-auto">
+                Our team is preparing new specials for you. Please check back soon!
+              </p>
+            </div>
+          )}
         </div>
       </section>
-      )}
 
       {/* Deal of the Day - Countdown with Parallax */}
       {(() => {
@@ -530,7 +550,6 @@ function HomePage() {
       })()}
 
       {/* Featured Products - Grid with product page links */}
-      {featuredProducts.length > 0 && (
       <section className="py-16 lg:py-24 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-end justify-between mb-12">
@@ -543,14 +562,18 @@ function HomePage() {
               </h2>
               <p className="text-sm text-gray-500 mt-2">Hand-picked pieces from our atelier</p>
             </div>
+            {featuredProducts.length > 0 && (
             <Link
               to="/collections"
               className="hidden sm:inline-flex items-center gap-2 text-sm font-medium text-black hover:text-gray-600 transition-colors"
             >
               View All <ArrowRight size={16} />
             </Link>
+            )}
           </div>
 
+          {featuredProducts.length > 0 ? (
+          <>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
             {featuredProducts.map((product) => (
               <ProductCard key={product.id} product={product} />
@@ -565,9 +588,20 @@ function HomePage() {
               View All Products <ArrowRight size={16} />
             </Link>
           </div>
+          </>
+          ) : (
+            <div className="text-center py-16">
+              <div className="w-20 h-20 rounded-full bg-gray-50 flex items-center justify-center mx-auto mb-4 border border-gray-100">
+                <Heart size={32} className="text-gray-300" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-600 mb-2">No featured products yet</h3>
+              <p className="text-sm text-gray-400 max-w-md mx-auto">
+                We're working on something special. Check back soon for our featured collection!
+              </p>
+            </div>
+          )}
         </div>
       </section>
-      )}
 
       {/* Promotional / Offers Banner - Dynamic from Admin Banners */}
       <section className="py-16 lg:py-24">
@@ -687,7 +721,6 @@ function HomePage() {
       </section>
 
       {/* New Arrivals */}
-      {newArrivals.length > 0 && (
       <section className="py-16 lg:py-24 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-end justify-between mb-12">
@@ -700,22 +733,35 @@ function HomePage() {
               </h2>
               <p className="text-sm text-gray-500 mt-2">The latest additions to our collection</p>
             </div>
+            {newArrivals.length > 0 && (
             <Link
               to="/collections"
               className="hidden sm:inline-flex items-center gap-2 text-sm font-medium text-black hover:text-gray-600 transition-colors"
             >
               Shop All <ArrowRight size={16} />
             </Link>
+            )}
           </div>
 
+          {newArrivals.length > 0 ? (
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
             {newArrivals.map((product) => (
               <ProductCard key={product.id} product={product} badgeOverride="New" />
             ))}
           </div>
+          ) : (
+            <div className="text-center py-16">
+              <div className="w-20 h-20 rounded-full bg-gray-50 flex items-center justify-center mx-auto mb-4">
+                <Crown size={32} className="text-gray-300" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-600 mb-2">No new arrivals yet</h3>
+              <p className="text-sm text-gray-400 max-w-md mx-auto">
+                New pieces are on their way. Check back soon to see the latest from our atelier.
+              </p>
+            </div>
+          )}
         </div>
       </section>
-      )}
 
       {/* Services Strip */}
       <section className="border-t border-b border-gray-100 py-12 lg:py-16 bg-white">
