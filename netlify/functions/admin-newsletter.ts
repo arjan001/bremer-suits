@@ -24,12 +24,20 @@ export default async function handler(req: Request, _context: Context) {
         if (error) return errorResponse(error.message, 500)
         return jsonResponse(data, 201)
       }
+      if (req.method === 'PUT') {
+        if (!id) return errorResponse('Missing id parameter')
+        const body = await req.json()
+        const { data, error } = await supabase.from('email_campaigns').update(body).eq('id', id).select().single()
+        if (error) return errorResponse(error.message, 500)
+        return jsonResponse(data)
+      }
       if (req.method === 'DELETE') {
         if (!id) return errorResponse('Missing id parameter')
         const { error } = await supabase.from('email_campaigns').delete().eq('id', id)
         if (error) return errorResponse(error.message, 500)
         return jsonResponse({ success: true })
       }
+      return errorResponse('Method not allowed', 405)
     }
 
     // Subscribers

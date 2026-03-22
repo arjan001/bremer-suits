@@ -21,6 +21,10 @@ export default async function handler(req: Request, _context: Context) {
       supabase.from('newsletter_subscribers').select('id, status'),
     ])
 
+    if (ordersRes.error) return errorResponse(ordersRes.error.message, 500)
+    if (productsRes.error) return errorResponse(productsRes.error.message, 500)
+    if (subscribersRes.error) return errorResponse(subscribersRes.error.message, 500)
+
     const orders = ordersRes.data || []
     const products = productsRes.data || []
     const subscribers = subscribersRes.data || []

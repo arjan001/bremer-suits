@@ -60,7 +60,8 @@ export default async function handler(req: Request, _context: Context) {
     if (req.method === 'DELETE') {
       if (!id) return errorResponse('Missing id parameter')
       // Delete order items first (cascade should handle this, but explicit)
-      await supabase.from('order_items').delete().eq('order_id', id)
+      const { error: itemsError } = await supabase.from('order_items').delete().eq('order_id', id)
+      if (itemsError) return errorResponse(itemsError.message, 500)
       const { error } = await supabase
         .from('orders')
         .delete()
