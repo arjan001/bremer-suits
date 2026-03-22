@@ -1,9 +1,10 @@
 import { HeadContent, Link, Outlet, Scripts, createRootRoute, useRouter } from '@tanstack/react-router'
 import { Header } from '@/components/Header'
 import { CartDrawer } from '@/components/CartDrawer'
+import { SeoHead } from '@/components/SeoHead'
 import { CartProvider } from '@/lib/cart-context'
 import { WishlistProvider } from '@/lib/wishlist-context'
-import { Phone, Mail, MapPin, Instagram, Clock, Navigation, X } from 'lucide-react'
+import { Phone, Mail, Instagram, Clock, Navigation, Globe, X } from 'lucide-react'
 import { useState, useEffect } from 'react'
 
 import '../styles.css'
@@ -64,6 +65,7 @@ function RootLayout() {
   return (
     <WishlistProvider>
       <CartProvider>
+        <SeoHead />
         <Header />
         <CartDrawer />
         <main>
@@ -360,8 +362,88 @@ function SubscribeModal() {
   )
 }
 
-/* ── Footer (Kallittos-inspired) ── */
+/* ── Footer (Dynamic - powered by admin settings) ── */
 function Footer() {
+  const [settings, setSettings] = useState<{
+    storeName: string
+    storeEmail: string
+    storePhone: string
+    address: string
+    footerText: string
+    footerStoreHours: string
+    footerLocationName: string
+    footerLocationDetail: string
+    socialLinks: Array<{ id: string; platform: string; url: string; label: string; isActive: boolean; sortOrder: number }>
+    footerLinks: Array<{ id: string; label: string; url: string; column: string; sortOrder: number }>
+    paymentMethods: Array<{ id: string; label: string; isActive: boolean; sortOrder: number }>
+    authorInfo: { name: string; url: string; tagline: string }
+  } | null>(null)
+
+  useEffect(() => {
+    async function loadSettings() {
+      try {
+        const res = await fetch('/.netlify/functions/admin-settings')
+        if (res.ok) {
+          const raw = await res.json()
+          setSettings({
+            storeName: raw.store_name || 'Bremer Suits',
+            storeEmail: raw.store_email || '',
+            storePhone: raw.store_phone || '',
+            address: raw.address || '',
+            footerText: raw.footer_text || '',
+            footerStoreHours: raw.footer_store_hours || '',
+            footerLocationName: raw.footer_location_name || '',
+            footerLocationDetail: raw.footer_location_detail || '',
+            socialLinks: (raw.social_links || []).sort((a: { sortOrder: number }, b: { sortOrder: number }) => (a.sortOrder || 0) - (b.sortOrder || 0)),
+            footerLinks: (raw.footer_links || []).sort((a: { sortOrder: number }, b: { sortOrder: number }) => (a.sortOrder || 0) - (b.sortOrder || 0)),
+            paymentMethods: (raw.payment_methods || []).filter((pm: { isActive: boolean }) => pm.isActive).sort((a: { sortOrder: number }, b: { sortOrder: number }) => (a.sortOrder || 0) - (b.sortOrder || 0)),
+            authorInfo: raw.author_info || { name: '', url: '', tagline: '' },
+          })
+        }
+      } catch { /* use defaults */ }
+    }
+    loadSettings()
+  }, [])
+
+  // Fallback values
+  const storeName = settings?.storeName || 'Bremer Suits'
+  const footerText = settings?.footerText || 'Premium custom suits, professional fashion styling, and image consulting — your one-stop destination for bespoke tailoring.'
+  const activeSocials = (settings?.socialLinks || []).filter((s) => s.isActive)
+  const shopLinks = (settings?.footerLinks || []).filter((l) => l.column === 'shop')
+  const companyLinks = (settings?.footerLinks || []).filter((l) => l.column === 'company')
+  const supportLinks = (settings?.footerLinks || []).filter((l) => l.column === 'support')
+  const hasFooterLinks = shopLinks.length > 0 || companyLinks.length > 0 || supportLinks.length > 0
+  const paymentMethods = settings?.paymentMethods || []
+  const authorInfo = settings?.authorInfo || { name: '', url: '', tagline: '' }
+  const locationName = settings?.footerLocationName || ''
+  const locationDetail = settings?.footerLocationDetail || ''
+  const storeHours = settings?.footerStoreHours || ''
+  const storePhone = settings?.storePhone || ''
+  const storeEmail = settings?.storeEmail || ''
+
+  const getSocialIcon = (platform: string) => {
+    switch (platform.toLowerCase()) {
+      case 'instagram': return <Instagram size={18} className="text-white" />
+      case 'tiktok': return <TikTokIcon size={18} />
+      case 'whatsapp': return <WhatsAppIcon size={18} />
+      default: return <Globe size={16} className="text-white" />
+    }
+  }
+
+  const getSocialBg = (platform: string): React.CSSProperties => {
+    switch (platform.toLowerCase()) {
+      case 'instagram': return { background: 'linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888)' }
+      case 'whatsapp': return { backgroundColor: '#25D366' }
+      case 'tiktok': return { backgroundColor: '#000000' }
+      case 'facebook': return { backgroundColor: '#1877F2' }
+      case 'twitter/x': return { backgroundColor: '#000000' }
+      case 'youtube': return { backgroundColor: '#FF0000' }
+      case 'linkedin': return { backgroundColor: '#0A66C2' }
+      case 'pinterest': return { backgroundColor: '#E60023' }
+      default: return { backgroundColor: '#555555' }
+    }
+  }
+
   return (
     <footer className="bg-[#1a1a1a] text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
@@ -373,135 +455,161 @@ function Footer() {
                 className="text-2xl font-bold tracking-wider"
                 style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
               >
-                Bremer Suits
+                {storeName}
               </h3>
             </div>
             <p className="text-sm text-gray-400 leading-relaxed mb-6 max-w-xs">
-              Premium custom suits, professional fashion styling, and image consulting — your one-stop destination for bespoke tailoring.
+              {footerText}
             </p>
-            {/* Colored social icons */}
-            <div className="flex gap-3">
-              <a
-                href="#"
-                className="w-10 h-10 rounded-full flex items-center justify-center transition-transform hover:scale-110"
-                style={{ background: 'linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888)' }}
-                aria-label="Instagram"
-              >
-                <Instagram size={18} className="text-white" />
-              </a>
-              <a
-                href="#"
-                className="w-10 h-10 rounded-full bg-black flex items-center justify-center transition-transform hover:scale-110 border border-gray-700"
-                aria-label="TikTok"
-              >
-                <TikTokIcon size={18} />
-              </a>
-              <a
-                href="#"
-                className="w-10 h-10 rounded-full flex items-center justify-center transition-transform hover:scale-110"
-                style={{ backgroundColor: '#25D366' }}
-                aria-label="WhatsApp"
-              >
-                <WhatsAppIcon size={18} />
-              </a>
-            </div>
+            {activeSocials.length > 0 && (
+              <div className="flex gap-3">
+                {activeSocials.map((social) => (
+                  <a
+                    key={social.id}
+                    href={social.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-10 h-10 rounded-full flex items-center justify-center transition-transform hover:scale-110 border border-gray-700"
+                    style={getSocialBg(social.platform)}
+                    aria-label={social.platform}
+                  >
+                    {getSocialIcon(social.platform)}
+                  </a>
+                ))}
+              </div>
+            )}
           </div>
 
-          {/* Shop Links */}
-          <div>
-            <h4 className="text-sm font-bold uppercase text-white mb-6 tracking-wide">Shop</h4>
-            <ul className="space-y-3">
-              {[
-                { label: 'All Collections', to: '/collections' },
-                { label: 'Business Suits', to: '/collections' },
-                { label: 'Black Tie', to: '/collections' },
-                { label: 'Casual Tailoring', to: '/collections' },
-                { label: 'Accessories', to: '/collections' },
-              ].map((item) => (
-                <li key={item.label}>
-                  <Link
-                    to={item.to}
-                    className="text-sm text-gray-400 hover:text-white transition-colors duration-200"
-                  >
-                    {item.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
+          {/* Footer Navigation Links */}
+          {hasFooterLinks ? (
+            <div>
+              {shopLinks.length > 0 && (
+                <div className="mb-6">
+                  <h4 className="text-sm font-bold uppercase text-white mb-4 tracking-wide">Shop</h4>
+                  <ul className="space-y-3">
+                    {shopLinks.map((link) => (
+                      <li key={link.id}>
+                        <Link to={link.url} className="text-sm text-gray-400 hover:text-white transition-colors duration-200">{link.label}</Link>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              {companyLinks.length > 0 && (
+                <div className="mb-6">
+                  <h4 className="text-sm font-bold uppercase text-white mb-4 tracking-wide">Company</h4>
+                  <ul className="space-y-3">
+                    {companyLinks.map((link) => (
+                      <li key={link.id}>
+                        <Link to={link.url} className="text-sm text-gray-400 hover:text-white transition-colors duration-200">{link.label}</Link>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              {supportLinks.length > 0 && (
+                <div>
+                  <h4 className="text-sm font-bold uppercase text-white mb-4 tracking-wide">Support</h4>
+                  <ul className="space-y-3">
+                    {supportLinks.map((link) => (
+                      <li key={link.id}>
+                        <Link to={link.url} className="text-sm text-gray-400 hover:text-white transition-colors duration-200">{link.label}</Link>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+          ) : (
+            <div>
+              <h4 className="text-sm font-bold uppercase text-white mb-6 tracking-wide">Shop</h4>
+              <ul className="space-y-3">
+                {[
+                  { label: 'All Collections', to: '/collections' },
+                  { label: 'Services', to: '/services' },
+                  { label: 'About Us', to: '/about' },
+                  { label: 'Contact', to: '/contact' },
+                ].map((item) => (
+                  <li key={item.label}>
+                    <Link to={item.to} className="text-sm text-gray-400 hover:text-white transition-colors duration-200">{item.label}</Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
 
           {/* Visit Our Store */}
           <div>
             <h4 className="text-sm font-bold uppercase text-white mb-6 tracking-wide">Visit Our Store</h4>
             <ul className="space-y-4">
-              <li className="flex items-start gap-3">
-                <Navigation size={16} className="text-gray-400 mt-0.5 shrink-0" />
-                <div>
-                  <span className="text-sm text-white font-medium">Bremer Studio</span>
-                  <br />
-                  <span className="text-sm text-gray-400">Downtown District</span>
-                  <br />
-                  <span className="text-sm text-gray-400">Business CBD</span>
-                </div>
-              </li>
-              <li className="flex items-start gap-3">
-                <Phone size={16} className="text-gray-400 mt-0.5 shrink-0" />
-                <span className="text-sm text-gray-400">+1 (555) 123-4567</span>
-              </li>
-              <li className="flex items-start gap-3">
-                <Mail size={16} className="text-gray-400 mt-0.5 shrink-0" />
-                <span className="text-sm text-gray-400">info@bremersuits.com</span>
-              </li>
-              <li className="flex items-start gap-3">
-                <Clock size={16} className="text-gray-400 mt-0.5 shrink-0" />
-                <div>
-                  <span className="text-sm text-gray-400">Mon - Sat: 9AM - 6PM</span>
-                  <br />
-                  <span className="text-sm text-gray-400">Dispatch: Tuesdays & Fridays</span>
-                </div>
-              </li>
+              {(locationName || settings?.address) && (
+                <li className="flex items-start gap-3">
+                  <Navigation size={16} className="text-gray-400 mt-0.5 shrink-0" />
+                  <div>
+                    {locationName && <span className="text-sm text-white font-medium">{locationName}</span>}
+                    {locationDetail && <><br /><span className="text-sm text-gray-400">{locationDetail}</span></>}
+                    {settings?.address && <><br /><span className="text-sm text-gray-400">{settings.address}</span></>}
+                  </div>
+                </li>
+              )}
+              {storePhone && (
+                <li className="flex items-start gap-3">
+                  <Phone size={16} className="text-gray-400 mt-0.5 shrink-0" />
+                  <a href={`tel:${storePhone}`} className="text-sm text-gray-400 hover:text-white transition-colors">{storePhone}</a>
+                </li>
+              )}
+              {storeEmail && (
+                <li className="flex items-start gap-3">
+                  <Mail size={16} className="text-gray-400 mt-0.5 shrink-0" />
+                  <a href={`mailto:${storeEmail}`} className="text-sm text-gray-400 hover:text-white transition-colors">{storeEmail}</a>
+                </li>
+              )}
+              {storeHours && (
+                <li className="flex items-start gap-3">
+                  <Clock size={16} className="text-gray-400 mt-0.5 shrink-0" />
+                  <div>
+                    {storeHours.split('\n').map((line, i) => (
+                      <span key={i} className="text-sm text-gray-400 block">{line}</span>
+                    ))}
+                  </div>
+                </li>
+              )}
             </ul>
-            <a
-              href="#"
-              className="inline-flex items-center gap-2 mt-5 px-4 py-2 border border-gray-600 rounded text-xs text-gray-300 hover:border-gray-400 hover:text-white transition-colors"
-            >
-              <MapPin size={14} />
-              Get Directions to Store
-            </a>
           </div>
 
-          {/* Follow Us */}
+          {/* Follow Us + Payment */}
           <div>
-            <h4 className="text-sm font-bold uppercase text-white mb-6 tracking-wide">Follow Us</h4>
-            <ul className="space-y-4">
-              <li>
-                <a href="#" className="flex items-center gap-3 text-sm text-gray-400 hover:text-white transition-colors">
-                  <InstagramColored size={18} />
-                  @bremersuits
-                </a>
-              </li>
-              <li>
-                <a href="#" className="flex items-center gap-3 text-sm text-gray-400 hover:text-white transition-colors">
-                  <TikTokIcon size={18} />
-                  @bremersuits
-                </a>
-              </li>
-              <li>
-                <a href="#" className="flex items-center gap-3 text-sm text-gray-400 hover:text-white transition-colors">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8.56 2.75c4.37 6.03 6.02 9.42 8.03 17.72m2.54-15.38c-3.72 4.35-8.94 5.66-16.88 5.85m19.5 1.9c-3.5-.93-6.63-.82-8.94 0-2.58.92-5.01 2.86-7.44 6.32"/></svg>
-                  WhatsApp Order
-                </a>
-              </li>
-            </ul>
+            {activeSocials.length > 0 && (
+              <>
+                <h4 className="text-sm font-bold uppercase text-white mb-6 tracking-wide">Follow Us</h4>
+                <ul className="space-y-4">
+                  {activeSocials.map((social) => (
+                    <li key={social.id}>
+                      <a
+                        href={social.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-3 text-sm text-gray-400 hover:text-white transition-colors"
+                      >
+                        {getSocialIcon(social.platform)}
+                        {social.label || social.platform}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </>
+            )}
 
-            <div className="mt-8">
-              <h5 className="text-xs font-bold uppercase text-gray-500 mb-3 tracking-wider">We Accept</h5>
-              <div className="flex gap-2">
-                <span className="px-3 py-1.5 border border-gray-600 rounded text-xs text-gray-300 font-medium">M-PESA</span>
-                <span className="px-3 py-1.5 border border-gray-600 rounded text-xs text-gray-300 font-medium">VISA</span>
-                <span className="px-3 py-1.5 border border-gray-600 rounded text-xs text-gray-300 font-medium">MC</span>
+            {paymentMethods.length > 0 && (
+              <div className={activeSocials.length > 0 ? 'mt-8' : ''}>
+                <h5 className="text-xs font-bold uppercase text-gray-500 mb-3 tracking-wider">We Accept</h5>
+                <div className="flex flex-wrap gap-2">
+                  {paymentMethods.map((pm) => (
+                    <span key={pm.id} className="px-3 py-1.5 border border-gray-600 rounded text-xs text-gray-300 font-medium">{pm.label}</span>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
       </div>
@@ -509,10 +617,9 @@ function Footer() {
       {/* Bottom Bar */}
       <div className="border-t border-gray-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-4">
-          {/* Row 1: Copyright + Policy links */}
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-xs text-gray-500">
-              &copy; {new Date().getFullYear()} Bremer Suits. All rights reserved.
+              &copy; {new Date().getFullYear()} {storeName}. All rights reserved.
             </p>
             <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
               <Link to="/privacy-policy" className="text-xs text-gray-500 hover:text-gray-300 transition-colors">Privacy Policy</Link>
@@ -521,19 +628,36 @@ function Footer() {
               <Link to="/shipping-policy" className="text-xs text-gray-500 hover:text-gray-300 transition-colors">Shipping Policy</Link>
             </div>
           </div>
-          {/* Row 2: Credits + Scroll to top */}
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            <p className="text-xs text-gray-500">
-              Designed &amp; developed by{' '}
-              <a
-                href="https://oneplusafrica.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-gray-400 underline hover:text-white transition-colors"
-              >
-                OnePlusAfrica Tech Solutions
-              </a>
-            </p>
+            {authorInfo.name ? (
+              <p className="text-xs text-gray-500">
+                {authorInfo.tagline || 'Designed & developed by'}{' '}
+                {authorInfo.url ? (
+                  <a
+                    href={authorInfo.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-gray-400 underline hover:text-white transition-colors"
+                  >
+                    {authorInfo.name}
+                  </a>
+                ) : (
+                  <span className="text-gray-400">{authorInfo.name}</span>
+                )}
+              </p>
+            ) : (
+              <p className="text-xs text-gray-500">
+                Designed &amp; developed by{' '}
+                <a
+                  href="https://oneplusafrica.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-gray-400 underline hover:text-white transition-colors"
+                >
+                  OnePlusAfrica Tech Solutions
+                </a>
+              </p>
+            )}
             <button
               onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
               className="w-10 h-10 rounded-full bg-gray-700 hover:bg-gray-600 flex items-center justify-center transition-colors"
