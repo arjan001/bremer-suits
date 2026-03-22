@@ -42,17 +42,6 @@ interface BannerItem {
   isActive: boolean
 }
 
-interface PortfolioItem {
-  id: string
-  title: string
-  description: string
-  image: string
-  tag: string
-  category: string
-  client_name: string
-  is_featured: boolean
-}
-
 export const Route = createFileRoute('/')({
   component: HomePage,
 })
@@ -175,12 +164,10 @@ function ProductCard({ product, badgeOverride }: { product: Product; badgeOverri
 }
 
 function HomePage() {
-  const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 })
   const [products, setProducts] = useState<Product[]>([])
   const [collections, setCollections] = useState<CategoryInfo[]>([])
   const [menuItems, setMenuItems] = useState<MenuItem[]>([])
   const [banners, setBanners] = useState<BannerItem[]>([])
-  const [portfolioItems, setPortfolioItems] = useState<PortfolioItem[]>([])
 
   useEffect(() => {
     async function loadData() {
@@ -265,43 +252,12 @@ function HomePage() {
     loadData()
     loadMenuItems()
     loadBanners()
-
-    async function loadPortfolio() {
-      try {
-        const res = await fetch(`${BASE}/admin-portfolio?status=active`)
-        if (res.ok) {
-          const data = await res.json()
-          setPortfolioItems(data)
-        }
-      } catch { /* ignore */ }
-    }
-    loadPortfolio()
   }, [])
 
   const featuredProducts = products.slice(0, 4)
   const newArrivals = products.filter((p) => p.tag === 'New' || p.tag === 'Best Seller').slice(0, 4).length > 0
     ? products.filter((p) => p.tag === 'New' || p.tag === 'Best Seller').slice(0, 4)
     : products.slice(4, 8)
-
-  useEffect(() => {
-    const calculateTimeLeft = () => {
-      const now = new Date()
-      const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59)
-      const diff = endOfMonth.getTime() - now.getTime()
-      if (diff > 0) {
-        return {
-          days: Math.floor(diff / (1000 * 60 * 60 * 24)),
-          hours: Math.floor((diff / (1000 * 60 * 60)) % 24),
-          minutes: Math.floor((diff / (1000 * 60)) % 60),
-          seconds: Math.floor((diff / 1000) % 60),
-        }
-      }
-      return { days: 0, hours: 0, minutes: 0, seconds: 0 }
-    }
-    setTimeLeft(calculateTimeLeft())
-    const timer = setInterval(() => setTimeLeft(calculateTimeLeft()), 1000)
-    return () => clearInterval(timer)
-  }, [])
 
   // Use menu items for specials, fall back to products
   const hasMenuItems = menuItems.length > 0
@@ -522,105 +478,6 @@ function HomePage() {
         </div>
       </section>
 
-      {/* Deals of the Day + Featured Products Split */}
-      {products.length > 0 && (
-      <section className="py-16 lg:py-24 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
-            {/* Left: Deals of the Day */}
-            <div className="border border-gray-200 p-6 lg:p-8">
-              <div className="mb-6">
-                <span className="inline-block px-6 py-2 bg-[#2c3e6b] text-white text-xs tracking-[0.2em] uppercase font-bold">
-                  Deals of the Day
-                </span>
-              </div>
-              <div className="grid grid-cols-2 gap-6">
-                {products.filter(p => p.salePrice || p.originalPrice).slice(0, 2).concat(
-                  products.filter(p => p.salePrice || p.originalPrice).length < 2
-                    ? products.slice(0, 2 - products.filter(p => p.salePrice || p.originalPrice).length)
-                    : []
-                ).slice(0, 2).map((product) => (
-                  <Link key={product.id} to="/collections/$slug" params={{ slug: product.id }} className="group block text-center">
-                    <div className="relative aspect-[3/4] overflow-hidden bg-gray-50 mb-3">
-                      <img
-                        src={product.image}
-                        alt={product.title}
-                        className="w-full h-full object-cover product-img-zoom"
-                      />
-                      {(product.salePrice || product.originalPrice) && (
-                        <span className="absolute top-3 right-3 bg-red-500 text-white text-[10px] px-2 py-1 font-bold uppercase tracking-wider"
-                          style={{ clipPath: 'polygon(0 0, 100% 0, 100% 100%, 50% 85%, 0 100%)' }}
-                        >
-                          Sale
-                        </span>
-                      )}
-                    </div>
-                    <h4 className="text-sm font-semibold text-black mb-1">{product.title}</h4>
-                    <div className="flex items-center justify-center gap-2">
-                      <span className="text-sm font-semibold text-black">{product.price}</span>
-                      {product.originalPrice && (
-                        <span className="text-xs text-gray-400 line-through">{product.originalPrice}</span>
-                      )}
-                    </div>
-                    <div className="mt-3 text-left">
-                      <p className="text-[10px] font-bold uppercase tracking-wider text-black">Hungry Up !</p>
-                      <p className="text-[10px] text-gray-400">Offer end in :</p>
-                    </div>
-                  </Link>
-                ))}
-              </div>
-            </div>
-
-            {/* Right: Featured Products */}
-            <div>
-              <div className="flex items-center justify-between mb-6">
-                <h3
-                  className="text-lg font-bold text-black uppercase tracking-wider"
-                  style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
-                >
-                  Featured Products
-                </h3>
-                <div className="flex gap-2">
-                  <span className="w-8 h-8 border border-gray-200 flex items-center justify-center text-gray-400 hover:text-black hover:border-black transition-colors cursor-pointer">
-                    <ArrowRight size={14} className="rotate-180" />
-                  </span>
-                  <span className="w-8 h-8 border border-gray-200 flex items-center justify-center text-gray-400 hover:text-black hover:border-black transition-colors cursor-pointer">
-                    <ArrowRight size={14} />
-                  </span>
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-6">
-                {featuredProducts.slice(0, 4).map((product) => (
-                  <Link key={product.id} to="/collections/$slug" params={{ slug: product.id }} className="group block text-center">
-                    <div className="relative aspect-[3/4] overflow-hidden bg-gray-50 mb-3">
-                      <img
-                        src={product.image}
-                        alt={product.title}
-                        className="w-full h-full object-cover product-img-zoom"
-                      />
-                      {product.tag && (
-                        <span className="absolute top-3 right-3 bg-red-500 text-white text-[10px] px-2 py-1 font-bold uppercase tracking-wider"
-                          style={{ clipPath: 'polygon(0 0, 100% 0, 100% 100%, 50% 85%, 0 100%)' }}
-                        >
-                          {product.tag}
-                        </span>
-                      )}
-                    </div>
-                    <h4 className="text-sm font-semibold text-black mb-1">{product.title}</h4>
-                    <div className="flex items-center justify-center gap-2">
-                      <span className="text-sm font-semibold text-black">{product.price}</span>
-                      {product.originalPrice && (
-                        <span className="text-xs text-gray-400 line-through">{product.originalPrice}</span>
-                      )}
-                    </div>
-                  </Link>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-      )}
 
       {/* Our Specials - Dynamic from products */}
       <section className="py-16 lg:py-24 bg-white">
@@ -718,81 +575,6 @@ function HomePage() {
         </div>
       </section>
 
-      {/* Deal of the Day - Countdown with Parallax */}
-      {(() => {
-        const dealProduct = products.find((p) => p.salePrice || p.originalPrice) || products[0]
-        if (!dealProduct) return null
-        return (
-      <section className="relative overflow-hidden">
-        <div
-          className="parallax-bg absolute inset-0"
-          style={{ backgroundImage: `url('${dealProduct.image || '/images/suit-hero.webp'}')` }}
-        />
-        <div className="absolute inset-0 bg-black/75" />
-
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 lg:py-32">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div>
-              <p className="text-xs tracking-[0.4em] uppercase text-white/60 mb-4 font-medium">
-                Deal of the Day
-              </p>
-              <h2
-                className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-4"
-                style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
-              >
-                {dealProduct.title}
-              </h2>
-              <div className="flex items-baseline gap-3 mb-8">
-                <span className="text-3xl font-bold text-white">$600.00</span>
-                <span className="text-lg text-white/40 line-through">$800.00</span>
-              </div>
-
-              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 mb-8">
-                <p className="text-sm text-white/60 font-light leading-snug">
-                  The countdown is on,<br />don&apos;t miss out!
-                </p>
-                <div className="flex gap-3">
-                  {[
-                    { value: timeLeft.days, label: 'Days' },
-                    { value: timeLeft.hours, label: 'Hours' },
-                    { value: timeLeft.minutes, label: 'Mins' },
-                    { value: timeLeft.seconds, label: 'Sec' },
-                  ].map((unit) => (
-                    <div key={unit.label} className="text-center">
-                      <div className="w-14 h-14 sm:w-16 sm:h-16 bg-white flex items-center justify-center">
-                        <span className="text-xl sm:text-2xl font-bold text-black">
-                          {String(unit.value).padStart(2, '0')}
-                        </span>
-                      </div>
-                      <span className="text-[10px] tracking-wider uppercase text-white/50 mt-1.5 block">
-                        {unit.label}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <Link
-                to="/collections/$slug"
-                params={{ slug: dealProduct.id }}
-                className="inline-flex items-center px-8 py-3.5 text-xs tracking-[0.2em] uppercase bg-white text-black hover:bg-gray-100 transition-colors duration-300 font-semibold"
-              >
-                Shop Now
-              </Link>
-            </div>
-
-            <div className="hidden lg:flex justify-center">
-              <img
-                src={dealProduct.image}
-                alt={dealProduct.title}
-                className="h-[500px] object-contain drop-shadow-2xl"
-              />
-            </div>
-          </div>
-        </div>
-      </section>
-        )
-      })()}
 
       {/* Featured Products - Grid with product page links */}
       <section className="py-16 lg:py-24 bg-gray-50">
@@ -1054,78 +836,8 @@ function HomePage() {
         </div>
       </section>
 
-      {/* "The Day Starts With Our Best Suit" Banner */}
-      <section className="relative overflow-hidden py-24 lg:py-32">
-        <div className="absolute inset-0">
-          <img
-            src="/images/banner-store.webp"
-            alt="Premium suit store"
-            className="w-full h-full object-cover"
-          />
-          <div className="absolute inset-0 bg-black/60" />
-        </div>
-        <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <p className="text-xs tracking-[0.4em] uppercase text-[#c9a96e] mb-4 font-semibold">
-            The Day Starts With
-          </p>
-          <h2
-            className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-6"
-            style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
-          >
-            Our Best Suit
-          </h2>
-          <p className="text-white/60 leading-relaxed mb-10 max-w-lg mx-auto font-light">
-            Every stitch tells a story of craftsmanship. We source only the finest fabrics from
-            Italian and British mills to create suits that stand the test of time.
-          </p>
-          <Link
-            to="/collections"
-            className="inline-flex items-center px-10 py-4 text-xs tracking-[0.2em] uppercase bg-white text-black hover:bg-gray-100 transition-colors duration-300 font-semibold"
-          >
-            Shop Collection
-          </Link>
-        </div>
-      </section>
 
 
-      {/* Bottom Deals of the Day - Horizontal Scroll */}
-      {products.length > 0 && (
-      <section className="py-16 lg:py-20 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between mb-8">
-            <div className="flex items-center gap-4">
-              <span className="text-xs tracking-[0.3em] uppercase text-gray-400 font-medium">&#9670;</span>
-              <h3
-                className="text-xl lg:text-2xl font-semibold text-black"
-                style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
-              >
-                Deals of the Day
-              </h3>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="text-[10px] tracking-wider uppercase text-black font-bold">Hungry Up !</span>
-              <div className="flex gap-1 ml-2">
-                {[
-                  { value: timeLeft.hours, label: 'h' },
-                  { value: timeLeft.minutes, label: 'm' },
-                  { value: timeLeft.seconds, label: 's' },
-                ].map((unit) => (
-                  <span key={unit.label} className="inline-flex items-center gap-0.5 px-2 py-1 bg-black text-white text-[10px] font-bold">
-                    {String(unit.value).padStart(2, '0')}{unit.label}
-                  </span>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 lg:gap-6">
-            {products.slice(0, 4).map((product) => (
-              <ProductCard key={`deal-${product.id}`} product={product} />
-            ))}
-          </div>
-        </div>
-      </section>
-      )}
 
       {/* Quote / Testimonial Banner */}
       <section className="relative overflow-hidden py-20 lg:py-28">
@@ -1176,121 +888,6 @@ function HomePage() {
         </div>
       </section>
 
-      {/* Portfolio Showcase */}
-      {portfolioItems.length > 0 && (
-        <section className="py-16 lg:py-24 bg-white">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex items-end justify-between mb-12">
-              <div>
-                <p className="text-xs tracking-[0.3em] uppercase text-[#5b7b9a] mb-2 font-semibold">
-                  Our Work
-                </p>
-                <h2
-                  className="text-3xl lg:text-4xl font-semibold text-black"
-                  style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
-                >
-                  Portfolio
-                </h2>
-                <p className="text-sm text-gray-500 mt-2">Recent work, partnerships &amp; gallery</p>
-              </div>
-              <Link
-                to="/portfolio"
-                className="hidden sm:inline-flex items-center gap-2 text-sm font-medium text-black hover:text-gray-600 transition-colors"
-              >
-                View All <ArrowRight size={16} />
-              </Link>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-              {portfolioItems.filter((i) => i.is_featured).slice(0, 3).map((item) => (
-                <Link
-                  key={item.id}
-                  to="/portfolio"
-                  className="group relative overflow-hidden bg-black aspect-[3/4] block"
-                >
-                  <img
-                    src={item.image}
-                    alt={item.title}
-                    className="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:opacity-60 group-hover:scale-110 transition-all duration-700"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
-
-                  {/* Tag */}
-                  {item.tag && (
-                    <span className={`absolute top-4 left-4 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider rounded-sm ${
-                      item.tag === 'new' ? 'bg-emerald-500 text-white' :
-                      item.tag === 'partnership' ? 'bg-blue-600 text-white' :
-                      item.tag === 'featured' ? 'bg-amber-500 text-white' :
-                      'bg-gray-700 text-white'
-                    }`}>
-                      {item.tag}
-                    </span>
-                  )}
-
-                  <div className="absolute bottom-0 left-0 right-0 p-6">
-                    {item.category && (
-                      <p className="text-[10px] tracking-[0.2em] uppercase text-white/50 mb-2 font-medium">{item.category}</p>
-                    )}
-                    <h3
-                      className="text-lg font-bold text-white mb-1"
-                      style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
-                    >
-                      {item.title}
-                    </h3>
-                    {item.client_name && (
-                      <p className="text-xs text-white/60">{item.client_name}</p>
-                    )}
-                    <span className="inline-flex items-center gap-2 text-xs tracking-widest uppercase text-white/80 font-medium mt-3 group-hover:gap-3 transition-all duration-300">
-                      View Project <ArrowRight size={12} />
-                    </span>
-                  </div>
-                </Link>
-              ))}
-            </div>
-
-            {/* Second row - smaller cards for non-featured or remaining items */}
-            {portfolioItems.length > 3 && (
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-5">
-                {portfolioItems.filter((i) => !i.is_featured).slice(0, 4).map((item) => (
-                  <Link
-                    key={item.id}
-                    to="/portfolio"
-                    className="group relative overflow-hidden bg-gray-100 aspect-square block rounded-lg"
-                  >
-                    <img
-                      src={item.image}
-                      alt={item.title}
-                      className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    />
-                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors duration-300" />
-                    <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                      <h4 className="text-xs font-semibold text-white line-clamp-1">{item.title}</h4>
-                    </div>
-                    {item.tag && (
-                      <span className={`absolute top-2 left-2 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider rounded-sm ${
-                        item.tag === 'new' ? 'bg-emerald-500 text-white' :
-                        item.tag === 'partnership' ? 'bg-blue-600 text-white' :
-                        'bg-gray-700 text-white'
-                      }`}>
-                        {item.tag}
-                      </span>
-                    )}
-                  </Link>
-                ))}
-              </div>
-            )}
-
-            <div className="text-center mt-8 sm:hidden">
-              <Link
-                to="/portfolio"
-                className="inline-flex items-center gap-2 text-sm font-medium text-black hover:text-gray-600 transition-colors"
-              >
-                View All Projects <ArrowRight size={16} />
-              </Link>
-            </div>
-          </div>
-        </section>
-      )}
     </div>
   )
 }
