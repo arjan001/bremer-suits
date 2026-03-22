@@ -686,7 +686,7 @@ function Footer() {
 
         {/* Main Footer Grid */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 lg:py-16">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-12 lg:gap-8">
 
             {/* Column 1: Brand + Description + Social Icons */}
             <div>
@@ -765,20 +765,38 @@ function Footer() {
               )}
             </div>
 
-            {/* Column 3: Visit Our Store */}
+            {/* Column 3: Policies */}
+            <div>
+              <h4 className="text-sm font-bold uppercase text-white mb-6 tracking-wide">Policies</h4>
+              <ul className="space-y-3">
+                <li><Link to="/privacy-policy" className="text-sm text-gray-400 hover:text-white transition-colors duration-200">Privacy Policy</Link></li>
+                <li><Link to="/terms-of-service" className="text-sm text-gray-400 hover:text-white transition-colors duration-200">Terms of Service</Link></li>
+                <li><Link to="/refund-policy" className="text-sm text-gray-400 hover:text-white transition-colors duration-200">Refund Policy</Link></li>
+                <li><Link to="/shipping-policy" className="text-sm text-gray-400 hover:text-white transition-colors duration-200">Shipping Policy</Link></li>
+                <li><Link to="/cookie-policy" className="text-sm text-gray-400 hover:text-white transition-colors duration-200">Cookie Policy</Link></li>
+                <li>
+                  <button
+                    onClick={() => setCookieModalOpen(true)}
+                    className="text-sm text-gray-400 hover:text-white transition-colors duration-200 cursor-pointer bg-transparent border-none p-0"
+                  >
+                    Cookie Preferences
+                  </button>
+                </li>
+              </ul>
+            </div>
+
+            {/* Column 4: Visit Our Store */}
             <div>
               <h4 className="text-sm font-bold uppercase text-white mb-6 tracking-wide">Visit Our Store</h4>
               <ul className="space-y-4">
-                {(locationName || settings?.address) && (
-                  <li className="flex items-start gap-3">
-                    <Navigation size={16} className="text-gray-400 mt-0.5 shrink-0" />
-                    <div>
-                      {locationName && <span className="text-sm text-white font-medium">{locationName}</span>}
-                      {locationDetail && <><br /><span className="text-sm text-gray-400">{locationDetail}</span></>}
-                      {settings?.address && <><br /><span className="text-sm text-gray-400">{settings.address}</span></>}
-                    </div>
-                  </li>
-                )}
+                <li className="flex items-start gap-3">
+                  <Navigation size={16} className="text-gray-400 mt-0.5 shrink-0" />
+                  <div>
+                    <span className="text-sm text-white font-medium">{locationName || 'Superior Center'}</span>
+                    <br /><span className="text-sm text-gray-400">{locationDetail || 'Kimathi Street, 1st Floor'}</span>
+                    {settings?.address && <><br /><span className="text-sm text-gray-400">{settings.address}</span></>}
+                  </div>
+                </li>
                 {storePhone && (
                   <li className="flex items-start gap-3">
                     <Phone size={16} className="text-gray-400 mt-0.5 shrink-0" />
@@ -802,44 +820,17 @@ function Footer() {
                   </li>
                 )}
               </ul>
-              {locationName && (
-                <div className="mt-6">
-                  <a
-                    href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent([locationName, locationDetail, settings?.address].filter(Boolean).join(' '))}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 px-4 py-2.5 border border-gray-600 rounded-lg text-sm text-gray-300 hover:text-white hover:border-gray-400 transition-colors"
-                  >
-                    <MapPin size={15} />
-                    Get Directions to {locationName}
-                  </a>
-                </div>
-              )}
-            </div>
-
-            {/* Column 4: Follow Us + We Accept */}
-            <div>
-              <h4 className="text-sm font-bold uppercase text-white mb-6 tracking-wide">Follow Us</h4>
-              <ul className="space-y-4">
-                {displaySocials.map((social) => (
-                  <li key={social.id}>
-                    <a
-                      href={social.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-3 text-sm text-gray-400 hover:text-white transition-colors group"
-                    >
-                      <span
-                        className="w-9 h-9 rounded-full flex items-center justify-center shrink-0 transition-transform group-hover:scale-110"
-                        style={getSocialBg(social.platform)}
-                      >
-                        {getSocialIcon(social.platform)}
-                      </span>
-                      {social.label || social.platform}
-                    </a>
-                  </li>
-                ))}
-              </ul>
+              <div className="mt-6">
+                <a
+                  href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent([locationName || 'Superior Center', locationDetail || 'Kimathi Street, 1st Floor', settings?.address].filter(Boolean).join(' '))}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-4 py-2.5 border border-gray-600 rounded-lg text-sm text-gray-300 hover:text-white hover:border-gray-400 transition-colors"
+                >
+                  <MapPin size={15} />
+                  Get Directions
+                </a>
+              </div>
 
               {paymentMethods.length > 0 && (
                 <div className="mt-8">
@@ -888,6 +879,19 @@ function Footer() {
               <p className="text-xs text-gray-500">
                 &copy; {new Date().getFullYear()} {storeName}. All rights reserved.
               </p>
+              <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1">
+                <Link to="/privacy-policy" className="text-xs text-gray-500 hover:text-white transition-colors">Privacy Policy</Link>
+                <span className="text-gray-700">|</span>
+                <Link to="/terms-of-service" className="text-xs text-gray-500 hover:text-white transition-colors">Terms of Service</Link>
+                <span className="text-gray-700">|</span>
+                <Link to="/refund-policy" className="text-xs text-gray-500 hover:text-white transition-colors">Refund Policy</Link>
+                <span className="text-gray-700">|</span>
+                <Link to="/shipping-policy" className="text-xs text-gray-500 hover:text-white transition-colors">Shipping Policy</Link>
+                <span className="text-gray-700">|</span>
+                <Link to="/cookie-policy" className="text-xs text-gray-500 hover:text-white transition-colors">Cookie Policy</Link>
+                <span className="text-gray-700">|</span>
+                <button onClick={() => setCookieModalOpen(true)} className="text-xs text-gray-500 hover:text-white transition-colors bg-transparent border-none p-0 cursor-pointer">Cookie Preferences</button>
+              </div>
               {authorInfo.name ? (
                 <p className="text-xs text-gray-500">
                   {authorInfo.tagline || 'Designed & developed by'}{' '}
