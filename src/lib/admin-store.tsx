@@ -1,4 +1,10 @@
 import { createContext, useContext, useState, useCallback, useEffect, type ReactNode } from 'react'
+import {
+  productsApi, ordersApi, categoriesApi,
+  heroBannersApi, bannersApi, carouselsApi, navbarOffersApi, popupOffersApi,
+  subscribersApi, campaignsApi, deliveryApi, usersApi,
+  cardDetailsApi, policiesApi, settingsApi,
+} from './admin-api'
 
 /* ── Types ── */
 export interface AdminProduct {
@@ -211,45 +217,7 @@ export interface AdminCardDetail {
   isActive: boolean
 }
 
-/* ── Storage keys ── */
-const KEYS = {
-  products: 'bremer-admin-products',
-  orders: 'bremer-admin-orders',
-  categories: 'bremer-admin-categories',
-  offers: 'bremer-admin-offers',
-  heroBanners: 'bremer-admin-hero-banners',
-  banners: 'bremer-admin-banners',
-  carousels: 'bremer-admin-carousels',
-  navbarOffers: 'bremer-admin-navbar-offers',
-  popupOffers: 'bremer-admin-popup-offers',
-  newsletter: 'bremer-admin-newsletter',
-  emailCampaigns: 'bremer-admin-email-campaigns',
-  delivery: 'bremer-admin-delivery',
-  policies: 'bremer-admin-policies',
-  users: 'bremer-admin-users',
-  settings: 'bremer-admin-settings',
-  cardDetails: 'bremer-admin-card-details',
-}
-
-function load<T>(key: string, fallback: T): T {
-  if (typeof window === 'undefined') return fallback
-  try {
-    const stored = localStorage.getItem(key)
-    if (stored) return JSON.parse(stored)
-  } catch { /* ignore */ }
-  return fallback
-}
-
-function save(key: string, value: unknown) {
-  if (typeof window === 'undefined') return
-  try { localStorage.setItem(key, JSON.stringify(value)) } catch { /* ignore */ }
-}
-
-function genId(): string {
-  return Date.now().toString(36) + Math.random().toString(36).slice(2, 8)
-}
-
-/* ── Default settings (no dummy data, just structure defaults) ── */
+/* ── Default settings ── */
 const defaultSettings: AdminSettings = {
   storeName: '',
   storeEmail: '',
@@ -272,8 +240,13 @@ const defaultSettings: AdminSettings = {
   seoPages: [],
 }
 
+function genId(): string {
+  return Date.now().toString(36) + Math.random().toString(36).slice(2, 8)
+}
+
 /* ── Context ── */
 interface AdminContextType {
+  loading: boolean
   // Products
   products: AdminProduct[]
   addProduct: (p: Omit<AdminProduct, 'id' | 'createdAt' | 'updatedAt'>) => void
@@ -289,7 +262,7 @@ interface AdminContextType {
   addCategory: (c: Omit<AdminCategory, 'id'>) => void
   updateCategory: (id: string, c: Partial<AdminCategory>) => void
   deleteCategory: (id: string) => void
-  // Offers (legacy)
+  // Offers (client-only, no DB table)
   offers: AdminOffer[]
   addOffer: (o: Omit<AdminOffer, 'id'>) => void
   updateOffer: (id: string, o: Partial<AdminOffer>) => void
@@ -355,86 +328,155 @@ interface AdminContextType {
 const AdminContext = createContext<AdminContextType | null>(null)
 
 export function AdminProvider({ children }: { children: ReactNode }) {
-  const [products, setProducts] = useState<AdminProduct[]>(() => load(KEYS.products, []))
-  const [orders, setOrders] = useState<AdminOrder[]>(() => load(KEYS.orders, []))
-  const [categories, setCategories] = useState<AdminCategory[]>(() => load(KEYS.categories, []))
-  const [offers, setOffers] = useState<AdminOffer[]>(() => load(KEYS.offers, []))
-  const [heroBanners, setHeroBanners] = useState<AdminHeroBanner[]>(() => load(KEYS.heroBanners, []))
-  const [banners, setBanners] = useState<AdminBanner[]>(() => load(KEYS.banners, []))
-  const [carousels, setCarousels] = useState<AdminCarousel[]>(() => load(KEYS.carousels, []))
-  const [navbarOffers, setNavbarOffers] = useState<AdminNavbarOffer[]>(() => load(KEYS.navbarOffers, []))
-  const [popupOffers, setPopupOffers] = useState<AdminPopupOffer[]>(() => load(KEYS.popupOffers, []))
-  const [subscribers, setSubscribers] = useState<AdminNewsletterSub[]>(() => load(KEYS.newsletter, []))
-  const [emailCampaigns, setEmailCampaigns] = useState<AdminEmailCampaign[]>(() => load(KEYS.emailCampaigns, []))
-  const [deliveryZones, setDeliveryZones] = useState<AdminDeliveryZone[]>(() => load(KEYS.delivery, []))
-  const [policies, setPolicies] = useState<AdminPolicy[]>(() => load(KEYS.policies, []))
-  const [users, setUsers] = useState<AdminUser[]>(() => load(KEYS.users, []))
-  const [cardDetails, setCardDetails] = useState<AdminCardDetail[]>(() => load(KEYS.cardDetails, []))
-  const [settings, setSettings] = useState<AdminSettings>(() => {
-    const stored = load<Partial<AdminSettings>>(KEYS.settings, {})
-    return {
-      ...defaultSettings,
-      ...stored,
-      socialLinks: { ...defaultSettings.socialLinks, ...(stored.socialLinks || {}) },
-      theme: { ...defaultSettings.theme, ...(stored.theme || {}) },
-      seoPages: stored.seoPages ?? defaultSettings.seoPages,
+  const [loading, setLoading] = useState(true)
+  const [products, setProducts] = useState<AdminProduct[]>([])
+  const [orders, setOrders] = useState<AdminOrder[]>([])
+  const [categories, setCategories] = useState<AdminCategory[]>([])
+  const [offers, setOffers] = useState<AdminOffer[]>([])
+  const [heroBanners, setHeroBanners] = useState<AdminHeroBanner[]>([])
+  const [banners, setBanners] = useState<AdminBanner[]>([])
+  const [carousels, setCarousels] = useState<AdminCarousel[]>([])
+  const [navbarOffers, setNavbarOffers] = useState<AdminNavbarOffer[]>([])
+  const [popupOffers, setPopupOffers] = useState<AdminPopupOffer[]>([])
+  const [subscribers, setSubscribers] = useState<AdminNewsletterSub[]>([])
+  const [emailCampaigns, setEmailCampaigns] = useState<AdminEmailCampaign[]>([])
+  const [deliveryZones, setDeliveryZones] = useState<AdminDeliveryZone[]>([])
+  const [policies, setPolicies] = useState<AdminPolicy[]>([])
+  const [users, setUsers] = useState<AdminUser[]>([])
+  const [cardDetails, setCardDetails] = useState<AdminCardDetail[]>([])
+  const [settings, setSettings] = useState<AdminSettings>(defaultSettings)
+
+  /* ── Fetch all data from Supabase via Netlify Functions on mount ── */
+  useEffect(() => {
+    let cancelled = false
+    async function fetchAll() {
+      const results = await Promise.allSettled([
+        productsApi.list(),      // 0
+        ordersApi.list(),        // 1
+        categoriesApi.list(),    // 2
+        heroBannersApi.list(),   // 3
+        bannersApi.list(),       // 4
+        carouselsApi.list(),     // 5
+        navbarOffersApi.list(),  // 6
+        popupOffersApi.list(),   // 7
+        subscribersApi.list(),   // 8
+        campaignsApi.list(),     // 9
+        deliveryApi.list(),      // 10
+        policiesApi.list(),      // 11
+        usersApi.list(),         // 12
+        cardDetailsApi.list(),   // 13
+        settingsApi.get(),       // 14
+      ])
+      if (cancelled) return
+
+      const val = <T,>(i: number): T | null =>
+        results[i].status === 'fulfilled' ? (results[i] as PromiseFulfilledResult<T>).value : null
+
+      const p = val<AdminProduct[]>(0)
+      const o = val<AdminOrder[]>(1)
+      const c = val<AdminCategory[]>(2)
+      const hb = val<AdminHeroBanner[]>(3)
+      const b = val<AdminBanner[]>(4)
+      const car = val<AdminCarousel[]>(5)
+      const no = val<AdminNavbarOffer[]>(6)
+      const po = val<AdminPopupOffer[]>(7)
+      const sub = val<AdminNewsletterSub[]>(8)
+      const ec = val<AdminEmailCampaign[]>(9)
+      const dz = val<AdminDeliveryZone[]>(10)
+      const pol = val<AdminPolicy[]>(11)
+      const u = val<AdminUser[]>(12)
+      const cd = val<AdminCardDetail[]>(13)
+      const s = val<Partial<AdminSettings>>(14)
+
+      if (p) setProducts(p)
+      if (o) setOrders(o)
+      if (c) setCategories(c)
+      if (hb) setHeroBanners(hb)
+      if (b) setBanners(b)
+      if (car) setCarousels(car)
+      if (no) setNavbarOffers(no)
+      if (po) setPopupOffers(po)
+      if (sub) setSubscribers(sub)
+      if (ec) setEmailCampaigns(ec)
+      if (dz) setDeliveryZones(dz)
+      if (pol) setPolicies(pol)
+      if (u) setUsers(u)
+      if (cd) setCardDetails(cd)
+      if (s) {
+        setSettings((prev) => ({
+          ...prev,
+          ...s,
+          socialLinks: { ...prev.socialLinks, ...(s.socialLinks as Record<string, string> || {}) },
+          theme: { ...prev.theme, ...(s.theme as Record<string, string> || {}) },
+        }))
+      }
+      setLoading(false)
     }
-  })
-
-  useEffect(() => { save(KEYS.products, products) }, [products])
-  useEffect(() => { save(KEYS.orders, orders) }, [orders])
-  useEffect(() => { save(KEYS.categories, categories) }, [categories])
-  useEffect(() => { save(KEYS.offers, offers) }, [offers])
-  useEffect(() => { save(KEYS.heroBanners, heroBanners) }, [heroBanners])
-  useEffect(() => { save(KEYS.banners, banners) }, [banners])
-  useEffect(() => { save(KEYS.carousels, carousels) }, [carousels])
-  useEffect(() => { save(KEYS.navbarOffers, navbarOffers) }, [navbarOffers])
-  useEffect(() => { save(KEYS.popupOffers, popupOffers) }, [popupOffers])
-  useEffect(() => { save(KEYS.newsletter, subscribers) }, [subscribers])
-  useEffect(() => { save(KEYS.emailCampaigns, emailCampaigns) }, [emailCampaigns])
-  useEffect(() => { save(KEYS.delivery, deliveryZones) }, [deliveryZones])
-  useEffect(() => { save(KEYS.policies, policies) }, [policies])
-  useEffect(() => { save(KEYS.users, users) }, [users])
-  useEffect(() => { save(KEYS.cardDetails, cardDetails) }, [cardDetails])
-  useEffect(() => { save(KEYS.settings, settings) }, [settings])
-
-  // Products
-  const addProduct = useCallback((p: Omit<AdminProduct, 'id' | 'createdAt' | 'updatedAt'>) => {
-    const ts = new Date().toISOString()
-    setProducts((prev) => [...prev, { ...p, id: genId(), createdAt: ts, updatedAt: ts }])
-  }, [])
-  const updateProduct = useCallback((id: string, p: Partial<AdminProduct>) => {
-    setProducts((prev) => prev.map((x) => x.id === id ? { ...x, ...p, updatedAt: new Date().toISOString() } : x))
-  }, [])
-  const deleteProduct = useCallback((id: string) => {
-    setProducts((prev) => prev.filter((x) => x.id !== id))
+    fetchAll()
+    return () => { cancelled = true }
   }, [])
 
-  // Orders
-  const addOrder = useCallback((o: Omit<AdminOrder, 'id' | 'orderNumber' | 'createdAt' | 'updatedAt'>) => {
-    const ts = new Date().toISOString()
-    const orderNum = 'BRM-' + Date.now().toString(36).toUpperCase().slice(-6)
-    setOrders((prev) => [...prev, { ...o, id: genId(), orderNumber: orderNum, createdAt: ts, updatedAt: ts }])
+  /* ── Products ── */
+  const addProduct = useCallback(async (p: Omit<AdminProduct, 'id' | 'createdAt' | 'updatedAt'>) => {
+    try {
+      const created = await productsApi.create(p as unknown as Record<string, unknown>)
+      setProducts((prev) => [...prev, created as AdminProduct])
+    } catch (err) { console.error('Failed to add product:', err) }
   }, [])
-  const updateOrder = useCallback((id: string, o: Partial<AdminOrder>) => {
-    setOrders((prev) => prev.map((x) => x.id === id ? { ...x, ...o, updatedAt: new Date().toISOString() } : x))
+  const updateProduct = useCallback(async (id: string, p: Partial<AdminProduct>) => {
+    try {
+      const updated = await productsApi.update(id, p as unknown as Record<string, unknown>)
+      setProducts((prev) => prev.map((x) => x.id === id ? { ...x, ...(updated as Partial<AdminProduct>) } : x))
+    } catch (err) { console.error('Failed to update product:', err) }
   }, [])
-  const deleteOrder = useCallback((id: string) => {
-    setOrders((prev) => prev.filter((x) => x.id !== id))
-  }, [])
-
-  // Categories
-  const addCategory = useCallback((c: Omit<AdminCategory, 'id'>) => {
-    setCategories((prev) => [...prev, { ...c, id: genId() }])
-  }, [])
-  const updateCategory = useCallback((id: string, c: Partial<AdminCategory>) => {
-    setCategories((prev) => prev.map((x) => x.id === id ? { ...x, ...c } : x))
-  }, [])
-  const deleteCategory = useCallback((id: string) => {
-    setCategories((prev) => prev.filter((x) => x.id !== id))
+  const deleteProduct = useCallback(async (id: string) => {
+    try {
+      await productsApi.remove(id)
+      setProducts((prev) => prev.filter((x) => x.id !== id))
+    } catch (err) { console.error('Failed to delete product:', err) }
   }, [])
 
-  // Offers
+  /* ── Orders ── */
+  const addOrder = useCallback(async (o: Omit<AdminOrder, 'id' | 'orderNumber' | 'createdAt' | 'updatedAt'>) => {
+    try {
+      const created = await ordersApi.create(o as unknown as Record<string, unknown>)
+      setOrders((prev) => [...prev, created as AdminOrder])
+    } catch (err) { console.error('Failed to add order:', err) }
+  }, [])
+  const updateOrder = useCallback(async (id: string, o: Partial<AdminOrder>) => {
+    try {
+      const updated = await ordersApi.update(id, o as unknown as Record<string, unknown>)
+      setOrders((prev) => prev.map((x) => x.id === id ? { ...x, ...(updated as Partial<AdminOrder>) } : x))
+    } catch (err) { console.error('Failed to update order:', err) }
+  }, [])
+  const deleteOrder = useCallback(async (id: string) => {
+    try {
+      await ordersApi.remove(id)
+      setOrders((prev) => prev.filter((x) => x.id !== id))
+    } catch (err) { console.error('Failed to delete order:', err) }
+  }, [])
+
+  /* ── Categories ── */
+  const addCategory = useCallback(async (c: Omit<AdminCategory, 'id'>) => {
+    try {
+      const created = await categoriesApi.create(c as unknown as Record<string, unknown>)
+      setCategories((prev) => [...prev, created as AdminCategory])
+    } catch (err) { console.error('Failed to add category:', err) }
+  }, [])
+  const updateCategory = useCallback(async (id: string, c: Partial<AdminCategory>) => {
+    try {
+      const updated = await categoriesApi.update(id, c as unknown as Record<string, unknown>)
+      setCategories((prev) => prev.map((x) => x.id === id ? { ...x, ...(updated as Partial<AdminCategory>) } : x))
+    } catch (err) { console.error('Failed to update category:', err) }
+  }, [])
+  const deleteCategory = useCallback(async (id: string) => {
+    try {
+      await categoriesApi.remove(id)
+      setCategories((prev) => prev.filter((x) => x.id !== id))
+    } catch (err) { console.error('Failed to delete category:', err) }
+  }, [])
+
+  /* ── Offers (client-only, no DB table) ── */
   const addOffer = useCallback((o: Omit<AdminOffer, 'id'>) => {
     setOffers((prev) => [...prev, { ...o, id: genId() }])
   }, [])
@@ -445,131 +487,230 @@ export function AdminProvider({ children }: { children: ReactNode }) {
     setOffers((prev) => prev.filter((x) => x.id !== id))
   }, [])
 
-  // Newsletter
-  const addSubscriber = useCallback((email: string) => {
-    setSubscribers((prev) => [...prev, { id: genId(), email, subscribedAt: new Date().toISOString(), status: 'active' }])
+  /* ── Hero Banners ── */
+  const addHeroBanner = useCallback(async (b: Omit<AdminHeroBanner, 'id'>) => {
+    try {
+      const created = await heroBannersApi.create(b as unknown as Record<string, unknown>)
+      setHeroBanners((prev) => [...prev, created as AdminHeroBanner])
+    } catch (err) { console.error('Failed to add hero banner:', err) }
   }, [])
-  const updateSubscriber = useCallback((id: string, s: Partial<AdminNewsletterSub>) => {
-    setSubscribers((prev) => prev.map((x) => x.id === id ? { ...x, ...s } : x))
+  const updateHeroBanner = useCallback(async (id: string, b: Partial<AdminHeroBanner>) => {
+    try {
+      const updated = await heroBannersApi.update(id, b as unknown as Record<string, unknown>)
+      setHeroBanners((prev) => prev.map((x) => x.id === id ? { ...x, ...(updated as Partial<AdminHeroBanner>) } : x))
+    } catch (err) { console.error('Failed to update hero banner:', err) }
   }, [])
-  const removeSubscriber = useCallback((id: string) => {
-    setSubscribers((prev) => prev.filter((x) => x.id !== id))
-  }, [])
-  const addEmailCampaign = useCallback((c: Omit<AdminEmailCampaign, 'id'>) => {
-    setEmailCampaigns((prev) => [...prev, { ...c, id: genId() }])
-  }, [])
-  const deleteEmailCampaign = useCallback((id: string) => {
-    setEmailCampaigns((prev) => prev.filter((x) => x.id !== id))
-  }, [])
-
-  // Hero Banners
-  const addHeroBanner = useCallback((b: Omit<AdminHeroBanner, 'id'>) => {
-    setHeroBanners((prev) => [...prev, { ...b, id: genId() }])
-  }, [])
-  const updateHeroBanner = useCallback((id: string, b: Partial<AdminHeroBanner>) => {
-    setHeroBanners((prev) => prev.map((x) => x.id === id ? { ...x, ...b } : x))
-  }, [])
-  const deleteHeroBanner = useCallback((id: string) => {
-    setHeroBanners((prev) => prev.filter((x) => x.id !== id))
+  const deleteHeroBanner = useCallback(async (id: string) => {
+    try {
+      await heroBannersApi.remove(id)
+      setHeroBanners((prev) => prev.filter((x) => x.id !== id))
+    } catch (err) { console.error('Failed to delete hero banner:', err) }
   }, [])
 
-  // Banners
-  const addBanner = useCallback((b: Omit<AdminBanner, 'id'>) => {
-    setBanners((prev) => [...prev, { ...b, id: genId() }])
+  /* ── Banners ── */
+  const addBanner = useCallback(async (b: Omit<AdminBanner, 'id'>) => {
+    try {
+      const created = await bannersApi.create(b as unknown as Record<string, unknown>)
+      setBanners((prev) => [...prev, created as AdminBanner])
+    } catch (err) { console.error('Failed to add banner:', err) }
   }, [])
-  const updateBanner = useCallback((id: string, b: Partial<AdminBanner>) => {
-    setBanners((prev) => prev.map((x) => x.id === id ? { ...x, ...b } : x))
+  const updateBanner = useCallback(async (id: string, b: Partial<AdminBanner>) => {
+    try {
+      const updated = await bannersApi.update(id, b as unknown as Record<string, unknown>)
+      setBanners((prev) => prev.map((x) => x.id === id ? { ...x, ...(updated as Partial<AdminBanner>) } : x))
+    } catch (err) { console.error('Failed to update banner:', err) }
   }, [])
-  const deleteBanner = useCallback((id: string) => {
-    setBanners((prev) => prev.filter((x) => x.id !== id))
-  }, [])
-
-  // Carousels
-  const addCarousel = useCallback((c: Omit<AdminCarousel, 'id'>) => {
-    setCarousels((prev) => [...prev, { ...c, id: genId() }])
-  }, [])
-  const updateCarousel = useCallback((id: string, c: Partial<AdminCarousel>) => {
-    setCarousels((prev) => prev.map((x) => x.id === id ? { ...x, ...c } : x))
-  }, [])
-  const deleteCarousel = useCallback((id: string) => {
-    setCarousels((prev) => prev.filter((x) => x.id !== id))
+  const deleteBanner = useCallback(async (id: string) => {
+    try {
+      await bannersApi.remove(id)
+      setBanners((prev) => prev.filter((x) => x.id !== id))
+    } catch (err) { console.error('Failed to delete banner:', err) }
   }, [])
 
-  // Navbar Offers
-  const addNavbarOffer = useCallback((o: Omit<AdminNavbarOffer, 'id'>) => {
-    setNavbarOffers((prev) => [...prev, { ...o, id: genId() }])
+  /* ── Carousels ── */
+  const addCarousel = useCallback(async (c: Omit<AdminCarousel, 'id'>) => {
+    try {
+      const created = await carouselsApi.create(c as unknown as Record<string, unknown>)
+      setCarousels((prev) => [...prev, created as AdminCarousel])
+    } catch (err) { console.error('Failed to add carousel:', err) }
   }, [])
-  const updateNavbarOffer = useCallback((id: string, o: Partial<AdminNavbarOffer>) => {
-    setNavbarOffers((prev) => prev.map((x) => x.id === id ? { ...x, ...o } : x))
+  const updateCarousel = useCallback(async (id: string, c: Partial<AdminCarousel>) => {
+    try {
+      const updated = await carouselsApi.update(id, c as unknown as Record<string, unknown>)
+      setCarousels((prev) => prev.map((x) => x.id === id ? { ...x, ...(updated as Partial<AdminCarousel>) } : x))
+    } catch (err) { console.error('Failed to update carousel:', err) }
   }, [])
-  const deleteNavbarOffer = useCallback((id: string) => {
-    setNavbarOffers((prev) => prev.filter((x) => x.id !== id))
-  }, [])
-
-  // Popup Offers
-  const addPopupOffer = useCallback((o: Omit<AdminPopupOffer, 'id'>) => {
-    setPopupOffers((prev) => [...prev, { ...o, id: genId() }])
-  }, [])
-  const updatePopupOffer = useCallback((id: string, o: Partial<AdminPopupOffer>) => {
-    setPopupOffers((prev) => prev.map((x) => x.id === id ? { ...x, ...o } : x))
-  }, [])
-  const deletePopupOffer = useCallback((id: string) => {
-    setPopupOffers((prev) => prev.filter((x) => x.id !== id))
+  const deleteCarousel = useCallback(async (id: string) => {
+    try {
+      await carouselsApi.remove(id)
+      setCarousels((prev) => prev.filter((x) => x.id !== id))
+    } catch (err) { console.error('Failed to delete carousel:', err) }
   }, [])
 
-  // Delivery
-  const addDeliveryZone = useCallback((z: Omit<AdminDeliveryZone, 'id'>) => {
-    setDeliveryZones((prev) => [...prev, { ...z, id: genId() }])
+  /* ── Navbar Offers ── */
+  const addNavbarOffer = useCallback(async (o: Omit<AdminNavbarOffer, 'id'>) => {
+    try {
+      const created = await navbarOffersApi.create(o as unknown as Record<string, unknown>)
+      setNavbarOffers((prev) => [...prev, created as AdminNavbarOffer])
+    } catch (err) { console.error('Failed to add navbar offer:', err) }
   }, [])
-  const updateDeliveryZone = useCallback((id: string, z: Partial<AdminDeliveryZone>) => {
-    setDeliveryZones((prev) => prev.map((x) => x.id === id ? { ...x, ...z } : x))
+  const updateNavbarOffer = useCallback(async (id: string, o: Partial<AdminNavbarOffer>) => {
+    try {
+      const updated = await navbarOffersApi.update(id, o as unknown as Record<string, unknown>)
+      setNavbarOffers((prev) => prev.map((x) => x.id === id ? { ...x, ...(updated as Partial<AdminNavbarOffer>) } : x))
+    } catch (err) { console.error('Failed to update navbar offer:', err) }
   }, [])
-  const deleteDeliveryZone = useCallback((id: string) => {
-    setDeliveryZones((prev) => prev.filter((x) => x.id !== id))
-  }, [])
-
-  // Policies
-  const addPolicy = useCallback((p: Omit<AdminPolicy, 'id' | 'updatedAt'>) => {
-    const ts = new Date().toISOString()
-    setPolicies((prev) => [...prev, { ...p, id: genId(), updatedAt: ts }])
-  }, [])
-  const updatePolicy = useCallback((id: string, p: Partial<AdminPolicy>) => {
-    setPolicies((prev) => prev.map((x) => x.id === id ? { ...x, ...p, updatedAt: new Date().toISOString() } : x))
-  }, [])
-  const deletePolicy = useCallback((id: string) => {
-    setPolicies((prev) => prev.filter((x) => x.id !== id))
+  const deleteNavbarOffer = useCallback(async (id: string) => {
+    try {
+      await navbarOffersApi.remove(id)
+      setNavbarOffers((prev) => prev.filter((x) => x.id !== id))
+    } catch (err) { console.error('Failed to delete navbar offer:', err) }
   }, [])
 
-  // Users
-  const addUser = useCallback((u: Omit<AdminUser, 'id' | 'createdAt' | 'lastLogin'>) => {
-    const ts = new Date().toISOString()
-    setUsers((prev) => [...prev, { ...u, id: genId(), createdAt: ts, lastLogin: ts }])
+  /* ── Popup Offers ── */
+  const addPopupOffer = useCallback(async (o: Omit<AdminPopupOffer, 'id'>) => {
+    try {
+      const created = await popupOffersApi.create(o as unknown as Record<string, unknown>)
+      setPopupOffers((prev) => [...prev, created as AdminPopupOffer])
+    } catch (err) { console.error('Failed to add popup offer:', err) }
   }, [])
-  const updateUser = useCallback((id: string, u: Partial<AdminUser>) => {
-    setUsers((prev) => prev.map((x) => x.id === id ? { ...x, ...u } : x))
+  const updatePopupOffer = useCallback(async (id: string, o: Partial<AdminPopupOffer>) => {
+    try {
+      const updated = await popupOffersApi.update(id, o as unknown as Record<string, unknown>)
+      setPopupOffers((prev) => prev.map((x) => x.id === id ? { ...x, ...(updated as Partial<AdminPopupOffer>) } : x))
+    } catch (err) { console.error('Failed to update popup offer:', err) }
   }, [])
-  const deleteUser = useCallback((id: string) => {
-    setUsers((prev) => prev.filter((x) => x.id !== id))
-  }, [])
-
-  // Card Details
-  const addCardDetail = useCallback((c: Omit<AdminCardDetail, 'id'>) => {
-    setCardDetails((prev) => [...prev, { ...c, id: genId() }])
-  }, [])
-  const updateCardDetail = useCallback((id: string, c: Partial<AdminCardDetail>) => {
-    setCardDetails((prev) => prev.map((x) => x.id === id ? { ...x, ...c } : x))
-  }, [])
-  const deleteCardDetail = useCallback((id: string) => {
-    setCardDetails((prev) => prev.filter((x) => x.id !== id))
+  const deletePopupOffer = useCallback(async (id: string) => {
+    try {
+      await popupOffersApi.remove(id)
+      setPopupOffers((prev) => prev.filter((x) => x.id !== id))
+    } catch (err) { console.error('Failed to delete popup offer:', err) }
   }, [])
 
-  // Settings
-  const updateSettings = useCallback((s: Partial<AdminSettings>) => {
-    setSettings((prev) => ({ ...prev, ...s }))
+  /* ── Newsletter ── */
+  const addSubscriber = useCallback(async (email: string) => {
+    try {
+      const created = await subscribersApi.create({ email, status: 'active', subscribedAt: new Date().toISOString() } as unknown as Record<string, unknown>)
+      setSubscribers((prev) => [...prev, created as AdminNewsletterSub])
+    } catch (err) { console.error('Failed to add subscriber:', err) }
+  }, [])
+  const updateSubscriber = useCallback(async (id: string, s: Partial<AdminNewsletterSub>) => {
+    try {
+      const updated = await subscribersApi.update(id, s as unknown as Record<string, unknown>)
+      setSubscribers((prev) => prev.map((x) => x.id === id ? { ...x, ...(updated as Partial<AdminNewsletterSub>) } : x))
+    } catch (err) { console.error('Failed to update subscriber:', err) }
+  }, [])
+  const removeSubscriber = useCallback(async (id: string) => {
+    try {
+      await subscribersApi.remove(id)
+      setSubscribers((prev) => prev.filter((x) => x.id !== id))
+    } catch (err) { console.error('Failed to remove subscriber:', err) }
+  }, [])
+  const addEmailCampaign = useCallback(async (c: Omit<AdminEmailCampaign, 'id'>) => {
+    try {
+      const created = await campaignsApi.create(c as unknown as Record<string, unknown>)
+      setEmailCampaigns((prev) => [...prev, created as AdminEmailCampaign])
+    } catch (err) { console.error('Failed to add campaign:', err) }
+  }, [])
+  const deleteEmailCampaign = useCallback(async (id: string) => {
+    try {
+      await campaignsApi.remove(id)
+      setEmailCampaigns((prev) => prev.filter((x) => x.id !== id))
+    } catch (err) { console.error('Failed to delete campaign:', err) }
+  }, [])
+
+  /* ── Delivery ── */
+  const addDeliveryZone = useCallback(async (z: Omit<AdminDeliveryZone, 'id'>) => {
+    try {
+      const created = await deliveryApi.create(z as unknown as Record<string, unknown>)
+      setDeliveryZones((prev) => [...prev, created as AdminDeliveryZone])
+    } catch (err) { console.error('Failed to add delivery zone:', err) }
+  }, [])
+  const updateDeliveryZone = useCallback(async (id: string, z: Partial<AdminDeliveryZone>) => {
+    try {
+      const updated = await deliveryApi.update(id, z as unknown as Record<string, unknown>)
+      setDeliveryZones((prev) => prev.map((x) => x.id === id ? { ...x, ...(updated as Partial<AdminDeliveryZone>) } : x))
+    } catch (err) { console.error('Failed to update delivery zone:', err) }
+  }, [])
+  const deleteDeliveryZone = useCallback(async (id: string) => {
+    try {
+      await deliveryApi.remove(id)
+      setDeliveryZones((prev) => prev.filter((x) => x.id !== id))
+    } catch (err) { console.error('Failed to delete delivery zone:', err) }
+  }, [])
+
+  /* ── Policies ── */
+  const addPolicy = useCallback(async (p: Omit<AdminPolicy, 'id' | 'updatedAt'>) => {
+    try {
+      const created = await policiesApi.create(p as unknown as Record<string, unknown>)
+      setPolicies((prev) => [...prev, created as AdminPolicy])
+    } catch (err) { console.error('Failed to add policy:', err) }
+  }, [])
+  const updatePolicy = useCallback(async (id: string, p: Partial<AdminPolicy>) => {
+    try {
+      const updated = await policiesApi.update(id, p as unknown as Record<string, unknown>)
+      setPolicies((prev) => prev.map((x) => x.id === id ? { ...x, ...(updated as Partial<AdminPolicy>) } : x))
+    } catch (err) { console.error('Failed to update policy:', err) }
+  }, [])
+  const deletePolicy = useCallback(async (id: string) => {
+    try {
+      await policiesApi.remove(id)
+      setPolicies((prev) => prev.filter((x) => x.id !== id))
+    } catch (err) { console.error('Failed to delete policy:', err) }
+  }, [])
+
+  /* ── Users ── */
+  const addUser = useCallback(async (u: Omit<AdminUser, 'id' | 'createdAt' | 'lastLogin'>) => {
+    try {
+      const created = await usersApi.create(u as unknown as Record<string, unknown>)
+      setUsers((prev) => [...prev, created as AdminUser])
+    } catch (err) { console.error('Failed to add user:', err) }
+  }, [])
+  const updateUser = useCallback(async (id: string, u: Partial<AdminUser>) => {
+    try {
+      const updated = await usersApi.update(id, u as unknown as Record<string, unknown>)
+      setUsers((prev) => prev.map((x) => x.id === id ? { ...x, ...(updated as Partial<AdminUser>) } : x))
+    } catch (err) { console.error('Failed to update user:', err) }
+  }, [])
+  const deleteUser = useCallback(async (id: string) => {
+    try {
+      await usersApi.remove(id)
+      setUsers((prev) => prev.filter((x) => x.id !== id))
+    } catch (err) { console.error('Failed to delete user:', err) }
+  }, [])
+
+  /* ── Card Details ── */
+  const addCardDetail = useCallback(async (c: Omit<AdminCardDetail, 'id'>) => {
+    try {
+      const created = await cardDetailsApi.create(c as unknown as Record<string, unknown>)
+      setCardDetails((prev) => [...prev, created as AdminCardDetail])
+    } catch (err) { console.error('Failed to add card detail:', err) }
+  }, [])
+  const updateCardDetail = useCallback(async (id: string, c: Partial<AdminCardDetail>) => {
+    try {
+      const updated = await cardDetailsApi.update(id, c as unknown as Record<string, unknown>)
+      setCardDetails((prev) => prev.map((x) => x.id === id ? { ...x, ...(updated as Partial<AdminCardDetail>) } : x))
+    } catch (err) { console.error('Failed to update card detail:', err) }
+  }, [])
+  const deleteCardDetail = useCallback(async (id: string) => {
+    try {
+      await cardDetailsApi.remove(id)
+      setCardDetails((prev) => prev.filter((x) => x.id !== id))
+    } catch (err) { console.error('Failed to delete card detail:', err) }
+  }, [])
+
+  /* ── Settings ── */
+  const updateSettings = useCallback(async (s: Partial<AdminSettings>) => {
+    setSettings((prev) => {
+      const merged = { ...prev, ...s }
+      settingsApi.save(merged as unknown as Record<string, unknown>).catch((err) => console.error('Failed to save settings:', err))
+      return merged
+    })
   }, [])
 
   return (
     <AdminContext.Provider value={{
+      loading,
       products, addProduct, updateProduct, deleteProduct,
       orders, addOrder, updateOrder, deleteOrder,
       categories, addCategory, updateCategory, deleteCategory,

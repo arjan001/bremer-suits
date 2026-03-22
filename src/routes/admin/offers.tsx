@@ -2,6 +2,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import { useState } from 'react'
 import { Plus, Edit2, Trash2, X, Megaphone, Image, Percent } from 'lucide-react'
 import { useAdmin, type AdminHeroBanner, type AdminBanner, type AdminCarousel, type AdminNavbarOffer, type AdminPopupOffer, type AdminOffer } from '@/lib/admin-store'
+import { ImageUpload } from '@/components/ImageUpload'
 
 export const Route = createFileRoute('/admin/offers')({
   component: AdminOffers,
@@ -450,7 +451,7 @@ function HeroBannerForm({ item, categories, onSave, onCancel }: { item: AdminHer
         <div><label className="block text-sm font-semibold text-black mb-1">Link</label><input value={link} onChange={(e) => setLink(e.target.value)} className={inputCls} /></div>
         <div><label className="block text-sm font-semibold text-black mb-1">Button Text</label><input value={buttonText} onChange={(e) => setButtonText(e.target.value)} className={inputCls} /></div>
       </div>
-      <div><label className="block text-sm font-semibold text-black mb-1">Image URL</label><input value={image} onChange={(e) => setImage(e.target.value)} className={inputCls} /></div>
+      <ImageUpload value={image} onChange={(url) => setImage(url)} label="Image" />
       <div className="flex gap-3 justify-end pt-2">
         <button type="button" onClick={onCancel} className="px-4 py-2.5 text-sm font-medium text-gray-600">Cancel</button>
         <button type="submit" className="px-6 py-2.5 bg-black text-white text-sm font-semibold rounded-lg hover:bg-gray-800">Save</button>
@@ -471,7 +472,7 @@ function BannerForm({ item, onSave, onCancel }: { item: AdminBanner | null; onSa
       <div><label className="block text-sm font-semibold text-black mb-1">Title *</label><input value={title} onChange={(e) => setTitle(e.target.value)} required className={inputCls} /></div>
       <div><label className="block text-sm font-semibold text-black mb-1">Description</label><textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={2} className={inputCls + " resize-y"} /></div>
       <div><label className="block text-sm font-semibold text-black mb-1">Link</label><input value={link} onChange={(e) => setLink(e.target.value)} className={inputCls} /></div>
-      <div><label className="block text-sm font-semibold text-black mb-1">Image URL</label><input value={image} onChange={(e) => setImage(e.target.value)} className={inputCls} /></div>
+      <ImageUpload value={image} onChange={(url) => setImage(url)} label="Image" />
       <div className="flex gap-3 justify-end pt-2">
         <button type="button" onClick={onCancel} className="px-4 py-2.5 text-sm font-medium text-gray-600">Cancel</button>
         <button type="submit" className="px-6 py-2.5 bg-black text-white text-sm font-semibold rounded-lg hover:bg-gray-800">Save</button>
@@ -490,7 +491,7 @@ function CarouselForm({ item, onSave, onCancel }: { item: AdminCarousel | null; 
     <form onSubmit={(e) => { e.preventDefault(); onSave({ title, link, image, isActive: item?.isActive ?? true }) }} className="p-6 space-y-4">
       <div><label className="block text-sm font-semibold text-black mb-1">Title *</label><input value={title} onChange={(e) => setTitle(e.target.value)} required className={inputCls} /></div>
       <div><label className="block text-sm font-semibold text-black mb-1">Link</label><input value={link} onChange={(e) => setLink(e.target.value)} className={inputCls} /></div>
-      <div><label className="block text-sm font-semibold text-black mb-1">Image URL</label><input value={image} onChange={(e) => setImage(e.target.value)} className={inputCls} /></div>
+      <ImageUpload value={image} onChange={(url) => setImage(url)} label="Image" />
       <div className="flex gap-3 justify-end pt-2">
         <button type="button" onClick={onCancel} className="px-4 py-2.5 text-sm font-medium text-gray-600">Cancel</button>
         <button type="submit" className="px-6 py-2.5 bg-black text-white text-sm font-semibold rounded-lg hover:bg-gray-800">Save</button>
@@ -535,7 +536,7 @@ function PopupOfferForm({ item, onSave, onCancel }: { item: AdminPopupOffer | nu
         <div><label className="block text-sm font-semibold text-black mb-1">Discount %</label><input type="number" value={discountPercent} onChange={(e) => setDiscountPercent(Number(e.target.value))} min={1} max={100} className={inputCls} /></div>
         <div><label className="block text-sm font-semibold text-black mb-1">Promo Code</label><input value={code} onChange={(e) => setCode(e.target.value.toUpperCase())} placeholder="WELCOME10" className={inputCls + " font-mono"} /></div>
       </div>
-      <div><label className="block text-sm font-semibold text-black mb-1">Image URL</label><input value={image} onChange={(e) => setImage(e.target.value)} placeholder="/images/..." className={inputCls} /></div>
+      <ImageUpload value={image} onChange={(url) => setImage(url)} label="Image" />
       <div className="flex items-center gap-3 pt-1">
         <button type="button" onClick={() => setCollectNewsletter(!collectNewsletter)}
           className={`w-10 h-5 rounded-full transition-colors relative ${collectNewsletter ? 'bg-gray-800' : 'bg-gray-300'}`}>

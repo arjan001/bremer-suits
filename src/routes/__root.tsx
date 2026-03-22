@@ -122,146 +122,6 @@ function WhatsAppIcon({ size = 16 }: { size?: number }) {
   )
 }
 
-/* ── Signature Products Section ── */
-const signatureProducts = [
-  {
-    id: 'windsor-elegance',
-    title: 'Windsor Elegance',
-    category: 'Formal',
-    fabric: 'Premium Barathea',
-    image: '/images/suit-formal.webp',
-    salePrice: '$550.00',
-    originalPrice: '$600.00',
-    numericPrice: 550,
-  },
-  {
-    id: 'classic-gentleman',
-    title: 'The Classic Gentleman',
-    category: 'Three-Piece',
-    fabric: 'Premium Wool Blend',
-    image: '/images/suit-vest.webp',
-    salePrice: '$640.00',
-    originalPrice: '$700.00',
-    numericPrice: 640,
-  },
-  {
-    id: 'urban-tailor',
-    title: 'Urban Tailor',
-    category: 'Casual',
-    fabric: 'Stretch Cotton Blend',
-    image: '/images/suit-casual.webp',
-    salePrice: '$750.00',
-    originalPrice: '$800.00',
-    numericPrice: 750,
-  },
-  {
-    id: 'royal-navy-charm',
-    title: 'Royal Navy Charm',
-    category: 'Business',
-    fabric: 'Super 120s Wool',
-    image: '/images/suit-navy.webp',
-    salePrice: '$550.00',
-    originalPrice: '$600.00',
-    numericPrice: 550,
-  },
-]
-
-function SignatureProducts() {
-  const { toggleItem, isInWishlist } = useWishlist()
-
-  return (
-    <section className="py-16 lg:py-24 bg-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12">
-          <h2
-            className="text-3xl lg:text-4xl font-semibold text-black italic"
-            style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
-          >
-            Signature Product
-          </h2>
-          <div className="w-12 h-0.5 bg-blue-900 mx-auto mt-4" />
-        </div>
-
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
-          {signatureProducts.map((product) => {
-            const inWishlist = isInWishlist(product.id)
-            return (
-              <div
-                key={product.title}
-                className="group block bg-white text-center"
-              >
-                <Link
-                  to="/collections/$slug"
-                  params={{ slug: product.id }}
-                  className="block"
-                >
-                  <div className="relative overflow-hidden aspect-[3/4] bg-gray-50">
-                    <img
-                      src={product.image}
-                      alt={product.title}
-                      className="w-full h-full object-cover product-img-zoom"
-                    />
-                    <div className="absolute top-0 right-0 w-0 h-0 border-l-[60px] border-l-transparent border-t-[60px] border-t-red-500">
-                      <span className="absolute -top-[52px] -left-[38px] text-white text-[10px] font-bold rotate-45">
-                        Sale
-                      </span>
-                    </div>
-                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
-                    {/* View Product overlay */}
-                    <div className="absolute bottom-0 left-0 right-0 p-3 translate-y-full group-hover:translate-y-0 transition-transform duration-300 z-10">
-                      <span className="flex items-center justify-center gap-2 w-full py-2.5 bg-black text-white text-center text-xs tracking-widest uppercase font-semibold">
-                        View Product
-                        <ArrowRight size={14} />
-                      </span>
-                    </div>
-                  </div>
-                </Link>
-                <div className="pt-4 pb-2">
-                  <div className="flex items-center justify-center gap-2 mb-2">
-                    <Link
-                      to="/collections/$slug"
-                      params={{ slug: product.id }}
-                    >
-                      <h3
-                        className="text-sm font-semibold text-black group-hover:text-gray-600 transition-colors"
-                        style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
-                      >
-                        {product.title}
-                      </h3>
-                    </Link>
-                    <button
-                      onClick={() => toggleItem(product.id)}
-                      className={`p-1 rounded-full transition-all duration-200 ${
-                        inWishlist
-                          ? 'text-red-500'
-                          : 'text-gray-300 hover:text-red-400'
-                      }`}
-                      aria-label={inWishlist ? 'Remove from wishlist' : 'Add to wishlist'}
-                    >
-                      <Heart size={14} className={inWishlist ? 'fill-red-500' : ''} />
-                    </button>
-                  </div>
-                  <div className="flex items-center justify-center gap-2">
-                    <span className="text-sm font-semibold text-black">{product.salePrice}</span>
-                    <span className="text-sm text-gray-400 line-through">{product.originalPrice}</span>
-                  </div>
-                </div>
-              </div>
-            )
-          })}
-        </div>
-
-        {/* Carousel dots */}
-        <div className="flex items-center justify-center gap-2 mt-8">
-          <span className="w-2.5 h-2.5 rounded-full bg-black" />
-          <span className="w-2.5 h-2.5 rounded-full bg-gray-300" />
-          <span className="w-2.5 h-2.5 rounded-full bg-gray-300" />
-        </div>
-      </div>
-    </section>
-  )
-}
-
 /* ── Follow Us Section ── */
 function FollowUs() {
   const images = [
@@ -319,20 +179,30 @@ function SubscribeModal() {
   } | null>(null)
 
   useEffect(() => {
-    // Load active popup offer from admin store in localStorage
-    try {
-      const stored = localStorage.getItem('bremer-admin-popup-offers')
-      if (stored) {
-        const popupOffers = JSON.parse(stored) as Array<{
-          title: string; description: string; discountPercent: number;
-          code: string; image: string; collectNewsletter: boolean; isActive: boolean
-        }>
-        const activeOffer = popupOffers.find((o) => o.isActive)
-        if (activeOffer) {
-          setOffer(activeOffer)
+    // Load active popup offer from API
+    async function loadOffer() {
+      try {
+        const res = await fetch('/.netlify/functions/admin-offers?type=popup_offers')
+        if (res.ok) {
+          const popupOffers = (await res.json()) as Array<{
+            title: string; description: string; discount_percent: number;
+            code: string; image: string; collect_newsletter: boolean; is_active: boolean
+          }>
+          const activeOffer = popupOffers.find((o) => o.is_active)
+          if (activeOffer) {
+            setOffer({
+              title: activeOffer.title,
+              description: activeOffer.description,
+              discountPercent: activeOffer.discount_percent,
+              code: activeOffer.code,
+              image: activeOffer.image,
+              collectNewsletter: activeOffer.collect_newsletter,
+            })
+          }
         }
-      }
-    } catch { /* ignore */ }
+      } catch { /* ignore */ }
+    }
+    loadOffer()
   }, [])
 
   useEffect(() => {
@@ -357,21 +227,12 @@ function SubscribeModal() {
   const handleSubscribe = (e: React.FormEvent) => {
     e.preventDefault()
     if (!email.trim()) return
-    // Save subscriber to admin newsletter store in localStorage
-    try {
-      const stored = localStorage.getItem('bremer-admin-newsletter')
-      const subscribers = stored ? JSON.parse(stored) : []
-      const alreadyExists = subscribers.some((s: { email: string }) => s.email.toLowerCase() === email.toLowerCase())
-      if (!alreadyExists) {
-        subscribers.push({
-          id: Date.now().toString(36) + Math.random().toString(36).slice(2, 8),
-          email: email.trim(),
-          subscribedAt: new Date().toISOString(),
-          status: 'active',
-        })
-        localStorage.setItem('bremer-admin-newsletter', JSON.stringify(subscribers))
-      }
-    } catch { /* ignore */ }
+    // Save subscriber via API
+    fetch('/.netlify/functions/admin-newsletter?resource=subscribers', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: email.trim(), status: 'active', subscribed_at: new Date().toISOString() }),
+    }).catch(() => {})
     setSubscribed(true)
   }
 

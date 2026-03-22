@@ -1,8 +1,9 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { Heart, ShoppingBag, Trash2, ArrowRight } from 'lucide-react'
+import { useState, useEffect } from 'react'
 import { useWishlist } from '@/lib/wishlist-context'
 import { useCart } from '@/lib/cart-context'
-import { getProductById } from '@/lib/products'
+import { getProducts, type Product } from '@/lib/products'
 
 export const Route = createFileRoute('/wishlist')({
   component: WishlistPage,
@@ -11,10 +12,15 @@ export const Route = createFileRoute('/wishlist')({
 function WishlistPage() {
   const { items, removeItem } = useWishlist()
   const { addItem } = useCart()
+  const [allProducts, setAllProducts] = useState<Product[]>([])
+
+  useEffect(() => {
+    getProducts().then(setAllProducts)
+  }, [])
 
   const wishlistProducts = items
-    .map((id) => getProductById(id))
-    .filter(Boolean) as NonNullable<ReturnType<typeof getProductById>>[]
+    .map((id) => allProducts.find((p) => p.id === id))
+    .filter(Boolean) as Product[]
 
   return (
     <div className="min-h-screen bg-white">
