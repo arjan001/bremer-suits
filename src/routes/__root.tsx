@@ -27,6 +27,13 @@ export const Route = createRootRoute({
         content: 'Premium custom suits, professional fashion styling, and image consulting. Elevate your personal brand with Bremer Suits.',
       },
     ],
+    links: [
+      {
+        rel: 'icon',
+        type: 'image/png',
+        href: '/images/stemtrix-logo.png',
+      },
+    ],
   }),
   component: RootLayout,
   shellComponent: RootDocument,
