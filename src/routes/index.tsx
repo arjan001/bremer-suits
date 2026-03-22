@@ -25,6 +25,25 @@ interface CategoryInfo {
   category: string
 }
 
+interface MenuItem {
+  id: string
+  title: string
+  description: string
+  price: string
+  image: string
+  sortOrder: number
+  isActive: boolean
+}
+
+interface BannerItem {
+  id: string
+  title: string
+  description: string
+  link: string
+  image: string
+  isActive: boolean
+}
+
 export const Route = createFileRoute('/')({
   component: HomePage,
 })
@@ -134,6 +153,8 @@ function HomePage() {
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 })
   const [products, setProducts] = useState<Product[]>([])
   const [collections, setCollections] = useState<CategoryInfo[]>([])
+  const [menuItems, setMenuItems] = useState<MenuItem[]>([])
+  const [banners, setBanners] = useState<BannerItem[]>([])
 
   useEffect(() => {
     async function loadData() {
@@ -169,7 +190,55 @@ function HomePage() {
         category: cat,
       })))
     }
+
+    async function loadMenuItems() {
+      try {
+        const res = await fetch(`${BASE}/admin-offers?type=menu_items`)
+        if (res.ok) {
+          const items = (await res.json()) as Array<{
+            id: string; title: string; description: string; price: string;
+            image: string; sort_order: number; is_active: boolean
+          }>
+          const active = items
+            .filter((i) => i.is_active)
+            .map((i) => ({
+              id: i.id,
+              title: i.title,
+              description: i.description,
+              price: i.price,
+              image: i.image,
+              sortOrder: i.sort_order || 0,
+              isActive: i.is_active,
+            }))
+            .sort((a, b) => a.sortOrder - b.sortOrder)
+          setMenuItems(active)
+        }
+      } catch { /* ignore */ }
+    }
+
+    async function loadBanners() {
+      try {
+        const res = await fetch(`${BASE}/admin-offers?type=banners`)
+        if (res.ok) {
+          const items = (await res.json()) as Array<{
+            id: string; title: string; description: string; link: string;
+            image: string; is_active: boolean
+          }>
+          setBanners(items.filter((b) => b.is_active).map((b) => ({
+            id: b.id,
+            title: b.title,
+            description: b.description,
+            link: b.link,
+            image: b.image,
+            isActive: b.is_active,
+          })))
+        }
+      } catch { /* ignore */ }
+    }
+
     loadData()
+    loadMenuItems()
+    loadBanners()
   }, [])
 
   const featuredProducts = products.slice(0, 4)
@@ -196,6 +265,12 @@ function HomePage() {
     const timer = setInterval(() => setTimeLeft(calculateTimeLeft()), 1000)
     return () => clearInterval(timer)
   }, [])
+
+  // Use menu items for specials, fall back to products
+  const hasMenuItems = menuItems.length > 0
+  const specialsImage = hasMenuItems
+    ? (menuItems[0]?.image || '/images/suit-hero.webp')
+    : (products[0]?.image || '/images/suit-hero.webp')
 
   return (
     <div className="min-h-screen bg-white">
@@ -517,36 +592,60 @@ function HomePage() {
 
           {products.length > 0 ? (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-start">
-            {/* Left: Suit Image */}
+            {/* Left: Featured Image */}
             <div className="aspect-[3/4] overflow-hidden bg-gray-100">
               <img
-                src={products[0]?.image || '/images/suit-hero.webp'}
+                src={specialsImage}
                 alt="Featured suit"
                 className="w-full h-full object-cover"
               />
             </div>
 
-            {/* Right: Product List */}
+            {/* Right: Menu Item List */}
             <div className="flex flex-col gap-6 lg:pt-4">
-              {products.slice(0, 7).map((item) => (
-                <div key={item.id}>
-                  <div className="flex items-baseline gap-2">
-                    <h3
-                      className="text-lg font-bold text-black whitespace-nowrap"
-                      style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
-                    >
-                      {item.title}
-                    </h3>
-                    <div className="flex-1 border-b border-dashed border-gray-300 relative -top-1" />
-                    <span className="text-lg font-semibold text-black whitespace-nowrap">
-                      {item.price}
-                    </span>
+              {hasMenuItems ? (
+                /* Render curated menu items from admin */
+                menuItems.map((item) => (
+                  <div key={item.id}>
+                    <div className="flex items-baseline gap-2">
+                      <h3
+                        className="text-lg font-bold text-black whitespace-nowrap"
+                        style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
+                      >
+                        {item.title}
+                      </h3>
+                      <div className="flex-1 border-b border-dashed border-gray-300 relative -top-1" />
+                      <span className="text-lg font-semibold text-black whitespace-nowrap">
+                        {item.price}
+                      </span>
+                    </div>
+                    <p className="text-sm text-gray-500 mt-1 italic leading-relaxed line-clamp-2">
+                      {item.description}
+                    </p>
                   </div>
-                  <p className="text-sm text-gray-500 mt-1 italic leading-relaxed line-clamp-2">
-                    {item.description || `Crafted with ${item.fabric} for the modern gentleman.`}
-                  </p>
-                </div>
-              ))}
+                ))
+              ) : (
+                /* Fallback: render from products */
+                products.slice(0, 7).map((item) => (
+                  <div key={item.id}>
+                    <div className="flex items-baseline gap-2">
+                      <h3
+                        className="text-lg font-bold text-black whitespace-nowrap"
+                        style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
+                      >
+                        {item.title}
+                      </h3>
+                      <div className="flex-1 border-b border-dashed border-gray-300 relative -top-1" />
+                      <span className="text-lg font-semibold text-black whitespace-nowrap">
+                        {item.price}
+                      </span>
+                    </div>
+                    <p className="text-sm text-gray-500 mt-1 italic leading-relaxed line-clamp-2">
+                      {item.description || `Crafted with ${item.fabric} for the modern gentleman.`}
+                    </p>
+                  </div>
+                ))
+              )}
 
               <div className="text-center mt-4">
                 <Link
@@ -723,13 +822,31 @@ function HomePage() {
                   New Season Fabrics
                 </h3>
                 <Link
-                  to="/collections"
-                  className="inline-flex items-center gap-2 text-xs tracking-widest uppercase text-white font-semibold hover:gap-3 transition-all duration-300 mt-2"
+                  to={banners[0].link || '/collections'}
+                  className="group relative overflow-hidden bg-gray-900 aspect-[16/9] md:aspect-[3/2] block"
                 >
-                  Explore <ArrowRight size={14} />
+                  <img
+                    src={banners[0].image || '/images/fabrics.png'}
+                    alt={banners[0].title}
+                    className="absolute inset-0 w-full h-full object-cover opacity-50 group-hover:scale-105 transition-transform duration-700"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-transparent" />
+                  <div className="relative h-full flex flex-col justify-center p-8 lg:p-12">
+                    <p className="text-xs tracking-widest uppercase text-white/60 mb-2">Special Offer</p>
+                    <h3
+                      className="text-2xl lg:text-3xl font-bold text-white mb-3"
+                      style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
+                    >
+                      {banners[0].title}
+                    </h3>
+                    {banners[0].description && (
+                      <p className="text-sm text-white/70 mb-3 max-w-sm line-clamp-2">{banners[0].description}</p>
+                    )}
+                    <span className="inline-flex items-center gap-2 text-xs tracking-widest uppercase text-white font-semibold hover:gap-3 transition-all duration-300 mt-2">
+                      Shop Now <ArrowRight size={14} />
+                    </span>
+                  </div>
                 </Link>
-              </div>
-            </div>
 
             {/* Promo 2 */}
             <div className="relative overflow-hidden bg-gray-900 aspect-[16/9] md:aspect-[3/2] group">
@@ -751,10 +868,81 @@ function HomePage() {
                   to="/services"
                   className="inline-flex items-center gap-2 text-xs tracking-widest uppercase text-white font-semibold hover:gap-3 transition-all duration-300 mt-2"
                 >
-                  Learn More <ArrowRight size={14} />
+                  <img
+                    src={banners[1].image || '/images/dressmaker.png'}
+                    alt={banners[1].title}
+                    className="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:scale-105 transition-transform duration-700"
+                  />
+                  <div className="relative h-full flex flex-col justify-center p-8 lg:p-12">
+                    <p className="text-xs tracking-widest uppercase text-gray-500 mb-2">Featured</p>
+                    <h3
+                      className="text-2xl lg:text-3xl font-bold text-black mb-3"
+                      style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
+                    >
+                      {banners[1].title}
+                    </h3>
+                    {banners[1].description && (
+                      <p className="text-sm text-gray-600 mb-3 max-w-sm line-clamp-2">{banners[1].description}</p>
+                    )}
+                    <span className="inline-flex items-center gap-2 text-xs tracking-widest uppercase text-black font-semibold hover:gap-3 transition-all duration-300 mt-2">
+                      Explore <ArrowRight size={14} />
+                    </span>
+                  </div>
                 </Link>
-              </div>
-            </div>
+              </>
+            ) : (
+              /* Default static banners */
+              <>
+                {/* Promo 1 */}
+                <div className="relative overflow-hidden bg-gray-900 aspect-[16/9] md:aspect-[3/2] group">
+                  <img
+                    src="/images/fabrics.png"
+                    alt="Premium Fabrics"
+                    className="absolute inset-0 w-full h-full object-cover opacity-50 group-hover:scale-105 transition-transform duration-700"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-transparent" />
+                  <div className="relative h-full flex flex-col justify-center p-8 lg:p-12">
+                    <p className="text-xs tracking-widest uppercase text-white/60 mb-2">Premium Selection</p>
+                    <h3
+                      className="text-2xl lg:text-3xl font-bold text-white mb-3"
+                      style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
+                    >
+                      New Season Fabrics
+                    </h3>
+                    <Link
+                      to="/collections"
+                      className="inline-flex items-center gap-2 text-xs tracking-widest uppercase text-white font-semibold hover:gap-3 transition-all duration-300 mt-2"
+                    >
+                      Explore <ArrowRight size={14} />
+                    </Link>
+                  </div>
+                </div>
+
+                {/* Promo 2 */}
+                <div className="relative overflow-hidden bg-gray-100 aspect-[16/9] md:aspect-[3/2] group">
+                  <img
+                    src="/images/sewing-machine.png"
+                    alt="Custom Tailoring"
+                    className="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:scale-105 transition-transform duration-700"
+                  />
+                  <div className="relative h-full flex flex-col justify-center p-8 lg:p-12">
+                    <p className="text-xs tracking-widest uppercase text-gray-500 mb-2">Bespoke Service</p>
+                    <h3
+                      className="text-2xl lg:text-3xl font-bold text-black mb-3"
+                      style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
+                    >
+                      Custom Tailoring
+                    </h3>
+                    <Link
+                      to="/services"
+                      className="inline-flex items-center gap-2 text-xs tracking-widest uppercase text-black font-semibold hover:gap-3 transition-all duration-300 mt-2"
+                    >
+                      Learn More <ArrowRight size={14} />
+                    </Link>
+                  </div>
+                </div>
+              </>
+            )}
           </div>
         </div>
       </section>

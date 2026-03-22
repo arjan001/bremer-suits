@@ -203,6 +203,7 @@ export const bannersApi = makeOffersCrud('banners')
 export const carouselsApi = makeOffersCrud('carousels')
 export const navbarOffersApi = makeOffersCrud('navbar_offers')
 export const popupOffersApi = makeOffersCrud('popup_offers')
+export const menuItemsApi = makeOffersCrud('menu_items')
 
 /* ── Newsletter ── */
 export const subscribersApi = {
