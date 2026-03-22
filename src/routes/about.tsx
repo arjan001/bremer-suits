@@ -1,38 +1,59 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { ArrowRight, Award, Heart, Target, Users } from 'lucide-react'
+import { ArrowRight, Scissors, Heart, Shield } from 'lucide-react'
 
 export const Route = createFileRoute('/about')({
   component: About,
 })
 
-const values = [
+const whyChooseUs = [
   {
-    icon: Award,
-    title: 'Craftsmanship',
-    description: 'We believe in the enduring value of meticulous handwork and time-honored tailoring techniques.',
+    icon: '/images/icon-fabrics.png',
+    title: 'Heritage',
+    description:
+      'Our atelier blends traditional tailoring methods with modern design sensibilities.',
   },
   {
-    icon: Target,
-    title: 'Precision',
-    description: 'Every measurement, every stitch, every detail is considered with intention and care.',
+    icon: '/images/icon-measure.png',
+    title: 'Fabric Sourcing',
+    description:
+      'We work with renowned mills and fabric houses, ensuring every garment begins with premium.',
   },
   {
-    icon: Heart,
-    title: 'Personal Touch',
-    description: 'We take time to understand each client individually — their lifestyle, goals, and preferences.',
+    iconComponent: Heart,
+    title: 'Personal Service',
+    description:
+      'Every stage is personal. We listen, advise, and guide you through a seamless, enjoyable experience.',
   },
   {
-    icon: Users,
-    title: 'Partnership',
-    description: 'We see every client relationship as a long-term partnership in building and maintaining their image.',
+    iconComponent: Shield,
+    title: 'Aftercare',
+    description:
+      'We provide ongoing care, alterations, and advice so your bespoke pieces maintain their perfect fit.',
+  },
+]
+
+const services = [
+  {
+    title: 'Perfect Fit, Every Time',
+    description:
+      'We specialize in precision alterations to make sure every garment drapes flawlessly on your body. Whether it\'s a business suit, evening gown, or casual wear, we tailor it to enhance your natural shape and comfort.',
+  },
+  {
+    title: 'Bespoke Craftsmanship',
+    description:
+      'Our custom tailoring goes beyond simple adjustments. Each piece is carefully designed and crafted to reflect your personal style, giving you a one-of-a-kind wardrobe that speaks to your individuality.',
+  },
+  {
+    title: 'Fast & Reliable Service',
+    description:
+      'We understand your time is valuable. That\'s why we offer quick turnaround without compromising on precision, so you can enjoy a polished, perfectly tailored look exactly when you need it.',
   },
 ]
 
 const stats = [
   { value: '500+', label: 'Suits Crafted' },
   { value: '200+', label: 'Happy Clients' },
-  { value: '30+', label: 'Measurements Taken' },
-  { value: '100%', label: 'Satisfaction Rate' },
+  { value: '98%', label: 'Satisfaction Rate' },
 ]
 
 function About() {
@@ -104,8 +125,8 @@ function About() {
             <div className="relative">
               <div className="aspect-[4/5] overflow-hidden">
                 <img
-                  src="/images/dressmaker-1.png"
-                  alt="Bremer Suits craftsmanship"
+                  src="/images/about-patterns.jpg"
+                  alt="Bremer Suits tailoring patterns"
                   className="w-full h-full object-cover"
                 />
               </div>
@@ -122,70 +143,144 @@ function About() {
         </div>
       </section>
 
-      {/* Stats */}
-      <section className="bg-black py-16 lg:py-20">
+      {/* Why Choose Us — Reference design layout */}
+      <section className="py-16 lg:py-24 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
-            {stats.map((stat) => (
-              <div key={stat.label} className="text-center">
-                <p
-                  className="text-3xl lg:text-4xl font-bold text-white mb-2"
-                  style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
-                >
-                  {stat.value}
-                </p>
-                <p className="text-xs tracking-widest uppercase text-white/50 font-medium">
-                  {stat.label}
-                </p>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-start">
+            {/* Left: Image with overlaid stats */}
+            <div className="relative">
+              <div className="aspect-[3/4] overflow-hidden">
+                <img
+                  src="/images/about-cutting.jpg"
+                  alt="Precision fabric cutting"
+                  className="w-full h-full object-cover"
+                />
               </div>
-            ))}
+              {/* Stats overlays */}
+              <div className="absolute bottom-8 right-0 translate-x-4 lg:translate-x-8 flex flex-col gap-4">
+                {stats.map((stat) => (
+                  <div
+                    key={stat.label}
+                    className="bg-stone-200/90 backdrop-blur-sm px-6 py-4 min-w-[180px]"
+                  >
+                    <p
+                      className="text-2xl lg:text-3xl font-bold text-black"
+                      style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
+                    >
+                      {stat.value}
+                    </p>
+                    <p className="text-xs tracking-wide uppercase text-gray-600 font-medium">
+                      {stat.label}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Right: Title + 2x2 icon grid */}
+            <div>
+              <p
+                className="text-sm italic text-amber-700 mb-3 font-medium"
+                style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
+              >
+                The details that define our craft
+              </p>
+              <h2
+                className="text-3xl lg:text-5xl font-bold text-black mb-4"
+                style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
+              >
+                Why Choose Our Atelier
+              </h2>
+              {/* Dashed divider */}
+              <div className="border-t-2 border-dashed border-amber-700/40 w-48 mb-10" />
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+                {whyChooseUs.map((item) => (
+                  <div key={item.title}>
+                    <div className="w-16 h-16 mb-4 flex items-center justify-center">
+                      {item.icon ? (
+                        <img
+                          src={item.icon}
+                          alt={item.title}
+                          className="w-14 h-14 object-contain"
+                        />
+                      ) : item.iconComponent ? (
+                        <item.iconComponent
+                          size={40}
+                          className="text-black"
+                          strokeWidth={1.2}
+                        />
+                      ) : null}
+                    </div>
+                    <h3 className="text-base font-bold text-black mb-2">
+                      {item.title}
+                    </h3>
+                    <p className="text-sm text-gray-500 leading-relaxed">
+                      {item.description}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Values */}
-      <section className="py-16 lg:py-24 bg-gray-50">
+      {/* Stellar Tailor Services — Reference design layout */}
+      <section className="py-16 lg:py-24 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2
-              className="text-3xl lg:text-4xl font-bold text-black"
-              style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
-            >
-              Our Values
-            </h2>
-            <p className="text-sm text-gray-500 mt-3">What drives everything we do</p>
-          </div>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+            {/* Left: Thread spools image */}
+            <div className="aspect-[3/4] overflow-hidden">
+              <img
+                src="/images/about-threads.jpg"
+                alt="Premium thread collection"
+                className="w-full h-full object-cover"
+              />
+            </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {values.map((value) => (
-              <div key={value.title} className="bg-white p-8 text-center border border-gray-100 hover:border-gray-200 hover:shadow-md transition-all duration-300">
-                <div className="w-14 h-14 mx-auto mb-5 bg-gray-50 flex items-center justify-center">
-                  <value.icon size={24} className="text-black" strokeWidth={1.5} />
-                </div>
-                <h3 className="text-sm font-semibold text-black mb-2 uppercase tracking-wide">
-                  {value.title}
-                </h3>
-                <p className="text-sm text-gray-500 leading-relaxed">
-                  {value.description}
-                </p>
+            {/* Right: Services list */}
+            <div>
+              <p
+                className="text-sm italic text-amber-700 mb-3 font-medium"
+                style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
+              >
+                Crafting excellence with masterful tools and unmatched skills
+              </p>
+              <h2
+                className="text-3xl lg:text-5xl font-bold text-black mb-4"
+                style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
+              >
+                Stellar Tailor Services
+              </h2>
+              {/* Dashed divider */}
+              <div className="border-t-2 border-dashed border-amber-700/40 w-48 mb-10" />
+
+              <div className="space-y-8">
+                {services.map((service) => (
+                  <div key={service.title}>
+                    <h3
+                      className="text-lg font-bold text-black mb-2"
+                      style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
+                    >
+                      {service.title}
+                    </h3>
+                    <p className="text-sm text-gray-500 leading-relaxed">
+                      {service.description}
+                    </p>
+                  </div>
+                ))}
               </div>
-            ))}
+            </div>
           </div>
         </div>
       </section>
 
       {/* Philosophy */}
-      <section className="py-16 lg:py-24 bg-white">
+      <section className="py-16 lg:py-24 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-            <div className="aspect-[4/3] overflow-hidden">
-              <img
-                src="/images/fabrics.png"
-                alt="Premium fabrics"
-                className="w-full h-full object-cover"
-              />
-            </div>
-            <div>
+            <div className="order-2 lg:order-1">
               <p className="text-xs tracking-[0.3em] uppercase text-gray-400 mb-4 font-medium">
                 Our Philosophy
               </p>
@@ -213,6 +308,82 @@ function About() {
                 </p>
               </div>
             </div>
+            <div className="aspect-[4/3] overflow-hidden order-1 lg:order-2">
+              <img
+                src="/images/fabrics.png"
+                alt="Premium fabrics"
+                className="w-full h-full object-cover"
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Process Steps */}
+      <section className="py-16 lg:py-24 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2
+              className="text-3xl lg:text-4xl font-bold text-black"
+              style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
+            >
+              How We Work
+            </h2>
+            <p className="text-sm text-gray-500 mt-3">
+              Your journey to impeccable style in four steps
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+            {[
+              {
+                step: '01',
+                title: 'Consult',
+                desc: 'We meet to understand your goals, lifestyle, and vision.',
+                icon: Scissors,
+              },
+              {
+                step: '02',
+                title: 'Design',
+                desc: 'We develop a personalized plan — fabrics, styles, and strategy.',
+                image: '/images/icon-fabrics.png',
+              },
+              {
+                step: '03',
+                title: 'Craft',
+                desc: 'Your pieces are made with meticulous care and precision.',
+                image: '/images/icon-measure.png',
+              },
+              {
+                step: '04',
+                title: 'Refine',
+                desc: 'Final fittings and adjustments to ensure perfection.',
+                icon: Heart,
+              },
+            ].map((item) => (
+              <div key={item.step} className="text-center group">
+                <div className="w-20 h-20 mx-auto mb-5 bg-gray-50 border border-gray-100 flex items-center justify-center group-hover:border-gray-300 transition-colors duration-300">
+                  {item.image ? (
+                    <img
+                      src={item.image}
+                      alt={item.title}
+                      className="w-10 h-10 object-contain"
+                    />
+                  ) : item.icon ? (
+                    <item.icon size={28} className="text-black" strokeWidth={1.2} />
+                  ) : null}
+                </div>
+                <div className="text-xs text-amber-700 font-bold tracking-wider mb-2">
+                  STEP {item.step}
+                </div>
+                <h3 className="text-sm font-semibold text-black mb-2 uppercase tracking-wide">
+                  {item.title}
+                </h3>
+                <p className="text-sm text-gray-500 leading-relaxed">
+                  {item.desc}
+                </p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
