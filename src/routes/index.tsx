@@ -274,38 +274,46 @@ function HomePage() {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Hero Section - Full Width Image Banner with Category Grid */}
+      {/* Hero Section - Full Width Image Banner */}
       <section className="relative bg-black overflow-hidden">
         <div className="absolute inset-0">
           <img
-            src="/images/banner-store.webp"
+            src="/images/suit-hero.webp"
             alt="Bremer Suits Collection"
-            className="w-full h-full object-cover object-center opacity-50 hero-pan"
+            className="w-full h-full object-cover object-center opacity-60 hero-pan"
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/20 to-black/70" />
+          <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent" />
         </div>
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 lg:py-36">
-          {/* Category Grid Overlay */}
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4 lg:gap-6">
-            {[
-              { name: 'Bordeaux & Wool', subtitle: 'Suit Class' },
-              { name: 'Classic Revival', subtitle: '24 Pieces' },
-              { name: 'Clean Cut', subtitle: 'New Arrival' },
-              { name: 'Contemporary Class', subtitle: 'Collection' },
-              { name: 'Essential Form', subtitle: 'Premium' },
-              { name: 'Eternal Tailoring', subtitle: 'Signature' },
-            ].map((cat) => (
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-32 lg:py-48">
+          <div className="max-w-xl">
+            <p className="text-xs tracking-[0.4em] uppercase text-white/70 mb-4 font-medium">
+              New Season Collection
+            </p>
+            <h1
+              className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-[1.1] mb-6 text-white"
+              style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
+            >
+              Seasonal Bremer
+              <span className="block">Creations</span>
+            </h1>
+            <p className="text-base text-white/70 leading-relaxed mb-8 max-w-md font-light">
+              Discover our latest collection of bespoke suits crafted for the modern professional. Premium fabrics, impeccable fit, timeless style.
+            </p>
+            <div className="flex flex-wrap gap-4">
               <Link
-                key={cat.name}
                 to="/collections"
-                className="group flex flex-col justify-end p-5 lg:p-6 border border-white/20 hover:border-white/50 bg-black/20 hover:bg-black/40 backdrop-blur-sm transition-all duration-300 min-h-[100px] lg:min-h-[120px]"
+                className="inline-flex items-center px-8 py-3.5 text-xs tracking-[0.2em] uppercase bg-white text-black hover:bg-gray-100 transition-colors duration-300 font-semibold"
               >
-                <h3 className="text-lg lg:text-xl font-bold text-white" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
-                  {cat.name}
-                </h3>
-                <p className="text-xs text-white/50 mt-0.5 tracking-wider uppercase">{cat.subtitle}</p>
+                Shop Collection
               </Link>
-            ))}
+              <Link
+                to="/services"
+                className="inline-flex items-center gap-2 px-8 py-3.5 text-xs tracking-[0.2em] uppercase border border-white/40 text-white hover:bg-white/10 transition-colors duration-300 font-medium"
+              >
+                Our Services
+                <ArrowRight size={14} />
+              </Link>
+            </div>
           </div>
         </div>
       </section>
@@ -382,7 +390,7 @@ function HomePage() {
                 className="text-3xl lg:text-4xl font-bold text-black leading-tight mb-6"
                 style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
               >
-                Suitant &mdash; Defined by Precision, Worn with Purpose
+                Bremer &mdash; Defined by Precision, Worn with Purpose
               </h2>
               <div className="mb-6">
                 <img
@@ -392,11 +400,11 @@ function HomePage() {
                 />
               </div>
               <p className="text-sm text-gray-500 leading-relaxed mb-8">
-                At Suitant, we believe that a well-tailored suit is more than just clothing &mdash; it&apos;s a statement
+                At Bremer, we believe that a well-tailored suit is more than just clothing &mdash; it&apos;s a statement
                 of identity, confidence, and intent. Each vest and suit in our collection is crafted with attention
                 to detail, from fabric selection to final stitching, ensuring a perfect balance between classic
                 elegance and modern form. Whether for a boardroom, a wedding, or a casual yet refined evening out,
-                Suitant empowers you to dress not just for the occasion, but to define it.
+                Bremer empowers you to dress not just for the occasion, but to define it.
               </p>
               <div>
                 <Link
@@ -1063,28 +1071,23 @@ function HomePage() {
               <Link
                 key={service.title}
                 to="/services"
-                className="group block bg-white border border-gray-100 hover:border-gray-200 hover:shadow-lg transition-all duration-300 overflow-hidden"
+                className="group block bg-white border border-gray-100 hover:border-gray-200 hover:shadow-lg transition-all duration-300 overflow-hidden p-6 text-center"
               >
-                <div className="aspect-[16/10] overflow-hidden bg-gray-50">
+                <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-50 flex items-center justify-center overflow-hidden">
                   <img
                     src={service.image}
                     alt={service.title}
-                    className="w-full h-full object-cover product-img-zoom opacity-80"
+                    className="w-10 h-10 object-contain"
                   />
                 </div>
-                <div className="p-6">
-                  <div className="flex items-center gap-3 mb-3">
-                    <service.icon size={18} className="text-black" strokeWidth={1.5} />
-                    <h3 className="text-sm font-semibold text-black uppercase tracking-wide">
-                      {service.title}
-                    </h3>
-                  </div>
-                  <p className="text-sm text-gray-500 leading-relaxed">
-                    {service.description}
-                  </p>
-                  <div className="mt-4 inline-flex items-center gap-2 text-xs tracking-widest uppercase text-black font-medium group-hover:gap-3 transition-all duration-300">
-                    Learn More <ArrowRight size={12} />
-                  </div>
+                <h3 className="text-sm font-semibold text-black uppercase tracking-wide mb-3">
+                  {service.title}
+                </h3>
+                <p className="text-sm text-gray-500 leading-relaxed">
+                  {service.description}
+                </p>
+                <div className="mt-4 inline-flex items-center gap-2 text-xs tracking-widest uppercase text-black font-medium group-hover:gap-3 transition-all duration-300">
+                  Learn More <ArrowRight size={12} />
                 </div>
               </Link>
             ))}
