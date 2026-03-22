@@ -965,19 +965,6 @@ function Footer() {
               <p className="text-xs text-gray-500">
                 &copy; {new Date().getFullYear()} {storeName}. All rights reserved.
               </p>
-              <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1">
-                <Link to="/privacy-policy" className="text-xs text-gray-500 hover:text-white transition-colors">Privacy Policy</Link>
-                <span className="text-gray-700">|</span>
-                <Link to="/terms-of-service" className="text-xs text-gray-500 hover:text-white transition-colors">Terms of Service</Link>
-                <span className="text-gray-700">|</span>
-                <Link to="/refund-policy" className="text-xs text-gray-500 hover:text-white transition-colors">Refund Policy</Link>
-                <span className="text-gray-700">|</span>
-                <Link to="/shipping-policy" className="text-xs text-gray-500 hover:text-white transition-colors">Shipping Policy</Link>
-                <span className="text-gray-700">|</span>
-                <Link to="/cookie-policy" className="text-xs text-gray-500 hover:text-white transition-colors">Cookie Policy</Link>
-                <span className="text-gray-700">|</span>
-                <button onClick={() => setCookieModalOpen(true)} className="text-xs text-gray-500 hover:text-white transition-colors bg-transparent border-none p-0 cursor-pointer">Cookie Preferences</button>
-              </div>
               {authorInfo.name ? (
                 <p className="text-xs text-gray-500">
                   {authorInfo.tagline || 'Designed & developed by'}{' '}
