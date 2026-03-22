@@ -4,7 +4,7 @@ import { CartDrawer } from '@/components/CartDrawer'
 import { SeoHead } from '@/components/SeoHead'
 import { CartProvider } from '@/lib/cart-context'
 import { WishlistProvider } from '@/lib/wishlist-context'
-import { Phone, Mail, Instagram, Clock, Navigation, Globe, X, ChevronUp, Shield, FileText, Cookie, CreditCard, Truck, RotateCcw, ArrowRight } from 'lucide-react'
+import { Phone, Mail, Instagram, Clock, Navigation, Globe, X, ChevronUp, Shield, FileText, Cookie, CreditCard, Truck, RotateCcw, ArrowRight, MapPin } from 'lucide-react'
 import { useState, useEffect, useCallback } from 'react'
 
 import '../styles.css'
@@ -561,8 +561,6 @@ function Footer() {
     paymentMethods: Array<{ id: string; label: string; isActive: boolean; sortOrder: number }>
     authorInfo: { name: string; url: string; tagline: string }
   } | null>(null)
-  const [newsletterEmail, setNewsletterEmail] = useState('')
-  const [newsletterDone, setNewsletterDone] = useState(false)
   const [cookieModalOpen, setCookieModalOpen] = useState(false)
 
   useEffect(() => {
@@ -591,27 +589,28 @@ function Footer() {
     loadSettings()
   }, [])
 
-  const handleNewsletter = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!newsletterEmail.trim()) return
-    fetch('/.netlify/functions/admin-newsletter?resource=subscribers', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: newsletterEmail.trim(), status: 'active', subscribed_at: new Date().toISOString() }),
-    }).catch(() => {})
-    setNewsletterDone(true)
-  }
-
   // Fallback values
   const storeName = settings?.storeName || 'Bremer Suits'
   const footerText = settings?.footerText || 'Premium custom suits, professional fashion styling, and image consulting — your one-stop destination for bespoke tailoring.'
-  const activeSocials = (settings?.socialLinks || []).filter((s) => s.isActive)
+
+  // Social links - use admin settings if available, otherwise show defaults
+  const adminSocials = (settings?.socialLinks || []).filter((s) => s.isActive)
+  const defaultSocials = [
+    { id: 'def-ig', platform: 'instagram', url: '#', label: 'Instagram', isActive: true, sortOrder: 1 },
+    { id: 'def-tt', platform: 'tiktok', url: '#', label: 'TikTok', isActive: true, sortOrder: 2 },
+    { id: 'def-wa', platform: 'whatsapp', url: '#', label: 'WhatsApp', isActive: true, sortOrder: 3 },
+  ]
+  const displaySocials = adminSocials.length > 0 ? adminSocials : defaultSocials
+
+  // Footer links
   const shopLinks = (settings?.footerLinks || []).filter((l) => l.column === 'shop')
-  const companyLinks = (settings?.footerLinks || []).filter((l) => l.column === 'company')
-  const supportLinks = (settings?.footerLinks || []).filter((l) => l.column === 'support')
-  const hasFooterLinks = shopLinks.length > 0 || companyLinks.length > 0 || supportLinks.length > 0
+  const categoryLinks = (settings?.footerLinks || []).filter((l) => l.column === 'company')
+
+  // Payment & author
   const paymentMethods = settings?.paymentMethods || []
   const authorInfo = settings?.authorInfo || { name: '', url: '', tagline: '' }
+
+  // Store info
   const locationName = settings?.footerLocationName || ''
   const locationDetail = settings?.footerLocationDetail || ''
   const storeHours = settings?.footerStoreHours || ''
@@ -641,55 +640,34 @@ function Footer() {
     }
   }
 
-  /* Policy links with icons */
-  const policyLinks = [
-    { to: '/privacy-policy', label: 'Privacy Policy', icon: <Shield size={14} /> },
-    { to: '/terms-of-service', label: 'Terms of Service', icon: <FileText size={14} /> },
-    { to: '/refund-policy', label: 'Refund Policy', icon: <RotateCcw size={14} /> },
-    { to: '/shipping-policy', label: 'Shipping Policy', icon: <Truck size={14} /> },
-    { to: '/cookie-policy', label: 'Cookie Policy', icon: <Cookie size={14} /> },
-  ]
-
   return (
     <>
       <footer className="bg-[#1a1a1a] text-white">
-        {/* Newsletter Banner */}
-        <div className="border-b border-gray-800">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 lg:py-12">
-            <div className="flex flex-col lg:flex-row items-center justify-between gap-6 lg:gap-12">
-              <div className="text-center lg:text-left">
-                <h3
-                  className="text-xl lg:text-2xl font-bold text-white mb-1.5"
-                  style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
-                >
-                  Stay In Style
-                </h3>
-                <p className="text-sm text-gray-400">Subscribe for exclusive offers, new arrivals, and styling tips.</p>
-              </div>
-              {newsletterDone ? (
-                <div className="flex items-center gap-2 text-sm text-green-400 font-medium">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-                  Thank you for subscribing!
+        {/* Trust Badges Banner */}
+        <div className="border-b border-gray-800 bg-[#151515]">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-4">
+              <div className="flex items-center justify-center gap-3">
+                <Truck size={22} className="text-gray-400 shrink-0" />
+                <div>
+                  <p className="text-sm font-semibold text-white">Nationwide Delivery</p>
+                  <p className="text-xs text-gray-500">Dispatch every Tue &amp; Fri</p>
                 </div>
-              ) : (
-                <form onSubmit={handleNewsletter} className="flex w-full max-w-md">
-                  <input
-                    type="email"
-                    value={newsletterEmail}
-                    onChange={(e) => setNewsletterEmail(e.target.value)}
-                    placeholder="Enter your email"
-                    required
-                    className="flex-1 px-4 py-3 bg-white/10 border border-gray-700 text-sm text-white placeholder:text-gray-500 focus:border-white focus:ring-1 focus:ring-white outline-none transition-colors rounded-l-lg"
-                  />
-                  <button
-                    type="submit"
-                    className="px-5 py-3 bg-white text-black text-sm font-semibold hover:bg-gray-200 transition-colors rounded-r-lg flex items-center gap-1.5 shrink-0"
-                  >
-                    Subscribe
-                    <ArrowRight size={14} />
-                  </button>
-                </form>
-              )}
+              </div>
+              <div className="flex items-center justify-center gap-3">
+                <Shield size={22} className="text-gray-400 shrink-0" />
+                <div>
+                  <p className="text-sm font-semibold text-white">Quality Guaranteed</p>
+                  <p className="text-xs text-gray-500">Curated denim picks</p>
+                </div>
+              </div>
+              <div className="flex items-center justify-center gap-3">
+                <RotateCcw size={22} className="text-gray-400 shrink-0" />
+                <div>
+                  <p className="text-sm font-semibold text-white">Easy Returns</p>
+                  <p className="text-xs text-gray-500">Hassle-free refund policy</p>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -697,7 +675,8 @@ function Footer() {
         {/* Main Footer Grid */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 lg:py-16">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8">
-            {/* Brand Column */}
+
+            {/* Column 1: Brand + Description + Social Icons */}
             <div>
               <div className="mb-5">
                 <h3
@@ -710,84 +689,59 @@ function Footer() {
               <p className="text-sm text-gray-400 leading-relaxed mb-6 max-w-xs">
                 {footerText}
               </p>
-              {activeSocials.length > 0 && (
-                <div className="flex gap-3">
-                  {activeSocials.map((social) => (
-                    <a
-                      key={social.id}
-                      href={social.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="w-10 h-10 rounded-full flex items-center justify-center transition-transform hover:scale-110 border border-gray-700"
-                      style={getSocialBg(social.platform)}
-                      aria-label={social.platform}
-                    >
-                      {getSocialIcon(social.platform)}
-                    </a>
-                  ))}
+              <div className="flex gap-3">
+                {displaySocials.map((social) => (
+                  <a
+                    key={social.id}
+                    href={social.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-10 h-10 rounded-full flex items-center justify-center transition-transform hover:scale-110"
+                    style={getSocialBg(social.platform)}
+                    aria-label={social.platform}
+                  >
+                    {getSocialIcon(social.platform)}
+                  </a>
+                ))}
+              </div>
+            </div>
+
+            {/* Column 2: Shop + Categories */}
+            <div>
+              <div className="mb-8">
+                <h4 className="text-sm font-bold uppercase text-white mb-4 tracking-wide">Shop</h4>
+                <ul className="space-y-3">
+                  {shopLinks.length > 0 ? (
+                    shopLinks.map((link) => (
+                      <li key={link.id}>
+                        <Link to={link.url} className="text-sm text-gray-400 hover:text-white transition-colors duration-200">{link.label}</Link>
+                      </li>
+                    ))
+                  ) : (
+                    <>
+                      <li><Link to="/collections" className="text-sm text-gray-400 hover:text-white transition-colors duration-200">All Collections</Link></li>
+                      <li><Link to="/collections" className="text-sm text-gray-400 hover:text-white transition-colors duration-200">New Arrivals</Link></li>
+                      <li><Link to="/services" className="text-sm text-gray-400 hover:text-white transition-colors duration-200">Services</Link></li>
+                      <li><Link to="/contact" className="text-sm text-gray-400 hover:text-white transition-colors duration-200">Contact</Link></li>
+                    </>
+                  )}
+                </ul>
+              </div>
+              {categoryLinks.length > 0 && (
+                <div>
+                  <h4 className="text-sm font-bold uppercase text-white mb-4 tracking-wide">Categories</h4>
+                  <ul className="space-y-3">
+                    {categoryLinks.map((link) => (
+                      <li key={link.id}>
+                        <Link to={link.url} className="text-sm text-gray-400 hover:text-white transition-colors duration-200">{link.label}</Link>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
               )}
             </div>
 
-            {/* Footer Navigation Links */}
-            {hasFooterLinks ? (
-              <div>
-                {shopLinks.length > 0 && (
-                  <div className="mb-6">
-                    <h4 className="text-sm font-bold uppercase text-white mb-4 tracking-wide">Shop</h4>
-                    <ul className="space-y-3">
-                      {shopLinks.map((link) => (
-                        <li key={link.id}>
-                          <Link to={link.url} className="text-sm text-gray-400 hover:text-white transition-colors duration-200">{link.label}</Link>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-                {companyLinks.length > 0 && (
-                  <div className="mb-6">
-                    <h4 className="text-sm font-bold uppercase text-white mb-4 tracking-wide">Company</h4>
-                    <ul className="space-y-3">
-                      {companyLinks.map((link) => (
-                        <li key={link.id}>
-                          <Link to={link.url} className="text-sm text-gray-400 hover:text-white transition-colors duration-200">{link.label}</Link>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-                {supportLinks.length > 0 && (
-                  <div>
-                    <h4 className="text-sm font-bold uppercase text-white mb-4 tracking-wide">Support</h4>
-                    <ul className="space-y-3">
-                      {supportLinks.map((link) => (
-                        <li key={link.id}>
-                          <Link to={link.url} className="text-sm text-gray-400 hover:text-white transition-colors duration-200">{link.label}</Link>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-              </div>
-            ) : (
-              <div>
-                <h4 className="text-sm font-bold uppercase text-white mb-6 tracking-wide">Shop</h4>
-                <ul className="space-y-3">
-                  {[
-                    { label: 'All Collections', to: '/collections' },
-                    { label: 'Services', to: '/services' },
-                    { label: 'About Us', to: '/about' },
-                    { label: 'Contact', to: '/contact' },
-                  ].map((item) => (
-                    <li key={item.label}>
-                      <Link to={item.to} className="text-sm text-gray-400 hover:text-white transition-colors duration-200">{item.label}</Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-
-            {/* Visit Our Store */}
+            {/* Column 3: Visit Our Store */}
             <div>
               <h4 className="text-sm font-bold uppercase text-white mb-6 tracking-wide">Visit Our Store</h4>
               <ul className="space-y-4">
@@ -824,29 +778,43 @@ function Footer() {
                   </li>
                 )}
               </ul>
+              {locationName && (
+                <div className="mt-6">
+                  <a
+                    href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent([locationName, locationDetail, settings?.address].filter(Boolean).join(' '))}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 px-4 py-2.5 border border-gray-600 rounded-lg text-sm text-gray-300 hover:text-white hover:border-gray-400 transition-colors"
+                  >
+                    <MapPin size={15} />
+                    Get Directions to {locationName}
+                  </a>
+                </div>
+              )}
             </div>
 
-            {/* Policies & Payment */}
+            {/* Column 4: Follow Us + We Accept */}
             <div>
-              <h4 className="text-sm font-bold uppercase text-white mb-6 tracking-wide">Policies & Info</h4>
-              <ul className="space-y-3">
-                {policyLinks.map((link) => (
-                  <li key={link.to}>
-                    <Link to={link.to} className="flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors duration-200">
-                      {link.icon}
-                      {link.label}
-                    </Link>
+              <h4 className="text-sm font-bold uppercase text-white mb-6 tracking-wide">Follow Us</h4>
+              <ul className="space-y-4">
+                {displaySocials.map((social) => (
+                  <li key={social.id}>
+                    <a
+                      href={social.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-3 text-sm text-gray-400 hover:text-white transition-colors group"
+                    >
+                      <span
+                        className="w-9 h-9 rounded-full flex items-center justify-center shrink-0 transition-transform group-hover:scale-110"
+                        style={getSocialBg(social.platform)}
+                      >
+                        {getSocialIcon(social.platform)}
+                      </span>
+                      {social.label || social.platform}
+                    </a>
                   </li>
                 ))}
-                <li>
-                  <button
-                    onClick={() => setCookieModalOpen(true)}
-                    className="flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors duration-200"
-                  >
-                    <Cookie size={14} />
-                    Cookie Preferences
-                  </button>
-                </li>
               </ul>
 
               {paymentMethods.length > 0 && (
@@ -854,59 +822,15 @@ function Footer() {
                   <h5 className="text-xs font-bold uppercase text-gray-500 mb-3 tracking-wider">We Accept</h5>
                   <div className="flex flex-wrap gap-2">
                     {paymentMethods.map((pm) => (
-                      <span key={pm.id} className="px-3 py-1.5 border border-gray-600 rounded text-xs text-gray-300 font-medium flex items-center gap-1.5">
-                        <CreditCard size={12} className="text-gray-500" />
+                      <span key={pm.id} className="px-3 py-1.5 border border-gray-600 rounded text-xs text-gray-300 font-medium">
                         {pm.label}
                       </span>
                     ))}
                   </div>
                 </div>
               )}
-
-              {activeSocials.length > 0 && (
-                <div className="mt-8">
-                  <h5 className="text-xs font-bold uppercase text-gray-500 mb-3 tracking-wider">Follow Us</h5>
-                  <div className="flex gap-2.5">
-                    {activeSocials.map((social) => (
-                      <a
-                        key={social.id}
-                        href={social.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="w-9 h-9 rounded-full flex items-center justify-center transition-transform hover:scale-110 border border-gray-700"
-                        style={getSocialBg(social.platform)}
-                        aria-label={social.label || social.platform}
-                      >
-                        {getSocialIcon(social.platform)}
-                      </a>
-                    ))}
-                  </div>
-                </div>
-              )}
             </div>
-          </div>
-        </div>
 
-        {/* Policy Links Bar */}
-        <div className="border-t border-gray-800/60">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
-            <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-2">
-              {policyLinks.map((link, i) => (
-                <span key={link.to} className="flex items-center gap-x-3">
-                  <Link to={link.to} className="text-xs text-gray-500 hover:text-gray-300 transition-colors">{link.label}</Link>
-                  {i < policyLinks.length - 1 && <span className="text-gray-700">|</span>}
-                </span>
-              ))}
-              <span className="flex items-center gap-x-3">
-                <span className="text-gray-700">|</span>
-                <button
-                  onClick={() => setCookieModalOpen(true)}
-                  className="text-xs text-gray-500 hover:text-gray-300 transition-colors"
-                >
-                  Cookie Preferences
-                </button>
-              </span>
-            </div>
           </div>
         </div>
 
