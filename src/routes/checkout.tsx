@@ -1,9 +1,9 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { X, Minus, Plus, CreditCard, Phone, MessageCircle, Lock, ShieldCheck, ChevronRight, Package, MapPin, Wallet, CheckCircle, Truck } from 'lucide-react'
+import { X, Minus, Plus, CreditCard, Phone, MessageCircle, Lock, ShieldCheck, ChevronRight, Package, MapPin, Wallet, CheckCircle, Truck, Copy, Search } from 'lucide-react'
 import { useState } from 'react'
 import { useCart } from '@/lib/cart-context'
 import { PaymentModal } from '@/components/PaymentModal'
-import { saveOrder, type CardPaymentDetails, type MpesaPaymentDetails } from '@/lib/order-store'
+import { saveOrder, type CardPaymentDetails, type MpesaPaymentDetails, type StoredOrder } from '@/lib/order-store'
 import { ordersApi } from '@/lib/admin-api'
 import { VisaLogo, MastercardLogo, MpesaLogo, VisaBadge, MastercardBadge, MpesaBadge } from '@/components/PaymentLogos'
 
@@ -42,9 +42,11 @@ function Checkout() {
     orderNotes: '',
   })
   const [orderPlaced, setOrderPlaced] = useState(false)
+  const [confirmedOrder, setConfirmedOrder] = useState<StoredOrder | null>(null)
   const [paymentModalOpen, setPaymentModalOpen] = useState(false)
   const [paymentMethod, setPaymentMethod] = useState<'card' | 'mpesa'>('card')
   const [formError, setFormError] = useState('')
+  const [copiedOrderNum, setCopiedOrderNum] = useState(false)
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>,
@@ -122,6 +124,8 @@ function Checkout() {
   }
 
   const placeOrder = (method: 'card' | 'mpesa' | 'whatsapp', paymentDetails?: CardPaymentDetails | MpesaPaymentDetails) => {
+    // Generate order number upfront so both localStorage and API get the same one
+    const orderNumber = 'BRM-' + Date.now().toString(36).toUpperCase().slice(-6)
     const orderData = {
       customer: { fullName: formData.fullName, phone: formData.phone, email: formData.email || undefined },
       delivery: { location: formData.deliveryLocation, address: formData.deliveryAddress },
@@ -143,10 +147,11 @@ function Checkout() {
       status: 'pending' as const,
       orderNotes: formData.orderNotes || undefined,
     }
-    // Save to localStorage
-    saveOrder(orderData)
-    // Persist to Supabase via API
-    ordersApi.create(orderData as unknown as Record<string, unknown>).catch((err) => {
+    // Save to localStorage and capture the full order
+    const savedOrder = saveOrder(orderData, orderNumber)
+    if (savedOrder) setConfirmedOrder(savedOrder)
+    // Persist to Supabase via API (include order_number)
+    ordersApi.create({ ...orderData, orderNumber } as unknown as Record<string, unknown>).catch((err) => {
       console.error('Failed to save order to database:', err)
     })
   }
@@ -160,6 +165,15 @@ function Checkout() {
 
   // Order Success State
   if (orderPlaced) {
+    const copyOrderNumber = () => {
+      if (confirmedOrder?.orderNumber) {
+        navigator.clipboard.writeText(confirmedOrder.orderNumber).then(() => {
+          setCopiedOrderNum(true)
+          setTimeout(() => setCopiedOrderNum(false), 2000)
+        })
+      }
+    }
+
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
         <div className="text-center max-w-lg bg-white p-10 lg:p-14 border border-gray-100">
@@ -175,21 +189,76 @@ function Checkout() {
           <p className="text-gray-500 text-sm leading-relaxed mb-4">
             Thank you for choosing Bremer Suits!
           </p>
-          <p className="text-gray-400 text-sm leading-relaxed mb-10">
+
+          {/* Order Number */}
+          {confirmedOrder && (
+            <div className="bg-gray-50 border border-gray-200 p-5 mb-6 text-left">
+              <div className="flex items-center justify-between mb-3">
+                <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">Order Number</p>
+                <button
+                  onClick={copyOrderNumber}
+                  className="flex items-center gap-1 text-xs text-gray-400 hover:text-black transition-colors"
+                  title="Copy order number"
+                >
+                  <Copy size={12} />
+                  {copiedOrderNum ? 'Copied!' : 'Copy'}
+                </button>
+              </div>
+              <p className="text-xl font-bold text-black tracking-wider font-mono mb-4">{confirmedOrder.orderNumber}</p>
+
+              <div className="space-y-2 border-t border-gray-200 pt-3">
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-500">Status</span>
+                  <span className="inline-flex px-2 py-0.5 text-xs font-semibold rounded-full bg-yellow-50 text-yellow-700">Pending</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-500">Payment</span>
+                  <span className="font-medium text-black capitalize">{confirmedOrder.paymentMethod === 'mpesa' ? 'M-PESA' : confirmedOrder.paymentMethod}</span>
+                </div>
+                {confirmedOrder.paymentMethod === 'card' && confirmedOrder.paymentDetails && 'cardBrand' in confirmedOrder.paymentDetails && (
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-500">Card</span>
+                    <span className="font-medium text-black font-mono">
+                      {confirmedOrder.paymentDetails.cardBrand} •••• {confirmedOrder.paymentDetails.lastFourDigits}
+                    </span>
+                  </div>
+                )}
+                {confirmedOrder.paymentMethod === 'mpesa' && confirmedOrder.paymentDetails && 'transactionId' in confirmedOrder.paymentDetails && confirmedOrder.paymentDetails.transactionId && (
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-500">Transaction</span>
+                    <span className="font-medium text-black font-mono">{confirmedOrder.paymentDetails.transactionId}</span>
+                  </div>
+                )}
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-500">Total</span>
+                  <span className="font-bold text-black">${confirmedOrder.total.toLocaleString()}</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-500">Items</span>
+                  <span className="font-medium text-black">{confirmedOrder.items.length} {confirmedOrder.items.length === 1 ? 'item' : 'items'}</span>
+                </div>
+              </div>
+            </div>
+          )}
+
+          <p className="text-gray-400 text-sm leading-relaxed mb-8">
             We will confirm your order and arrange delivery shortly. You'll receive a confirmation via phone or email.
           </p>
+
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Link
-              to="/collections"
-              className="inline-flex items-center justify-center px-8 py-3.5 text-xs tracking-[0.2em] uppercase bg-black text-white hover:bg-gray-800 transition-colors duration-300 font-semibold"
+              to="/track-order"
+              search={confirmedOrder ? { orderNumber: confirmedOrder.orderNumber } : {}}
+              className="inline-flex items-center justify-center gap-2 px-8 py-3.5 text-xs tracking-[0.2em] uppercase bg-black text-white hover:bg-gray-800 transition-colors duration-300 font-semibold"
             >
-              Continue Shopping
+              <Search size={14} />
+              Track Order
             </Link>
             <Link
-              to="/"
+              to="/collections"
               className="inline-flex items-center justify-center px-8 py-3.5 text-xs tracking-[0.2em] uppercase border border-gray-200 text-gray-600 hover:border-black hover:text-black transition-colors duration-300 font-medium"
             >
-              Back to Home
+              Continue Shopping
             </Link>
           </div>
         </div>
