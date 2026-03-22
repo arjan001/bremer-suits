@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
-import { X, CreditCard, Phone, Lock, CheckCircle, Loader2, Shield, AlertCircle, Smartphone } from 'lucide-react'
+import { X, CreditCard, Phone, Lock, CheckCircle, Loader2, Shield, AlertCircle } from 'lucide-react'
 import type { CardPaymentDetails, MpesaPaymentDetails } from '@/lib/order-store'
+import { VisaLogo, MastercardLogo, MpesaLogo, VisaBadge, MastercardBadge, MpesaBadge, CardBrandIndicator } from '@/components/PaymentLogos'
 
 type PaymentMethod = 'card' | 'mpesa'
 type PaymentStep = 'form' | 'processing' | 'success'
@@ -307,7 +308,7 @@ export function PaymentModal({
             <div className="flex gap-3">
               <button
                 onClick={() => handleMethodSwitch('card')}
-                className={`flex-1 flex flex-col items-center gap-1.5 py-3.5 rounded-lg border-2 transition-all duration-200 ${
+                className={`flex-1 flex flex-col items-center gap-2 py-3.5 rounded-lg border-2 transition-all duration-200 ${
                   method === 'card'
                     ? 'border-black bg-black text-white shadow-lg'
                     : 'border-gray-200 bg-white text-gray-500 hover:border-gray-300'
@@ -315,22 +316,14 @@ export function PaymentModal({
               >
                 <CreditCard size={20} />
                 <span className="text-xs font-semibold">Card</span>
-                <span className="flex items-center gap-1">
-                  <span className={`text-[8px] px-1 py-0.5 rounded font-bold ${
-                    method === 'card' ? 'bg-white/20' : 'bg-gray-100'
-                  }`}>
-                    VISA
-                  </span>
-                  <span className={`text-[8px] px-1 py-0.5 rounded font-bold ${
-                    method === 'card' ? 'bg-white/20' : 'bg-gray-100'
-                  }`}>
-                    MC
-                  </span>
+                <span className="flex items-center gap-1.5">
+                  <VisaBadge />
+                  <MastercardBadge />
                 </span>
               </button>
               <button
                 onClick={() => handleMethodSwitch('mpesa')}
-                className={`flex-1 flex flex-col items-center gap-1.5 py-3.5 rounded-lg border-2 transition-all duration-200 ${
+                className={`flex-1 flex flex-col items-center gap-2 py-3.5 rounded-lg border-2 transition-all duration-200 ${
                   method === 'mpesa'
                     ? 'border-[#4CAF50] bg-[#4CAF50] text-white shadow-lg'
                     : 'border-gray-200 bg-white text-gray-500 hover:border-gray-300'
@@ -338,11 +331,7 @@ export function PaymentModal({
               >
                 <Phone size={20} />
                 <span className="text-xs font-semibold">M-PESA</span>
-                <span className={`text-[8px] px-1 py-0.5 rounded font-bold ${
-                  method === 'mpesa' ? 'bg-white/20' : 'bg-gray-100'
-                }`}>
-                  SAFARICOM
-                </span>
+                <MpesaBadge />
               </button>
             </div>
           </div>
@@ -370,14 +359,15 @@ export function PaymentModal({
                       className="w-full px-4 py-3 bg-white border border-gray-200 rounded-lg text-sm focus:border-black focus:ring-1 focus:ring-black outline-none transition-colors pr-20"
                     />
                     <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1">
-                      {cardBrand === 'visa' && (
-                        <span className="text-[10px] font-bold px-1.5 py-0.5 bg-blue-600 text-white rounded">VISA</span>
-                      )}
-                      {cardBrand === 'mastercard' && (
-                        <span className="text-[10px] font-bold px-1.5 py-0.5 bg-orange-500 text-white rounded">MC</span>
-                      )}
+                      <CardBrandIndicator brand={cardBrand} />
                       {!cardBrand && cardNumber.length > 0 && (
                         <CreditCard size={18} className="text-gray-300" />
+                      )}
+                      {!cardBrand && cardNumber.length === 0 && (
+                        <span className="flex items-center gap-1">
+                          <VisaBadge />
+                          <MastercardBadge />
+                        </span>
                       )}
                     </div>
                   </div>
@@ -438,9 +428,7 @@ export function PaymentModal({
                 {/* M-Pesa Branding */}
                 <div className="bg-[#E8F5E9] border border-[#C8E6C9] rounded-lg p-4">
                   <div className="flex items-start gap-3">
-                    <div className="w-10 h-10 bg-[#4CAF50] rounded-full flex items-center justify-center shrink-0">
-                      <Smartphone size={18} className="text-white" />
-                    </div>
+                    <MpesaLogo size={56} className="shrink-0 rounded" />
                     <div>
                       <p className="text-sm font-semibold text-[#2E7D32]">Lipa Na M-PESA</p>
                       <p className="text-xs text-[#388E3C] leading-relaxed mt-1">
@@ -534,15 +522,22 @@ export function PaymentModal({
             </button>
 
             {/* Security Notice */}
-            <div className="flex items-center justify-center gap-3 mt-4 pt-3 border-t border-gray-100">
-              <div className="flex items-center gap-1">
-                <Lock size={10} className="text-gray-300" />
-                <span className="text-[10px] text-gray-400">SSL Encrypted</span>
+            <div className="mt-4 pt-3 border-t border-gray-100">
+              <div className="flex items-center justify-center gap-3">
+                <div className="flex items-center gap-1">
+                  <Lock size={10} className="text-gray-300" />
+                  <span className="text-[10px] text-gray-400">SSL Encrypted</span>
+                </div>
+                <span className="text-gray-200">|</span>
+                <div className="flex items-center gap-1">
+                  <Shield size={10} className="text-gray-300" />
+                  <span className="text-[10px] text-gray-400">Secure Payment</span>
+                </div>
               </div>
-              <span className="text-gray-200">|</span>
-              <div className="flex items-center gap-1">
-                <Shield size={10} className="text-gray-300" />
-                <span className="text-[10px] text-gray-400">Secure Payment</span>
+              <div className="flex items-center justify-center gap-2 mt-2.5">
+                <VisaLogo size={32} className="rounded" />
+                <MastercardLogo size={32} className="rounded" />
+                <MpesaLogo size={32} className="rounded" />
               </div>
             </div>
           </form>
@@ -667,7 +662,8 @@ export function PaymentModal({
 
             {/* Transaction details */}
             {method === 'mpesa' && transactionId && (
-              <div className="mt-3 bg-[#E8F5E9] border border-[#C8E6C9] rounded-lg px-4 py-2.5">
+              <div className="mt-3 bg-[#E8F5E9] border border-[#C8E6C9] rounded-lg px-4 py-2.5 flex items-center justify-center gap-2">
+                <MpesaLogo size={32} className="rounded" />
                 <p className="text-xs text-[#2E7D32]">
                   Transaction ID: <span className="font-bold">{transactionId}</span>
                 </p>
@@ -675,7 +671,8 @@ export function PaymentModal({
             )}
 
             {method === 'card' && (
-              <div className="mt-3 bg-gray-50 border border-gray-100 rounded-lg px-4 py-2.5">
+              <div className="mt-3 bg-gray-50 border border-gray-100 rounded-lg px-4 py-2.5 flex items-center justify-center gap-2">
+                <CardBrandIndicator brand={detectCardBrand(cardNumber)} />
                 <p className="text-xs text-gray-500">
                   {detectCardBrand(cardNumber) === 'visa' ? 'Visa' : 'Mastercard'} ending in {cardNumber.replace(/\s/g, '').slice(-4)}
                 </p>

@@ -805,22 +805,9 @@ function HomePage() {
       <section className="py-16 lg:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Promo 1 */}
-            <div className="relative overflow-hidden bg-gray-900 aspect-[16/9] md:aspect-[3/2] group">
-              <img
-                src="/images/banner-store.webp"
-                alt="Premium Fabrics"
-                className="absolute inset-0 w-full h-full object-cover opacity-50 group-hover:scale-105 transition-transform duration-700"
-              />
-              <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-transparent" />
-              <div className="relative h-full flex flex-col justify-center p-8 lg:p-12">
-                <p className="text-xs tracking-widest uppercase text-white/60 mb-2">Premium Selection</p>
-                <h3
-                  className="text-2xl lg:text-3xl font-bold text-white mb-3"
-                  style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
-                >
-                  New Season Fabrics
-                </h3>
+            {banners.length >= 2 ? (
+              <>
+                {/* Promo 1 - Dynamic */}
                 <Link
                   to={banners[0].link || '/collections'}
                   className="group relative overflow-hidden bg-gray-900 aspect-[16/9] md:aspect-[3/2] block"
@@ -848,25 +835,10 @@ function HomePage() {
                   </div>
                 </Link>
 
-            {/* Promo 2 */}
-            <div className="relative overflow-hidden bg-gray-900 aspect-[16/9] md:aspect-[3/2] group">
-              <img
-                src="/images/banner-quote.webp"
-                alt="Custom Tailoring"
-                className="absolute inset-0 w-full h-full object-cover opacity-50 group-hover:scale-105 transition-transform duration-700"
-              />
-              <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-transparent" />
-              <div className="relative h-full flex flex-col justify-center p-8 lg:p-12">
-                <p className="text-xs tracking-widest uppercase text-white/60 mb-2">Bespoke Service</p>
-                <h3
-                  className="text-2xl lg:text-3xl font-bold text-white mb-3"
-                  style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
-                >
-                  Custom Tailoring
-                </h3>
+                {/* Promo 2 - Dynamic */}
                 <Link
-                  to="/services"
-                  className="inline-flex items-center gap-2 text-xs tracking-widest uppercase text-white font-semibold hover:gap-3 transition-all duration-300 mt-2"
+                  to={banners[1].link || '/services'}
+                  className="group relative overflow-hidden bg-gray-100 aspect-[16/9] md:aspect-[3/2] block"
                 >
                   <img
                     src={banners[1].image || '/images/dressmaker.png'}

@@ -1,9 +1,10 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { X, Minus, Plus, CreditCard, Phone, MessageCircle } from 'lucide-react'
+import { X, Minus, Plus, CreditCard, Phone, MessageCircle, Lock, ShieldCheck } from 'lucide-react'
 import { useState } from 'react'
 import { useCart } from '@/lib/cart-context'
 import { PaymentModal } from '@/components/PaymentModal'
 import { saveOrder, type CardPaymentDetails, type MpesaPaymentDetails } from '@/lib/order-store'
+import { VisaLogo, MastercardLogo, MpesaLogo, VisaBadge, MastercardBadge, MpesaBadge } from '@/components/PaymentLogos'
 
 export const Route = createFileRoute('/checkout')({
   component: Checkout,
@@ -396,51 +397,91 @@ function Checkout() {
                 </div>
               </div>
 
-              {/* Payment Buttons */}
-              <div className="mt-6 space-y-3">
+              {/* Payment Methods */}
+              <div className="mt-6">
+                <div className="flex items-center gap-2 mb-4">
+                  <Lock size={13} className="text-gray-400" />
+                  <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Secure Payment</span>
+                </div>
+
                 {formError && (
-                  <div className="p-3 bg-red-50 border border-red-100 rounded">
+                  <div className="p-3 bg-red-50 border border-red-100 rounded-lg mb-4">
                     <p className="text-sm text-red-600">{formError}</p>
                   </div>
                 )}
 
-                <button
-                  type="button"
-                  onClick={() => openPaymentModal('card')}
-                  className="flex items-center justify-center gap-2 w-full py-3.5 bg-[#1a1a1a] text-white text-sm font-semibold rounded hover:bg-black transition-colors duration-300"
-                >
-                  <CreditCard size={18} />
-                  Pay with Card
-                  <span className="flex items-center gap-1 ml-1">
-                    <span className="text-[10px] px-1 py-0.5 bg-white/20 rounded font-bold">VISA</span>
-                    <span className="text-[10px] px-1 py-0.5 bg-white/20 rounded font-bold">MC</span>
-                  </span>
-                </button>
+                <div className="space-y-3">
+                  {/* Card Payment */}
+                  <button
+                    type="button"
+                    onClick={() => openPaymentModal('card')}
+                    className="group flex items-center w-full py-3.5 px-4 bg-[#1a1a1a] text-white text-sm font-semibold rounded-lg hover:bg-black transition-all duration-300 shadow-md hover:shadow-lg"
+                  >
+                    <CreditCard size={18} className="shrink-0" />
+                    <span className="ml-2.5">Pay with Card</span>
+                    <span className="ml-auto flex items-center gap-1.5">
+                      <VisaBadge />
+                      <MastercardBadge />
+                    </span>
+                  </button>
 
-                <div className="text-center text-xs text-gray-400">or</div>
+                  {/* M-PESA Payment */}
+                  <button
+                    type="button"
+                    onClick={() => openPaymentModal('mpesa')}
+                    className="group flex items-center w-full py-3.5 px-4 bg-[#4CAF50] text-white text-sm font-semibold rounded-lg hover:bg-[#43A047] transition-all duration-300 shadow-md hover:shadow-lg"
+                  >
+                    <Phone size={18} className="shrink-0" />
+                    <span className="ml-2.5">Pay with M-PESA</span>
+                    <span className="ml-auto">
+                      <MpesaBadge />
+                    </span>
+                  </button>
 
-                <button
-                  type="button"
-                  onClick={() => openPaymentModal('mpesa')}
-                  className="flex items-center justify-center gap-2 w-full py-3.5 bg-[#4CAF50] text-white text-sm font-semibold rounded hover:bg-[#43A047] transition-colors duration-300"
-                >
-                  <Phone size={18} />
-                  Pay with M-PESA
-                </button>
+                  <div className="flex items-center gap-3 py-1">
+                    <div className="flex-1 border-t border-gray-200" />
+                    <span className="text-xs text-gray-400">or</span>
+                    <div className="flex-1 border-t border-gray-200" />
+                  </div>
 
-                <div className="text-center text-xs text-gray-400">or</div>
+                  {/* WhatsApp Order */}
+                  <button
+                    onClick={(e) => handleSubmit(e, 'whatsapp')}
+                    className="group flex items-center w-full py-3.5 px-4 bg-white border border-gray-200 text-gray-600 text-sm font-medium rounded-lg hover:border-[#25D366] hover:text-[#25D366] transition-all duration-300"
+                  >
+                    <MessageCircle size={18} className="shrink-0" />
+                    <span className="ml-2.5">Complete via WhatsApp</span>
+                    <svg viewBox="0 0 36 12" width="36" height="12" className="ml-auto" aria-label="WhatsApp">
+                      <rect width="36" height="12" rx="3" fill="#25D366" />
+                      <g transform="translate(3, 1) scale(0.4)">
+                        <path d="M12.5 0C5.6 0 0 5.6 0 12.5c0 2.4.7 4.6 1.8 6.5L0 25l6.2-1.8c1.8 1 3.9 1.6 6.1 1.6 6.9 0 12.5-5.6 12.5-12.5S19.4 0 12.5 0zm0 22.9c-2 0-3.9-.5-5.6-1.5l-.4-.2-4.1 1.1 1.1-4-.3-.4C2 16.1 1.3 14.3 1.3 12.5 1.3 6.3 6.3 1.3 12.5 1.3S23.7 6.3 23.7 12.5 18.7 22.9 12.5 22.9z" fill="#fff"/>
+                      </g>
+                    </svg>
+                  </button>
+                </div>
 
-                <button
-                  onClick={(e) => handleSubmit(e, 'whatsapp')}
-                  className="flex items-center justify-center gap-2 w-full py-3.5 bg-white border border-gray-200 text-gray-600 text-sm font-medium rounded hover:bg-gray-50 transition-colors duration-300"
-                >
-                  <MessageCircle size={18} />
-                  Complete via WhatsApp
-                </button>
-
-                <p className="text-xs text-gray-400 text-center mt-2">
-                  We will confirm your order and arrange delivery
-                </p>
+                {/* Trust indicators */}
+                <div className="mt-5 pt-4 border-t border-gray-100">
+                  <div className="flex items-center justify-center gap-4">
+                    <div className="flex items-center gap-1.5">
+                      <Lock size={11} className="text-gray-300" />
+                      <span className="text-[10px] text-gray-400">SSL Encrypted</span>
+                    </div>
+                    <div className="w-px h-3 bg-gray-200" />
+                    <div className="flex items-center gap-1.5">
+                      <ShieldCheck size={11} className="text-gray-300" />
+                      <span className="text-[10px] text-gray-400">Secure Checkout</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-center gap-3 mt-3">
+                    <VisaLogo size={40} />
+                    <MastercardLogo size={40} />
+                    <MpesaLogo size={40} />
+                  </div>
+                  <p className="text-[10px] text-gray-400 text-center mt-3">
+                    We will confirm your order and arrange delivery
+                  </p>
+                </div>
               </div>
             </div>
           </div>
