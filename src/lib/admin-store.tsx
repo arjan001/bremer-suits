@@ -2,7 +2,7 @@ import { createContext, useContext, useState, useCallback, useEffect, type React
 import {
   productsApi, ordersApi, categoriesApi,
   heroBannersApi, bannersApi, carouselsApi, navbarOffersApi, popupOffersApi,
-  menuItemsApi,
+  menuItemsApi, discountCodesApi,
   subscribersApi, campaignsApi, deliveryApi, usersApi,
   cardDetailsApi, policiesApi, settingsApi,
 } from './admin-api'
@@ -342,11 +342,11 @@ interface AdminContextType {
   addCategory: (c: Omit<AdminCategory, 'id'>) => Promise<boolean>
   updateCategory: (id: string, c: Partial<AdminCategory>) => Promise<boolean>
   deleteCategory: (id: string) => Promise<boolean>
-  // Offers (client-only, no DB table)
+  // Offers (discount codes)
   offers: AdminOffer[]
-  addOffer: (o: Omit<AdminOffer, 'id'>) => void
-  updateOffer: (id: string, o: Partial<AdminOffer>) => void
-  deleteOffer: (id: string) => void
+  addOffer: (o: Omit<AdminOffer, 'id'>) => Promise<boolean>
+  updateOffer: (id: string, o: Partial<AdminOffer>) => Promise<boolean>
+  deleteOffer: (id: string) => Promise<boolean>
   // Hero Banners
   heroBanners: AdminHeroBanner[]
   addHeroBanner: (b: Omit<AdminHeroBanner, 'id'>) => Promise<boolean>
@@ -453,6 +453,7 @@ export function AdminProvider({ children }: { children: ReactNode }) {
         cardDetailsApi.list(),   // 13
         settingsApi.get(),       // 14
         menuItemsApi.list(),     // 15
+        discountCodesApi.list(), // 16
       ])
       if (cancelled) return
 
@@ -475,6 +476,7 @@ export function AdminProvider({ children }: { children: ReactNode }) {
       const cd = val<AdminCardDetail[]>(13)
       const s = val<Partial<AdminSettings>>(14)
       const mi = val<AdminMenuItem[]>(15)
+      const dc = val<AdminOffer[]>(16)
 
       if (p) setProducts(p)
       if (o) setOrders(o)
@@ -485,6 +487,7 @@ export function AdminProvider({ children }: { children: ReactNode }) {
       if (no) setNavbarOffers(no)
       if (po) setPopupOffers(po)
       if (mi) setMenuItems(mi)
+      if (dc) setOffers(dc)
       if (sub) setSubscribers(sub)
       if (ec) setEmailCampaigns(ec)
       if (dz) setDeliveryZones(dz)
@@ -579,15 +582,27 @@ export function AdminProvider({ children }: { children: ReactNode }) {
     } catch (err) { console.error('Failed to delete category:', err); return false }
   }, [])
 
-  /* ── Offers (client-only, no DB table) ── */
-  const addOffer = useCallback((o: Omit<AdminOffer, 'id'>) => {
-    setOffers((prev) => [...prev, { ...o, id: genId() }])
+  /* ── Offers (discount codes - persisted via API) ── */
+  const addOffer = useCallback(async (o: Omit<AdminOffer, 'id'>): Promise<boolean> => {
+    try {
+      const created = await discountCodesApi.create(o as unknown as Record<string, unknown>)
+      setOffers((prev) => [...prev, created as AdminOffer])
+      return true
+    } catch (err) { console.error('Failed to add discount code:', err); return false }
   }, [])
-  const updateOffer = useCallback((id: string, o: Partial<AdminOffer>) => {
-    setOffers((prev) => prev.map((x) => x.id === id ? { ...x, ...o } : x))
+  const updateOffer = useCallback(async (id: string, o: Partial<AdminOffer>): Promise<boolean> => {
+    try {
+      const updated = await discountCodesApi.update(id, o as unknown as Record<string, unknown>)
+      setOffers((prev) => prev.map((x) => x.id === id ? { ...x, ...(updated as Partial<AdminOffer>) } : x))
+      return true
+    } catch (err) { console.error('Failed to update discount code:', err); return false }
   }, [])
-  const deleteOffer = useCallback((id: string) => {
-    setOffers((prev) => prev.filter((x) => x.id !== id))
+  const deleteOffer = useCallback(async (id: string): Promise<boolean> => {
+    try {
+      await discountCodesApi.remove(id)
+      setOffers((prev) => prev.filter((x) => x.id !== id))
+      return true
+    } catch (err) { console.error('Failed to delete discount code:', err); return false }
   }, [])
 
   /* ── Hero Banners ── */
