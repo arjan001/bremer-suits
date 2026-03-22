@@ -42,9 +42,9 @@ function About() {
       <section className="relative bg-black overflow-hidden">
         <div className="absolute inset-0">
           <img
-            src="/images/fabric-pattern.png"
+            src="/images/about-hero.webp"
             alt="About Bremer Suits"
-            className="w-full h-full object-cover opacity-25"
+            className="w-full h-full object-cover opacity-40"
           />
         </div>
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-28 text-center">
