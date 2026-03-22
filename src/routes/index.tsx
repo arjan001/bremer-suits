@@ -1,5 +1,4 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { allBlogs } from 'content-collections'
 import { useState, useEffect } from 'react'
 import {
   ArrowRight,
@@ -41,6 +40,17 @@ interface BannerItem {
   link: string
   image: string
   isActive: boolean
+}
+
+interface PortfolioItem {
+  id: string
+  title: string
+  description: string
+  image: string
+  tag: string
+  category: string
+  client_name: string
+  is_featured: boolean
 }
 
 export const Route = createFileRoute('/')({
@@ -165,15 +175,12 @@ function ProductCard({ product, badgeOverride }: { product: Product; badgeOverri
 }
 
 function HomePage() {
-  const latestPosts = [...allBlogs]
-    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-    .slice(0, 2)
-
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 })
   const [products, setProducts] = useState<Product[]>([])
   const [collections, setCollections] = useState<CategoryInfo[]>([])
   const [menuItems, setMenuItems] = useState<MenuItem[]>([])
   const [banners, setBanners] = useState<BannerItem[]>([])
+  const [portfolioItems, setPortfolioItems] = useState<PortfolioItem[]>([])
 
   useEffect(() => {
     async function loadData() {
@@ -258,6 +265,17 @@ function HomePage() {
     loadData()
     loadMenuItems()
     loadBanners()
+
+    async function loadPortfolio() {
+      try {
+        const res = await fetch(`${BASE}/admin-portfolio?status=active`)
+        if (res.ok) {
+          const data = await res.json()
+          setPortfolioItems(data)
+        }
+      } catch { /* ignore */ }
+    }
+    loadPortfolio()
   }, [])
 
   const featuredProducts = products.slice(0, 4)
@@ -1156,60 +1174,117 @@ function HomePage() {
         </div>
       </section>
 
-      {/* Blog Preview */}
-      {latestPosts.length > 0 && (
+      {/* Portfolio Showcase */}
+      {portfolioItems.length > 0 && (
         <section className="py-16 lg:py-24 bg-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex items-end justify-between mb-12">
               <div>
+                <p className="text-xs tracking-[0.3em] uppercase text-[#5b7b9a] mb-2 font-semibold">
+                  Our Work
+                </p>
                 <h2
                   className="text-3xl lg:text-4xl font-semibold text-black"
                   style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
                 >
-                  From the Journal
+                  Portfolio
                 </h2>
-                <p className="text-sm text-gray-500 mt-2">Style insights and tailoring tips</p>
+                <p className="text-sm text-gray-500 mt-2">Recent work, partnerships &amp; gallery</p>
               </div>
               <Link
-                to="/blog"
+                to="/portfolio"
                 className="hidden sm:inline-flex items-center gap-2 text-sm font-medium text-black hover:text-gray-600 transition-colors"
               >
-                Read All <ArrowRight size={16} />
+                View All <ArrowRight size={16} />
               </Link>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {latestPosts.map((post) => (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+              {portfolioItems.filter((i) => i.is_featured).slice(0, 3).map((item) => (
                 <Link
-                  key={post._meta.path}
-                  to="/blog/$slug"
-                  params={{ slug: post._meta.path }}
-                  className="group block bg-white border border-gray-100 hover:border-gray-200 hover:shadow-md transition-all duration-300 overflow-hidden"
+                  key={item.id}
+                  to="/portfolio"
+                  className="group relative overflow-hidden bg-black aspect-[3/4] block"
                 >
-                  <div className="p-8">
-                    <p className="text-xs tracking-wide text-gray-400 mb-3 uppercase">
-                      {new Date(post.date).toLocaleDateString('en-US', {
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric',
-                      })}
-                      {' '}&middot;{' '}{post.author}
-                    </p>
+                  <img
+                    src={item.image}
+                    alt={item.title}
+                    className="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:opacity-60 group-hover:scale-110 transition-all duration-700"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+
+                  {/* Tag */}
+                  {item.tag && (
+                    <span className={`absolute top-4 left-4 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider rounded-sm ${
+                      item.tag === 'new' ? 'bg-emerald-500 text-white' :
+                      item.tag === 'partnership' ? 'bg-blue-600 text-white' :
+                      item.tag === 'featured' ? 'bg-amber-500 text-white' :
+                      'bg-gray-700 text-white'
+                    }`}>
+                      {item.tag}
+                    </span>
+                  )}
+
+                  <div className="absolute bottom-0 left-0 right-0 p-6">
+                    {item.category && (
+                      <p className="text-[10px] tracking-[0.2em] uppercase text-white/50 mb-2 font-medium">{item.category}</p>
+                    )}
                     <h3
-                      className="text-xl font-semibold text-black mb-3 group-hover:text-gray-600 transition-colors"
+                      className="text-lg font-bold text-white mb-1"
                       style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
                     >
-                      {post.title}
+                      {item.title}
                     </h3>
-                    <p className="text-sm text-gray-500 leading-relaxed mb-4">
-                      {post.summary}
-                    </p>
-                    <div className="inline-flex items-center gap-2 text-xs tracking-widest uppercase text-black font-medium group-hover:gap-3 transition-all duration-300">
-                      Read Article <ArrowRight size={12} />
-                    </div>
+                    {item.client_name && (
+                      <p className="text-xs text-white/60">{item.client_name}</p>
+                    )}
+                    <span className="inline-flex items-center gap-2 text-xs tracking-widest uppercase text-white/80 font-medium mt-3 group-hover:gap-3 transition-all duration-300">
+                      View Project <ArrowRight size={12} />
+                    </span>
                   </div>
                 </Link>
               ))}
+            </div>
+
+            {/* Second row - smaller cards for non-featured or remaining items */}
+            {portfolioItems.length > 3 && (
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-5">
+                {portfolioItems.filter((i) => !i.is_featured).slice(0, 4).map((item) => (
+                  <Link
+                    key={item.id}
+                    to="/portfolio"
+                    className="group relative overflow-hidden bg-gray-100 aspect-square block rounded-lg"
+                  >
+                    <img
+                      src={item.image}
+                      alt={item.title}
+                      className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors duration-300" />
+                    <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                      <h4 className="text-xs font-semibold text-white line-clamp-1">{item.title}</h4>
+                    </div>
+                    {item.tag && (
+                      <span className={`absolute top-2 left-2 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider rounded-sm ${
+                        item.tag === 'new' ? 'bg-emerald-500 text-white' :
+                        item.tag === 'partnership' ? 'bg-blue-600 text-white' :
+                        'bg-gray-700 text-white'
+                      }`}>
+                        {item.tag}
+                      </span>
+                    )}
+                  </Link>
+                ))}
+              </div>
+            )}
+
+            <div className="text-center mt-8 sm:hidden">
+              <Link
+                to="/portfolio"
+                className="inline-flex items-center gap-2 text-sm font-medium text-black hover:text-gray-600 transition-colors"
+              >
+                View All Projects <ArrowRight size={16} />
+              </Link>
             </div>
           </div>
         </section>

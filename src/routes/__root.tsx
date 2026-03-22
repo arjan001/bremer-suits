@@ -819,7 +819,9 @@ function Footer() {
                     <>
                       <li><Link to="/collections" className="text-sm text-gray-400 hover:text-white transition-colors duration-200">All Collections</Link></li>
                       <li><Link to="/collections" className="text-sm text-gray-400 hover:text-white transition-colors duration-200">New Arrivals</Link></li>
+                      <li><Link to="/portfolio" className="text-sm text-gray-400 hover:text-white transition-colors duration-200">Portfolio</Link></li>
                       <li><Link to="/services" className="text-sm text-gray-400 hover:text-white transition-colors duration-200">Services</Link></li>
+                      <li><Link to="/blog" className="text-sm text-gray-400 hover:text-white transition-colors duration-200">Journal</Link></li>
                       <li><Link to="/contact" className="text-sm text-gray-400 hover:text-white transition-colors duration-200">Contact</Link></li>
                     </>
                   )}

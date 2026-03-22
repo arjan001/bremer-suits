@@ -377,6 +377,31 @@ export const analyticsApi = {
   },
 }
 
+/* ── Portfolio ── */
+export const portfolioApi = {
+  async list() {
+    const rows = await request<Record<string, unknown>[]>(`${BASE}/admin-portfolio`)
+    return rows.map((r) => mapFromApi(r))
+  },
+  async create(data: Record<string, unknown>) {
+    const row = await request<Record<string, unknown>>(`${BASE}/admin-portfolio`, {
+      method: 'POST',
+      body: JSON.stringify(mapToApi(data)),
+    })
+    return mapFromApi(row)
+  },
+  async update(id: string, data: Record<string, unknown>) {
+    const row = await request<Record<string, unknown>>(`${BASE}/admin-portfolio?id=${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(mapToApi(data)),
+    })
+    return mapFromApi(row)
+  },
+  async remove(id: string) {
+    await request(`${BASE}/admin-portfolio?id=${id}`, { method: 'DELETE' })
+  },
+}
+
 /* ── Image Upload ── */
 export const imagesApi = {
   async upload(file: File): Promise<string> {
