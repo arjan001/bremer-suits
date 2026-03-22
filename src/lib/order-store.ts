@@ -47,7 +47,7 @@ export interface StoredOrder {
   updatedAt: string
 }
 
-export function saveOrder(order: Omit<StoredOrder, 'id' | 'orderNumber' | 'createdAt' | 'updatedAt'>) {
+export function saveOrder(order: Omit<StoredOrder, 'id' | 'orderNumber' | 'createdAt' | 'updatedAt'>, orderNumber?: string) {
   if (typeof window === 'undefined') return
   try {
     const existing = JSON.parse(localStorage.getItem(ORDERS_KEY) || '[]') as StoredOrder[]
@@ -55,7 +55,7 @@ export function saveOrder(order: Omit<StoredOrder, 'id' | 'orderNumber' | 'creat
     const newOrder: StoredOrder = {
       ...order,
       id: Date.now().toString(36) + Math.random().toString(36).slice(2, 8),
-      orderNumber: 'BRM-' + Date.now().toString(36).toUpperCase().slice(-6),
+      orderNumber: orderNumber || 'BRM-' + Date.now().toString(36).toUpperCase().slice(-6),
       createdAt: ts,
       updatedAt: ts,
     }
@@ -63,4 +63,12 @@ export function saveOrder(order: Omit<StoredOrder, 'id' | 'orderNumber' | 'creat
     localStorage.setItem(ORDERS_KEY, JSON.stringify(existing))
     return newOrder
   } catch { /* ignore */ }
+}
+
+export function getOrderByNumber(orderNumber: string): StoredOrder | undefined {
+  if (typeof window === 'undefined') return
+  try {
+    const orders = JSON.parse(localStorage.getItem(ORDERS_KEY) || '[]') as StoredOrder[]
+    return orders.find((o) => o.orderNumber.toLowerCase() === orderNumber.toLowerCase())
+  } catch { return undefined }
 }

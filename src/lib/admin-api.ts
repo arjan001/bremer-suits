@@ -115,6 +115,7 @@ export const ordersApi = {
       payment_details: data.paymentDetails || null,
       payment_status: data.paymentStatus || 'pending_processing',
       order_notes: data.orderNotes,
+      order_number: data.orderNumber || 'BRM-' + Date.now().toString(36).toUpperCase().slice(-6),
       delivery_fee: data.deliveryFee,
     }
     delete flat.customer
@@ -124,6 +125,7 @@ export const ordersApi = {
     delete flat.paymentDetails
     delete flat.paymentStatus
     delete flat.orderNotes
+    delete flat.orderNumber
     delete flat.deliveryFee
 
     const body = {
