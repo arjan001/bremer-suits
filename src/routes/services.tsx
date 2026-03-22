@@ -128,23 +128,16 @@ function Services() {
           <img
             src="/images/measure.png"
             alt="Services"
-            className="w-full h-full object-cover opacity-30"
+            className="w-full h-full object-cover opacity-40"
           />
         </div>
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-28 text-center">
-          <p className="text-xs tracking-[0.4em] uppercase text-white/60 mb-3 font-medium">
-            Our Services
-          </p>
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 lg:py-20 text-center">
           <h1
-            className="text-4xl lg:text-6xl font-bold text-white mb-4"
+            className="text-4xl lg:text-6xl text-white mb-2 italic"
             style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
           >
             What We Do
           </h1>
-          <p className="text-white/60 max-w-xl mx-auto font-light leading-relaxed">
-            From bespoke suiting to complete image transformation, every service
-            is designed to help you present the best version of yourself.
-          </p>
         </div>
       </section>
 

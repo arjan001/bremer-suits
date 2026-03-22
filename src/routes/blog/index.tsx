@@ -19,23 +19,16 @@ function BlogIndex() {
           <img
             src="/images/fabric-pattern-1.png"
             alt="Journal"
-            className="w-full h-full object-cover opacity-20"
+            className="w-full h-full object-cover opacity-40"
           />
         </div>
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-28 text-center">
-          <p className="text-xs tracking-[0.4em] uppercase text-white/60 mb-3 font-medium">
-            Style & Insight
-          </p>
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 lg:py-20 text-center">
           <h1
-            className="text-4xl lg:text-6xl font-bold text-white mb-4"
+            className="text-4xl lg:text-6xl text-white mb-2 italic"
             style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
           >
             The Journal
           </h1>
-          <p className="text-white/60 max-w-xl mx-auto font-light leading-relaxed">
-            Perspectives on menswear, personal style, and the art of
-            presenting yourself with purpose.
-          </p>
         </div>
       </section>
 
