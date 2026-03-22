@@ -312,45 +312,45 @@ function HomePage() {
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section - Full Width Image Banner */}
-      <section className="relative bg-black overflow-hidden">
+      <section className="relative bg-black overflow-hidden min-h-[90vh] flex items-center justify-center">
         <div className="absolute inset-0">
           <img
-            src="/images/suit-hero.webp"
-            alt="Bremer Suits Collection"
-            className="w-full h-full object-cover object-center opacity-60 hero-pan"
+            src="/images/tailor-hero-bg.jpg"
+            alt="Tailoring patterns and tools"
+            className="w-full h-full object-cover object-center"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent" />
+          <div className="absolute inset-0 bg-black/60" />
         </div>
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-32 lg:py-48">
-          <div className="max-w-xl">
-            <p className="text-xs tracking-[0.4em] uppercase text-white/70 mb-4 font-medium">
-              New Season Collection
-            </p>
-            <h1
-              className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-[1.1] mb-6 text-white"
-              style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
+        <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-32 lg:py-48 text-center">
+          <h1
+            className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl leading-[1.15] mb-8 text-white"
+            style={{ fontFamily: "'Playfair Display', Georgia, serif", fontStyle: 'italic', fontWeight: 400 }}
+          >
+            Garments Designed to{' '}
+            <span className="block">Celebrate Your</span>
+            <span className="block">Individuality</span>
+          </h1>
+          <p className="text-sm sm:text-base text-white/70 leading-relaxed mb-6 max-w-2xl mx-auto font-light">
+            Every piece we create is a story of craftsmanship, precision, and style. From bespoke tailoring
+            to ready-made collections, we celebrate your unique identity through garments that define who you are.
+          </p>
+          <p className="text-xs sm:text-sm tracking-[0.25em] uppercase text-white/50 mb-10 font-light">
+            Style Consultations &mdash; Bespoke Tailoring &mdash; Fashion Design
+          </p>
+          <div className="flex flex-wrap justify-center gap-4">
+            <Link
+              to="/collections"
+              className="inline-flex items-center px-10 py-4 text-xs tracking-[0.25em] uppercase bg-[#c8102e] text-white hover:bg-[#a30d25] transition-colors duration-300 font-semibold"
             >
-              Seasonal Bremer
-              <span className="block">Creations</span>
-            </h1>
-            <p className="text-base text-white/70 leading-relaxed mb-8 max-w-md font-light">
-              Discover our latest collection of bespoke suits crafted for the modern professional. Premium fabrics, impeccable fit, timeless style.
-            </p>
-            <div className="flex flex-wrap gap-4">
-              <Link
-                to="/collections"
-                className="inline-flex items-center px-8 py-3.5 text-xs tracking-[0.2em] uppercase bg-white text-black hover:bg-gray-100 transition-colors duration-300 font-semibold"
-              >
-                Shop Collection
-              </Link>
-              <Link
-                to="/services"
-                className="inline-flex items-center gap-2 px-8 py-3.5 text-xs tracking-[0.2em] uppercase border border-white/40 text-white hover:bg-white/10 transition-colors duration-300 font-medium"
-              >
-                Our Services
-                <ArrowRight size={14} />
-              </Link>
-            </div>
+              Discover More
+            </Link>
+            <Link
+              to="/services"
+              className="inline-flex items-center gap-2 px-10 py-4 text-xs tracking-[0.25em] uppercase border border-white/40 text-white hover:bg-white/10 transition-colors duration-300 font-medium"
+            >
+              Our Services
+              <ArrowRight size={14} />
+            </Link>
           </div>
         </div>
       </section>
