@@ -57,7 +57,7 @@ function AdminOffers() {
     else if (type === 'carousels') ok = await deleteCarousel(id)
     else if (type === 'navbar') ok = await deleteNavbarOffer(id)
     else if (type === 'popup') ok = await deletePopupOffer(id)
-    else if (type === 'discounts') { deleteOffer(id); ok = true }
+    else if (type === 'discounts') ok = await deleteOffer(id)
     if (ok) showDeleteSuccess('Item')
     else showError('Delete Failed')
   }
@@ -389,10 +389,9 @@ function AdminOffers() {
 
       {discountModal !== 'closed' && (
         <ModalShell title={discountModal === 'add' ? 'Add Discount Code' : 'Edit Discount Code'} onClose={() => setDiscountModal('closed')}>
-          <DiscountOfferForm item={editDiscount} onSave={(data) => {
-            if (discountModal === 'edit' && editDiscount) updateOffer(editDiscount.id, data)
-            else addOffer(data as AdminOffer)
-            showCreateSuccess('Discount Code')
+          <DiscountOfferForm item={editDiscount} onSave={async (data) => {
+            if (discountModal === 'edit' && editDiscount) { const ok = await updateOffer(editDiscount.id, data); if (ok) showUpdateSuccess('Discount Code'); else showError('Update Failed') }
+            else { const ok = await addOffer(data as AdminOffer); if (ok) showCreateSuccess('Discount Code'); else showError('Create Failed') }
             setDiscountModal('closed')
           }} onCancel={() => setDiscountModal('closed')} />
         </ModalShell>

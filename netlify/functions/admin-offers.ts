@@ -12,7 +12,7 @@ export default async function handler(req: Request, _context: Context) {
     const id = url.searchParams.get('id')
     const table = url.searchParams.get('type') || 'hero_banners'
 
-    const validTables = ['hero_banners', 'banners', 'carousels', 'navbar_offers', 'popup_offers']
+    const validTables = ['hero_banners', 'banners', 'carousels', 'navbar_offers', 'popup_offers', 'menu_items', 'discount_codes']
     if (!validTables.includes(table)) {
       return errorResponse('Invalid offer type. Use: ' + validTables.join(', '))
     }

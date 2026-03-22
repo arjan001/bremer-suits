@@ -4,7 +4,7 @@ import { CartDrawer } from '@/components/CartDrawer'
 import { SeoHead } from '@/components/SeoHead'
 import { CartProvider } from '@/lib/cart-context'
 import { WishlistProvider } from '@/lib/wishlist-context'
-import { Phone, Mail, Instagram, Clock, Navigation, Globe, X, ChevronUp, Shield, FileText, Cookie, CreditCard, Truck, RotateCcw, ArrowRight, MapPin } from 'lucide-react'
+import { Phone, Mail, Instagram, Clock, Navigation, Globe, X, ChevronUp, Shield, FileText, Cookie, CreditCard, Truck, RotateCcw, ArrowRight, MapPin, SearchX } from 'lucide-react'
 import { useState, useEffect, useCallback } from 'react'
 
 import '../styles.css'
@@ -37,7 +37,86 @@ export const Route = createRootRoute({
   }),
   component: RootLayout,
   shellComponent: RootDocument,
+  notFoundComponent: NotFoundPage,
 })
+
+function NotFoundPage() {
+  return (
+    <div className="min-h-screen bg-white flex flex-col">
+      {/* Hero Section */}
+      <section className="relative flex-1 flex items-center justify-center bg-black overflow-hidden">
+        <div className="absolute inset-0">
+          <img
+            src="/images/suit-hero.webp"
+            alt="Background"
+            className="w-full h-full object-cover opacity-20"
+          />
+        </div>
+        <div className="relative text-center px-4 sm:px-6 lg:px-8 py-20">
+          <div className="w-20 h-20 rounded-full bg-white/10 flex items-center justify-center mx-auto mb-8">
+            <SearchX size={36} className="text-white/70" />
+          </div>
+          <p className="text-xs tracking-[0.3em] uppercase text-white/50 font-medium mb-4">
+            Page Not Found
+          </p>
+          <h1
+            className="text-6xl sm:text-8xl lg:text-9xl font-bold text-white mb-4"
+            style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
+          >
+            404
+          </h1>
+          <p className="text-lg sm:text-xl text-white/60 mb-4 max-w-md mx-auto font-light">
+            The page you&apos;re looking for doesn&apos;t exist or has been moved.
+          </p>
+          <p className="text-sm text-white/40 mb-10 max-w-sm mx-auto">
+            It may have been removed, renamed, or the URL might be incorrect. Let us help you find what you need.
+          </p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <Link
+              to="/"
+              className="inline-flex items-center gap-2 px-8 py-3.5 text-xs tracking-[0.2em] uppercase bg-white text-black hover:bg-gray-100 transition-colors duration-300 font-semibold"
+            >
+              Back to Home
+              <ArrowRight size={14} />
+            </Link>
+            <Link
+              to="/collections"
+              className="inline-flex items-center gap-2 px-8 py-3.5 text-xs tracking-[0.2em] uppercase border border-white/30 text-white hover:bg-white/10 transition-colors duration-300 font-semibold"
+            >
+              Browse Products
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Quick Links */}
+      <section className="bg-[#f8f8f8] py-12">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <p className="text-xs tracking-[0.2em] uppercase text-gray-400 text-center mb-8 font-medium">
+            Popular Destinations
+          </p>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {[
+              { to: '/collections', label: 'Products', desc: 'Browse our collection' },
+              { to: '/services', label: 'Services', desc: 'What we offer' },
+              { to: '/about', label: 'About Us', desc: 'Our story' },
+              { to: '/contact', label: 'Contact', desc: 'Get in touch' },
+            ].map((link) => (
+              <Link
+                key={link.to}
+                to={link.to}
+                className="group p-5 bg-white border border-gray-100 hover:border-black transition-all duration-300 text-center"
+              >
+                <p className="text-sm font-semibold text-black mb-1 group-hover:underline">{link.label}</p>
+                <p className="text-xs text-gray-400">{link.desc}</p>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+    </div>
+  )
+}
 
 function RootDocument({ children }: { children: React.ReactNode }) {
   return (
