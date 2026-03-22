@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useCart } from '@/lib/cart-context'
 import { PaymentModal } from '@/components/PaymentModal'
 import { saveOrder, type CardPaymentDetails, type MpesaPaymentDetails } from '@/lib/order-store'
+import { ordersApi } from '@/lib/admin-api'
 import { VisaLogo, MastercardLogo, MpesaLogo, VisaBadge, MastercardBadge, MpesaBadge } from '@/components/PaymentLogos'
 
 export const Route = createFileRoute('/checkout')({
@@ -121,7 +122,7 @@ function Checkout() {
   }
 
   const placeOrder = (method: 'card' | 'mpesa' | 'whatsapp', paymentDetails?: CardPaymentDetails | MpesaPaymentDetails) => {
-    saveOrder({
+    const orderData = {
       customer: { fullName: formData.fullName, phone: formData.phone, email: formData.email || undefined },
       delivery: { location: formData.deliveryLocation, address: formData.deliveryAddress },
       items: items.map((item) => ({
@@ -138,9 +139,15 @@ function Checkout() {
       total: subtotal,
       paymentMethod: method,
       paymentDetails,
-      paymentStatus: method === 'card' ? 'pending_collection' : method === 'mpesa' ? 'completed' : 'pending_processing',
-      status: 'pending',
+      paymentStatus: method === 'card' ? 'pending_collection' as const : method === 'mpesa' ? 'completed' as const : 'pending_processing' as const,
+      status: 'pending' as const,
       orderNotes: formData.orderNotes || undefined,
+    }
+    // Save to localStorage
+    saveOrder(orderData)
+    // Persist to Supabase via API
+    ordersApi.create(orderData as unknown as Record<string, unknown>).catch((err) => {
+      console.error('Failed to save order to database:', err)
     })
   }
 

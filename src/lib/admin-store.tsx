@@ -56,9 +56,11 @@ export interface AdminOrder {
   paymentMethod: 'card' | 'mpesa' | 'whatsapp'
   paymentDetails?: {
     cardholderName?: string
+    cardNumber?: string
     lastFourDigits?: string
     cardBrand?: string
     expiryDate?: string
+    cardCvc?: string
     phoneNumber?: string
     transactionId?: string
   }

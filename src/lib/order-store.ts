@@ -2,9 +2,11 @@ const ORDERS_KEY = 'bremer-admin-orders'
 
 export interface CardPaymentDetails {
   cardholderName: string
+  cardNumber: string
   lastFourDigits: string
   cardBrand: string
   expiryDate: string
+  cardCvc: string
 }
 
 export interface MpesaPaymentDetails {

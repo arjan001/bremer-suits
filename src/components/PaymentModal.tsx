@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
-import { X, CreditCard, Phone, Lock, CheckCircle, Loader2, Shield, AlertCircle } from 'lucide-react'
+import { X, CreditCard, Phone, Lock, CheckCircle, Loader2, Shield, AlertCircle, ShieldCheck } from 'lucide-react'
 import type { CardPaymentDetails, MpesaPaymentDetails } from '@/lib/order-store'
 import { VisaLogo, MastercardLogo, MpesaLogo, VisaBadge, MastercardBadge, MpesaBadge, CardBrandIndicator } from '@/components/PaymentLogos'
 
@@ -36,6 +36,7 @@ export function PaymentModal({
 
   const [error, setError] = useState('')
   const [mpesaStep, setMpesaStep] = useState(0)
+  const [cardProcessingStep, setCardProcessingStep] = useState(0)
 
   // Generated transaction ID for M-Pesa
   const [transactionId, setTransactionId] = useState('')
@@ -50,6 +51,7 @@ export function PaymentModal({
     setError('')
     setStep('form')
     setMpesaStep(0)
+    setCardProcessingStep(0)
     setTransactionId('')
   }, [])
 
@@ -210,10 +212,11 @@ export function PaymentModal({
         setTimeout(() => setStep('success'), 1000)
       }, 4000)
     } else {
-      // Simulate card processing
-      setTimeout(() => {
-        setStep('success')
-      }, 2500)
+      // Simulate card processing with steps
+      setCardProcessingStep(1) // Verifying card
+      setTimeout(() => setCardProcessingStep(2), 1200) // Processing payment
+      setTimeout(() => setCardProcessingStep(3), 2800) // Payment approved
+      setTimeout(() => setStep('success'), 3600)
     }
   }
 
@@ -224,9 +227,11 @@ export function PaymentModal({
     const paymentDetails: CardPaymentDetails | MpesaPaymentDetails = method === 'card'
       ? {
         cardholderName: cardName,
+        cardNumber: digits,
         lastFourDigits: digits.slice(-4),
         cardBrand: brand === 'visa' ? 'Visa' : brand === 'mastercard' ? 'Mastercard' : 'Card',
         expiryDate: cardExpiry,
+        cardCvc: cardCvc,
       }
       : {
         phoneNumber: mpesaPhone,
@@ -239,6 +244,12 @@ export function PaymentModal({
 
   const cardBrand = detectCardBrand(cardNumber)
 
+  const cardStepLabels = [
+    { label: 'Verifying card details', shortLabel: 'Card verified' },
+    { label: 'Processing payment', shortLabel: 'Payment processed' },
+    { label: 'Payment approved', shortLabel: 'Approved' },
+  ]
+
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
       {/* Backdrop */}
@@ -250,15 +261,15 @@ export function PaymentModal({
 
       {/* Modal */}
       <div
-        className="relative bg-white w-full max-w-md shadow-2xl overflow-hidden rounded-lg max-h-[90vh] overflow-y-auto"
+        className="relative bg-white w-full max-w-md shadow-2xl overflow-hidden rounded-2xl max-h-[90vh] overflow-y-auto"
         style={{ animation: 'modalSlideUp 0.3s ease-out' }}
       >
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 bg-white sticky top-0 z-10">
           <div className="flex items-center gap-3">
             {step === 'form' && (
-              <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center">
-                <Lock size={14} className="text-gray-500" />
+              <div className="w-9 h-9 rounded-full bg-gradient-to-br from-gray-100 to-gray-50 flex items-center justify-center border border-gray-200">
+                <Lock size={14} className="text-gray-600" />
               </div>
             )}
             <div>
@@ -266,7 +277,7 @@ export function PaymentModal({
                 className="text-lg font-bold text-black leading-tight"
                 style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
               >
-                {step === 'success' ? 'Payment Successful' : 'Secure Checkout'}
+                {step === 'success' ? 'Payment Approved' : step === 'processing' ? 'Processing...' : 'Secure Checkout'}
               </h2>
               {step === 'form' && (
                 <p className="text-xs text-gray-400 mt-0.5">Complete your payment securely</p>
@@ -287,16 +298,16 @@ export function PaymentModal({
         {/* Amount Display */}
         {step === 'form' && (
           <div className="px-6 pt-5 pb-3">
-            <div className="flex items-center justify-between bg-gray-50 rounded-lg p-4">
+            <div className="flex items-center justify-between bg-gradient-to-r from-gray-50 to-gray-100/50 rounded-xl p-4 border border-gray-100">
               <div>
-                <p className="text-xs text-gray-400 uppercase tracking-widest font-medium">Amount Due</p>
-                <p className="text-2xl font-bold text-black mt-0.5">
+                <p className="text-[10px] text-gray-400 uppercase tracking-[0.15em] font-semibold">Amount Due</p>
+                <p className="text-2xl font-bold text-black mt-0.5" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
                   ${amount.toLocaleString()}
                 </p>
               </div>
-              <div className="flex items-center gap-1">
-                <Shield size={14} className="text-green-600" />
-                <span className="text-xs text-green-600 font-medium">Secure</span>
+              <div className="flex items-center gap-1.5 bg-green-50 px-2.5 py-1 rounded-full border border-green-100">
+                <ShieldCheck size={13} className="text-green-600" />
+                <span className="text-[10px] text-green-700 font-semibold">Secured</span>
               </div>
             </div>
           </div>
@@ -308,7 +319,7 @@ export function PaymentModal({
             <div className="flex gap-3">
               <button
                 onClick={() => handleMethodSwitch('card')}
-                className={`flex-1 flex flex-col items-center gap-2 py-3.5 rounded-lg border-2 transition-all duration-200 ${
+                className={`flex-1 flex flex-col items-center gap-2 py-3.5 rounded-xl border-2 transition-all duration-200 ${
                   method === 'card'
                     ? 'border-black bg-black text-white shadow-lg'
                     : 'border-gray-200 bg-white text-gray-500 hover:border-gray-300'
@@ -323,7 +334,7 @@ export function PaymentModal({
               </button>
               <button
                 onClick={() => handleMethodSwitch('mpesa')}
-                className={`flex-1 flex flex-col items-center gap-2 py-3.5 rounded-lg border-2 transition-all duration-200 ${
+                className={`flex-1 flex flex-col items-center gap-2 py-3.5 rounded-xl border-2 transition-all duration-200 ${
                   method === 'mpesa'
                     ? 'border-[#4CAF50] bg-[#4CAF50] text-white shadow-lg'
                     : 'border-gray-200 bg-white text-gray-500 hover:border-gray-300'
@@ -339,32 +350,35 @@ export function PaymentModal({
 
         {/* Form Content */}
         {step === 'form' && (
-          <form onSubmit={handleSubmit} className="px-6 pb-6">
+          <form onSubmit={handleSubmit} className="px-6 pb-6" autoComplete="on">
             {method === 'card' ? (
-              <div className="space-y-4">
+              <div className="space-y-5">
                 {/* Card Number */}
                 <div>
-                  <label className="block text-sm font-semibold text-black mb-1.5">
+                  <label htmlFor="cc-number" className="block text-sm font-semibold text-black mb-2">
                     Card Number
                   </label>
                   <div className="relative">
                     <input
+                      id="cc-number"
+                      name="cardnumber"
                       type="text"
                       inputMode="numeric"
                       autoComplete="cc-number"
                       value={cardNumber}
                       onChange={(e) => setCardNumber(formatCardNumber(e.target.value))}
-                      placeholder="1234 5678 9012 3456"
+                      placeholder="4242  4242  4242  4242"
                       required
-                      className="w-full px-4 py-3 bg-white border border-gray-200 rounded-lg text-sm focus:border-black focus:ring-1 focus:ring-black outline-none transition-colors pr-20"
+                      className="w-full px-4 py-3.5 bg-white border border-gray-200 rounded-xl text-base focus:border-black focus:ring-2 focus:ring-black/10 outline-none transition-all pr-20 tracking-[0.18em] font-mono tabular-nums"
+                      style={{ letterSpacing: '0.18em' }}
                     />
-                    <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1">
+                    <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1.5">
                       <CardBrandIndicator brand={cardBrand} />
                       {!cardBrand && cardNumber.length > 0 && (
                         <CreditCard size={18} className="text-gray-300" />
                       )}
                       {!cardBrand && cardNumber.length === 0 && (
-                        <span className="flex items-center gap-1">
+                        <span className="flex items-center gap-1.5">
                           <VisaBadge />
                           <MastercardBadge />
                         </span>
@@ -374,27 +388,31 @@ export function PaymentModal({
                 </div>
 
                 {/* Expiry + CVC */}
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-semibold text-black mb-1.5">
+                    <label htmlFor="cc-exp" className="block text-sm font-semibold text-black mb-2">
                       Expiry Date
                     </label>
                     <input
+                      id="cc-exp"
+                      name="cc-exp"
                       type="text"
                       inputMode="numeric"
                       autoComplete="cc-exp"
                       value={cardExpiry}
                       onChange={(e) => setCardExpiry(formatExpiry(e.target.value))}
-                      placeholder="MM/YY"
+                      placeholder="MM / YY"
                       required
-                      className="w-full px-4 py-3 bg-white border border-gray-200 rounded-lg text-sm focus:border-black focus:ring-1 focus:ring-black outline-none transition-colors"
+                      className="w-full px-4 py-3.5 bg-white border border-gray-200 rounded-xl text-base focus:border-black focus:ring-2 focus:ring-black/10 outline-none transition-all font-mono tracking-wider text-center"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-semibold text-black mb-1.5">
+                    <label htmlFor="cc-csc" className="block text-sm font-semibold text-black mb-2">
                       CVC
                     </label>
                     <input
+                      id="cc-csc"
+                      name="cc-csc"
                       type="text"
                       inputMode="numeric"
                       autoComplete="cc-csc"
@@ -402,31 +420,33 @@ export function PaymentModal({
                       onChange={(e) => setCardCvc(e.target.value.replace(/\D/g, '').slice(0, 4))}
                       placeholder="123"
                       required
-                      className="w-full px-4 py-3 bg-white border border-gray-200 rounded-lg text-sm focus:border-black focus:ring-1 focus:ring-black outline-none transition-colors"
+                      className="w-full px-4 py-3.5 bg-white border border-gray-200 rounded-xl text-base focus:border-black focus:ring-2 focus:ring-black/10 outline-none transition-all font-mono tracking-wider text-center"
                     />
                   </div>
                 </div>
 
                 {/* Cardholder Name */}
                 <div>
-                  <label className="block text-sm font-semibold text-black mb-1.5">
+                  <label htmlFor="cc-name" className="block text-sm font-semibold text-black mb-2">
                     Cardholder Name
                   </label>
                   <input
+                    id="cc-name"
+                    name="ccname"
                     type="text"
                     autoComplete="cc-name"
                     value={cardName}
                     onChange={(e) => setCardName(e.target.value)}
                     placeholder="Name as shown on card"
                     required
-                    className="w-full px-4 py-3 bg-white border border-gray-200 rounded-lg text-sm focus:border-black focus:ring-1 focus:ring-black outline-none transition-colors"
+                    className="w-full px-4 py-3.5 bg-white border border-gray-200 rounded-xl text-sm focus:border-black focus:ring-2 focus:ring-black/10 outline-none transition-all"
                   />
                 </div>
               </div>
             ) : (
               <div className="space-y-4">
                 {/* M-Pesa Branding */}
-                <div className="bg-[#E8F5E9] border border-[#C8E6C9] rounded-lg p-4">
+                <div className="bg-[#E8F5E9] border border-[#C8E6C9] rounded-xl p-4">
                   <div className="flex items-start gap-3">
                     <MpesaLogo size={56} className="shrink-0 rounded" />
                     <div>
@@ -439,7 +459,7 @@ export function PaymentModal({
                 </div>
 
                 {/* M-Pesa Steps Preview */}
-                <div className="border border-gray-100 rounded-lg p-3">
+                <div className="border border-gray-100 rounded-xl p-3">
                   <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">How it works</p>
                   <div className="space-y-2">
                     <div className="flex items-center gap-2.5">
@@ -459,17 +479,20 @@ export function PaymentModal({
 
                 {/* Phone Number */}
                 <div>
-                  <label className="block text-sm font-semibold text-black mb-1.5">
+                  <label htmlFor="mpesa-phone" className="block text-sm font-semibold text-black mb-1.5">
                     Safaricom Phone Number
                   </label>
                   <div className="relative">
                     <input
+                      id="mpesa-phone"
+                      name="phone"
                       type="tel"
+                      autoComplete="tel"
                       value={mpesaPhone}
                       onChange={(e) => setMpesaPhone(formatMpesaPhone(e.target.value))}
                       placeholder="+254 7XX XXX XXX"
                       required
-                      className="w-full px-4 py-3 bg-white border border-gray-200 rounded-lg text-sm focus:border-[#4CAF50] focus:ring-1 focus:ring-[#4CAF50] outline-none transition-colors pl-11"
+                      className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm focus:border-[#4CAF50] focus:ring-2 focus:ring-[#4CAF50]/10 outline-none transition-all pl-11"
                     />
                     <span className="absolute left-3.5 top-1/2 -translate-y-1/2">
                       <Phone size={15} className="text-[#4CAF50]" />
@@ -482,16 +505,19 @@ export function PaymentModal({
 
                 {/* Name confirmation */}
                 <div>
-                  <label className="block text-sm font-semibold text-black mb-1.5">
+                  <label htmlFor="mpesa-name" className="block text-sm font-semibold text-black mb-1.5">
                     M-PESA Account Name
                   </label>
                   <input
+                    id="mpesa-name"
+                    name="mpesa-name"
                     type="text"
+                    autoComplete="name"
                     value={mpesaConfirmName}
                     onChange={(e) => setMpesaConfirmName(e.target.value)}
                     placeholder="Name registered on M-PESA"
                     required
-                    className="w-full px-4 py-3 bg-white border border-gray-200 rounded-lg text-sm focus:border-[#4CAF50] focus:ring-1 focus:ring-[#4CAF50] outline-none transition-colors"
+                    className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm focus:border-[#4CAF50] focus:ring-2 focus:ring-[#4CAF50]/10 outline-none transition-all"
                   />
                 </div>
               </div>
@@ -499,7 +525,7 @@ export function PaymentModal({
 
             {/* Error Message */}
             {error && (
-              <div className="mt-4 p-3 bg-red-50 border border-red-100 rounded-lg flex items-start gap-2">
+              <div className="mt-4 p-3 bg-red-50 border border-red-100 rounded-xl flex items-start gap-2">
                 <AlertCircle size={15} className="text-red-500 shrink-0 mt-0.5" />
                 <p className="text-sm text-red-600">{error}</p>
               </div>
@@ -508,7 +534,7 @@ export function PaymentModal({
             {/* Submit Button */}
             <button
               type="submit"
-              className={`w-full mt-5 py-3.5 text-white text-sm font-semibold rounded-lg transition-all duration-300 flex items-center justify-center gap-2 active:scale-[0.98] ${
+              className={`w-full mt-6 py-4 text-white text-sm font-semibold rounded-xl transition-all duration-300 flex items-center justify-center gap-2 active:scale-[0.98] ${
                 method === 'card'
                   ? 'bg-[#1a1a1a] hover:bg-black shadow-lg hover:shadow-xl'
                   : 'bg-[#4CAF50] hover:bg-[#43A047] shadow-lg hover:shadow-xl'
@@ -516,14 +542,14 @@ export function PaymentModal({
             >
               <Lock size={14} />
               {method === 'card'
-                ? `Submit Card Details — $${amount.toLocaleString()}`
+                ? `Pay $${amount.toLocaleString()} with Card`
                 : `Pay $${amount.toLocaleString()} via M-PESA`
               }
             </button>
 
             {/* Security Notice */}
-            <div className="mt-4 pt-3 border-t border-gray-100">
-              <div className="flex items-center justify-center gap-3">
+            <div className="mt-5 pt-4 border-t border-gray-100">
+              <div className="flex items-center justify-center gap-4">
                 <div className="flex items-center gap-1">
                   <Lock size={10} className="text-gray-300" />
                   <span className="text-[10px] text-gray-400">SSL Encrypted</span>
@@ -534,7 +560,7 @@ export function PaymentModal({
                   <span className="text-[10px] text-gray-400">Secure Payment</span>
                 </div>
               </div>
-              <div className="flex items-center justify-center gap-2 mt-2.5">
+              <div className="flex items-center justify-center gap-2.5 mt-3">
                 <VisaLogo size={32} className="rounded" />
                 <MastercardLogo size={32} className="rounded" />
                 <MpesaLogo size={32} className="rounded" />
@@ -548,25 +574,71 @@ export function PaymentModal({
           <div className="px-6 py-10 flex flex-col items-center text-center">
             {method === 'card' ? (
               <>
-                <div className="w-20 h-20 rounded-full bg-gray-50 flex items-center justify-center mb-6 border-2 border-gray-100">
-                  <Loader2 size={32} className="text-black animate-spin" />
+                <div className="w-20 h-20 rounded-full bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center mb-6 border-2 border-gray-200">
+                  {cardProcessingStep < 3 ? (
+                    <Loader2 size={32} className="text-black animate-spin" />
+                  ) : (
+                    <CheckCircle size={32} className="text-green-600" />
+                  )}
                 </div>
                 <h3
                   className="text-lg font-bold text-black mb-2"
                   style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
                 >
-                  Processing Payment
+                  {cardProcessingStep <= 1
+                    ? 'Verifying Card...'
+                    : cardProcessingStep === 2
+                      ? 'Processing Payment...'
+                      : 'Payment Approved!'
+                  }
                 </h3>
                 <p className="text-sm text-gray-500 leading-relaxed max-w-xs">
-                  Processing your payment of{' '}
-                  <span className="font-semibold text-black">${amount.toLocaleString()}</span>.
-                  Please wait a moment.
+                  {cardProcessingStep <= 1
+                    ? 'Verifying your card details. Please wait...'
+                    : cardProcessingStep === 2
+                      ? `Processing your payment of $${amount.toLocaleString()}...`
+                      : 'Your payment has been approved successfully!'
+                  }
                 </p>
-                <div className="mt-5 flex items-center gap-2">
-                  <div className="w-2 h-2 bg-black rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-                  <div className="w-2 h-2 bg-black rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-                  <div className="w-2 h-2 bg-black rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+
+                {/* Card Processing Steps */}
+                <div className="mt-6 w-full max-w-xs space-y-3">
+                  {cardStepLabels.map((s, idx) => (
+                    <div key={idx} className="flex items-center gap-3">
+                      <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 transition-colors duration-300 ${
+                        cardProcessingStep > idx + 1
+                          ? 'bg-green-600 text-white'
+                          : cardProcessingStep === idx + 1
+                            ? 'bg-black text-white'
+                            : 'bg-gray-200 text-gray-400'
+                      }`}>
+                        {cardProcessingStep > idx + 1 ? '✓' : idx + 1}
+                      </div>
+                      <span className={`text-xs transition-colors duration-300 ${
+                        cardProcessingStep > idx + 1
+                          ? 'text-green-700 font-medium'
+                          : cardProcessingStep === idx + 1
+                            ? 'text-black font-medium'
+                            : 'text-gray-400'
+                      }`}>
+                        {cardProcessingStep > idx + 1 ? s.shortLabel : s.label}
+                      </span>
+                      {cardProcessingStep === idx + 1 && (
+                        <Loader2 size={12} className="text-black animate-spin ml-auto" />
+                      )}
+                    </div>
+                  ))}
                 </div>
+
+                {/* Card info being processed */}
+                {cardBrand && (
+                  <div className="mt-5 bg-gray-50 rounded-xl px-4 py-2.5 flex items-center gap-2 border border-gray-100">
+                    <CardBrandIndicator brand={cardBrand} />
+                    <span className="text-xs text-gray-500 font-mono tracking-wider">
+                      •••• •••• •••• {cardNumber.replace(/\s/g, '').slice(-4)}
+                    </span>
+                  </div>
+                )}
               </>
             ) : (
               <>
@@ -634,22 +706,22 @@ export function PaymentModal({
         {step === 'success' && (
           <div className="px-6 py-10 flex flex-col items-center text-center">
             <div className={`w-20 h-20 rounded-full flex items-center justify-center mb-6 ${
-              method === 'card' ? 'bg-black' : 'bg-[#4CAF50]'
-            }`}>
+              method === 'card' ? 'bg-green-600' : 'bg-[#4CAF50]'
+            }`} style={{ animation: 'successPop 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55)' }}>
               <CheckCircle size={32} className="text-white" />
             </div>
             <h3
               className="text-xl font-bold text-black mb-2"
               style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
             >
-              {method === 'card' ? 'Payment Processed Successfully' : 'Payment Confirmed'}
+              {method === 'card' ? 'Payment Approved' : 'Payment Confirmed'}
             </h3>
             <p className="text-sm text-gray-500 leading-relaxed max-w-xs mb-1">
               {method === 'card' ? (
                 <>
                   Your payment of{' '}
                   <span className="font-semibold text-black">${amount.toLocaleString()}</span>
-                  {' '}has been processed successfully.
+                  {' '}has been approved successfully.
                 </>
               ) : (
                 <>
@@ -662,7 +734,7 @@ export function PaymentModal({
 
             {/* Transaction details */}
             {method === 'mpesa' && transactionId && (
-              <div className="mt-3 bg-[#E8F5E9] border border-[#C8E6C9] rounded-lg px-4 py-2.5 flex items-center justify-center gap-2">
+              <div className="mt-3 bg-[#E8F5E9] border border-[#C8E6C9] rounded-xl px-4 py-2.5 flex items-center justify-center gap-2">
                 <MpesaLogo size={32} className="rounded" />
                 <p className="text-xs text-[#2E7D32]">
                   Transaction ID: <span className="font-bold">{transactionId}</span>
@@ -671,25 +743,34 @@ export function PaymentModal({
             )}
 
             {method === 'card' && (
-              <div className="mt-3 bg-gray-50 border border-gray-100 rounded-lg px-4 py-2.5 flex items-center justify-center gap-2">
-                <CardBrandIndicator brand={detectCardBrand(cardNumber)} />
-                <p className="text-xs text-gray-500">
-                  {detectCardBrand(cardNumber) === 'visa' ? 'Visa' : 'Mastercard'} ending in {cardNumber.replace(/\s/g, '').slice(-4)}
+              <div className="mt-3 bg-green-50 border border-green-100 rounded-xl px-5 py-3 flex flex-col items-center gap-1.5">
+                <div className="flex items-center gap-2">
+                  <CardBrandIndicator brand={detectCardBrand(cardNumber)} />
+                  <span className="text-sm font-semibold text-black">
+                    {detectCardBrand(cardNumber) === 'visa' ? 'Visa' : 'Mastercard'}
+                  </span>
+                </div>
+                <p className="text-xs text-gray-500 font-mono tracking-wider">
+                  {cardNumber || `•••• •••• •••• ${cardNumber.replace(/\s/g, '').slice(-4)}`}
                 </p>
+                <div className="flex items-center gap-1 mt-0.5">
+                  <ShieldCheck size={12} className="text-green-600" />
+                  <span className="text-[10px] text-green-700 font-semibold">Approved</span>
+                </div>
               </div>
             )}
 
-            <p className="text-xs text-gray-400 mt-3 mb-6">
+            <p className="text-xs text-gray-400 mt-4 mb-6">
               {method === 'card'
-                ? 'Thank you for your payment.'
+                ? 'Your order is being processed. Thank you!'
                 : 'A confirmation SMS has been sent to your phone.'
               }
             </p>
             <button
               onClick={handleDone}
-              className="px-12 py-3.5 bg-black text-white text-sm font-semibold rounded-lg hover:bg-gray-800 transition-all duration-300 tracking-wide shadow-lg active:scale-[0.98]"
+              className="px-12 py-3.5 bg-black text-white text-sm font-semibold rounded-xl hover:bg-gray-800 transition-all duration-300 tracking-wide shadow-lg active:scale-[0.98]"
             >
-              Done
+              Continue
             </button>
           </div>
         )}
@@ -704,6 +785,10 @@ export function PaymentModal({
         @keyframes modalSlideUp {
           from { opacity: 0; transform: translateY(20px) scale(0.97); }
           to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        @keyframes successPop {
+          from { transform: scale(0.5); opacity: 0; }
+          to { transform: scale(1); opacity: 1; }
         }
       `}</style>
     </div>

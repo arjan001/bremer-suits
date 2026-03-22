@@ -93,6 +93,9 @@ export const ordersApi = {
         location: mapped.deliveryLocation,
         address: mapped.deliveryAddress,
       }
+      // Preserve payment_details (JSONB) and payment_status as-is
+      if (r.payment_details) mapped.paymentDetails = r.payment_details
+      if (r.payment_status) mapped.paymentStatus = r.payment_status
       return mapped
     })
   },
@@ -109,6 +112,8 @@ export const ordersApi = {
       delivery_location: delivery?.location || '',
       delivery_address: delivery?.address || '',
       payment_method: data.paymentMethod,
+      payment_details: data.paymentDetails || null,
+      payment_status: data.paymentStatus || 'pending_processing',
       order_notes: data.orderNotes,
       delivery_fee: data.deliveryFee,
     }
@@ -116,6 +121,8 @@ export const ordersApi = {
     delete flat.delivery
     delete flat.items
     delete flat.paymentMethod
+    delete flat.paymentDetails
+    delete flat.paymentStatus
     delete flat.orderNotes
     delete flat.deliveryFee
 
