@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react'
 import { useWishlist } from '@/lib/wishlist-context'
 import { getProducts, type Product } from '@/lib/products'
 
+const BASE = '/.netlify/functions'
+
 export const Route = createFileRoute('/collections/')({
   component: Collections,
 })
@@ -15,19 +17,22 @@ function Collections() {
   const [products, setProducts] = useState<Product[]>([])
 
   useEffect(() => {
-    setProducts(getProducts())
+    async function loadData() {
+      setProducts(await getProducts())
 
-    // Load categories from admin store in localStorage to match collections
-    try {
-      const stored = localStorage.getItem('bremer-admin-categories')
-      if (stored) {
-        const cats = JSON.parse(stored) as Array<{ name: string; status: string }>
-        const activeNames = cats.filter((c) => c.status === 'active').map((c) => c.name)
-        if (activeNames.length > 0) {
-          setDynamicCategories(activeNames)
+      // Load categories from API
+      try {
+        const res = await fetch(`${BASE}/admin-categories`)
+        if (res.ok) {
+          const cats = (await res.json()) as Array<{ name: string; status: string }>
+          const activeNames = cats.filter((c: { status: string }) => c.status === 'active').map((c: { name: string }) => c.name)
+          if (activeNames.length > 0) {
+            setDynamicCategories(activeNames)
+          }
         }
-      }
-    } catch { /* ignore */ }
+      } catch { /* ignore */ }
+    }
+    loadData()
   }, [])
 
   const categories = dynamicCategories.length > 0

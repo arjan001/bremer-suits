@@ -2,6 +2,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import { useState } from 'react'
 import { Plus, Edit2, Trash2, X, Search, Image } from 'lucide-react'
 import { useAdmin, type AdminCategory } from '@/lib/admin-store'
+import { ImageUpload } from '@/components/ImageUpload'
 
 export const Route = createFileRoute('/admin/categories')({
   component: AdminCategories,
@@ -158,13 +159,7 @@ function CategoryModal({ mode, category, onClose, onSave }: {
             <input value={slug} onChange={(e) => setSlug(e.target.value)} className={inputCls} />
           </div>
           <div>
-            <label className="block text-sm font-semibold text-black mb-1">Image URL</label>
-            <input value={image} onChange={(e) => setImage(e.target.value)} placeholder="/images/..." className={inputCls} />
-            {image && (
-              <div className="mt-2 w-full h-24 rounded-lg overflow-hidden bg-gray-100">
-                <img src={image} alt="Preview" className="w-full h-full object-cover" />
-              </div>
-            )}
+            <ImageUpload value={image} onChange={(url) => setImage(url)} label="Category Image" />
           </div>
           <div>
             <label className="block text-sm font-semibold text-black mb-1">Description</label>

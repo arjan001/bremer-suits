@@ -2,6 +2,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import { useState } from 'react'
 import { Plus, Search, Edit2, Trash2, X, Package, Download, Upload, Eye, Palette } from 'lucide-react'
 import { useAdmin, type AdminProduct } from '@/lib/admin-store'
+import { ImageUpload } from '@/components/ImageUpload'
 
 export const Route = createFileRoute('/admin/products')({
   component: AdminProducts,
@@ -414,10 +415,7 @@ function ProductModal({
           {/* Media */}
           <div className="bg-gray-50 rounded-lg p-4 space-y-4">
             <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wider">Media</h3>
-            <div>
-              <label className="block text-sm font-semibold text-black mb-1">Image URL *</label>
-              <input value={image} onChange={(e) => setImage(e.target.value)} placeholder="/images/product.webp" className={inputCls} />
-            </div>
+            <ImageUpload value={image} onChange={(url) => setImage(url)} label="Product Image" />
             {image && (
               <div className="w-24 h-24 rounded-lg overflow-hidden bg-gray-100">
                 <img src={image} alt="Preview" className="w-full h-full object-cover" />

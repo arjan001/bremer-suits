@@ -15,6 +15,16 @@ import {
 import { useWishlist } from '@/lib/wishlist-context'
 import { getProducts, type Product } from '@/lib/products'
 
+const BASE = '/.netlify/functions'
+
+interface CategoryInfo {
+  title: string
+  subtitle: string
+  image: string
+  count: string
+  category: string
+}
+
 export const Route = createFileRoute('/')({
   component: HomePage,
 })
@@ -123,40 +133,43 @@ function HomePage() {
 
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 })
   const [products, setProducts] = useState<Product[]>([])
-  const [collections, setCollections] = useState<{ title: string; subtitle: string; image: string; count: string; category: string }[]>([])
+  const [collections, setCollections] = useState<CategoryInfo[]>([])
 
   useEffect(() => {
-    const allProducts = getProducts()
-    setProducts(allProducts)
+    async function loadData() {
+      const allProducts = await getProducts()
+      setProducts(allProducts)
 
-    // Build collections from admin categories if available
-    try {
-      const stored = localStorage.getItem('bremer-admin-categories')
-      if (stored) {
-        const cats = JSON.parse(stored) as Array<{ name: string; slug: string; description: string; image: string; status: string }>
-        const activeCats = cats.filter((c) => c.status === 'active')
-        if (activeCats.length > 0) {
-          setCollections(activeCats.map((c) => ({
-            title: c.name,
-            subtitle: c.description || c.name,
-            image: c.image || '/images/suit-hero.webp',
-            count: `${allProducts.filter((p) => p.category === c.name).length} Pieces`,
-            category: c.name,
-          })))
-          return
+      // Fetch categories from API
+      try {
+        const res = await fetch(`${BASE}/admin-categories`)
+        if (res.ok) {
+          const cats = (await res.json()) as Array<{ name: string; slug: string; description: string; image: string; status: string }>
+          const activeCats = cats.filter((c: { status: string }) => c.status === 'active')
+          if (activeCats.length > 0) {
+            setCollections(activeCats.map((c) => ({
+              title: c.name,
+              subtitle: c.description || c.name,
+              image: c.image || '/images/suit-hero.webp',
+              count: `${allProducts.filter((p) => p.category === c.name).length} Pieces`,
+              category: c.name,
+            })))
+            return
+          }
         }
-      }
-    } catch { /* ignore */ }
+      } catch { /* ignore */ }
 
-    // Fall back to deriving collections from products
-    const categories = [...new Set(allProducts.map((p) => p.category))]
-    setCollections(categories.slice(0, 4).map((cat) => ({
-      title: cat,
-      subtitle: cat,
-      image: allProducts.find((p) => p.category === cat)?.image || '/images/suit-hero.webp',
-      count: `${allProducts.filter((p) => p.category === cat).length} Pieces`,
-      category: cat,
-    })))
+      // Fall back to deriving collections from products
+      const categories = [...new Set(allProducts.map((p) => p.category))]
+      setCollections(categories.slice(0, 4).map((cat) => ({
+        title: cat,
+        subtitle: cat,
+        image: allProducts.find((p) => p.category === cat)?.image || '/images/suit-hero.webp',
+        count: `${allProducts.filter((p) => p.category === cat).length} Pieces`,
+        category: cat,
+      })))
+    }
+    loadData()
   }, [])
 
   const featuredProducts = products.slice(0, 4)
@@ -305,46 +318,10 @@ function HomePage() {
               />
             </div>
 
-            {/* Right: Menu List */}
+            {/* Right: Product List */}
             <div className="flex flex-col gap-6 lg:pt-4">
-              {[
-                {
-                  title: 'Modern Silhouette',
-                  price: '$850',
-                  description: 'Discover how the right fit can elevate your suit from ordinary to exceptional.',
-                },
-                {
-                  title: 'Urban Tailor',
-                  price: '$650',
-                  description: 'Stay cool and stylish with breathable fabrics and smart layering tips.',
-                },
-                {
-                  title: 'Clean Cut',
-                  price: '$420',
-                  description: 'Versatile, refined, and modern\u2014learn how to make the vest work on its own.',
-                },
-                {
-                  title: 'Metro Mode',
-                  price: '$800',
-                  description: 'One suit, many occasions. Here\u2019s how to adapt your look effortlessly.',
-                },
-                {
-                  title: 'The Refined Minimal',
-                  price: '$350',
-                  description: 'Step outside the black-and-navy box with statement-making designs.',
-                },
-                {
-                  title: 'Sleek Statement',
-                  price: '$560',
-                  description: 'Ties, pocket squares, shoes\u2014details that define your style.',
-                },
-                {
-                  title: 'Essential Form',
-                  price: '$700',
-                  description: 'Explore how the suit has transformed\u2014and how to wear it today, learn how to wear the vest, jacket, and trousers in perfect harmony for timeless elegance.',
-                },
-              ].map((item) => (
-                <div key={item.title}>
+              {products.slice(0, 7).map((item) => (
+                <div key={item.id}>
                   <div className="flex items-baseline gap-2">
                     <h3
                       className="text-lg font-bold text-black whitespace-nowrap"
@@ -360,7 +337,7 @@ function HomePage() {
                   <p className="text-sm text-gray-500 mt-1 italic leading-relaxed line-clamp-2">
                     {item.description || `Crafted with ${item.fabric} for the modern gentleman.`}
                   </p>
-                </Link>
+                </div>
               ))}
 
               <div className="text-center mt-4">

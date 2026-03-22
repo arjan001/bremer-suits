@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import {
   Minus,
   Plus,
@@ -37,13 +37,15 @@ const sizeGuideData = [
 
 function ProductDetail() {
   const { slug } = Route.useParams()
-  const product = getProductById(slug)
   const { addItem } = useCart()
   const { toggleItem, isInWishlist } = useWishlist()
+  const [product, setProduct] = useState<Product | null>(null)
+  const [relatedProducts, setRelatedProducts] = useState<Product[]>([])
+  const [loading, setLoading] = useState(true)
   const [quantity, setQuantity] = useState(1)
   const [activeTab, setActiveTab] = useState<'description' | 'shipping' | 'sizing'>('description')
   const [enquireProduct, setEnquireProduct] = useState<Product | null>(null)
-  const [selectedColor, setSelectedColor] = useState(product?.colors[0]?.name ?? 'Black')
+  const [selectedColor, setSelectedColor] = useState('')
   const [selectedSize, setSelectedSize] = useState('')
   const [selectedThumb, setSelectedThumb] = useState(0)
   const [wishlistTooltip, setWishlistTooltip] = useState(false)
@@ -51,6 +53,35 @@ function ProductDetail() {
   const [compareOpen, setCompareOpen] = useState(false)
   const [skuCopied, setSkuCopied] = useState(false)
   const [sizeError, setSizeError] = useState(false)
+
+  useEffect(() => {
+    let cancelled = false
+    async function load() {
+      setLoading(true)
+      const p = await getProductById(slug)
+      if (cancelled) return
+      setProduct(p || null)
+      if (p) {
+        setSelectedColor(p.colors[0]?.name ?? 'Black')
+        const related = await getRelatedProducts(p.id, 4)
+        if (!cancelled) setRelatedProducts(related)
+      }
+      setLoading(false)
+    }
+    load()
+    return () => { cancelled = true }
+  }, [slug])
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-white">
+        <div className="text-center">
+          <div className="w-8 h-8 border-2 border-gray-300 border-t-black rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-sm text-gray-400">Loading product...</p>
+        </div>
+      </div>
+    )
+  }
 
   if (!product) {
     return (
@@ -72,8 +103,6 @@ function ProductDetail() {
       </div>
     )
   }
-
-  const relatedProducts = getRelatedProducts(product.id, 4)
 
   const handleAddToCart = () => {
     if (!selectedSize) {

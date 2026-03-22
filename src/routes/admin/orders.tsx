@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useState } from 'react'
-import { Search, Eye, X, ShoppingCart, Truck, XCircle, Clock, Package, CreditCard, Phone } from 'lucide-react'
+import { Search, Eye, X, ShoppingCart, Truck, XCircle, Clock, Package, CreditCard, Phone, Plus, Trash2 } from 'lucide-react'
 import { useAdmin, type AdminOrder } from '@/lib/admin-store'
 
 export const Route = createFileRoute('/admin/orders')({
