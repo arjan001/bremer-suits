@@ -1,16 +1,29 @@
-import { Link, useNavigate } from '@tanstack/react-router'
+import { Link, useRouter, useNavigate } from '@tanstack/react-router'
 import { useState, useEffect } from 'react'
-import { Search, Heart, ShoppingBag, Phone, Mail } from 'lucide-react'
+import { Menu, X, Search, Heart, ShoppingBag, Phone, Mail } from 'lucide-react'
 import { useCart } from '@/lib/cart-context'
 import { useWishlist } from '@/lib/wishlist-context'
 
 const BASE = '/.netlify/functions'
 
+const navLinks = [
+  { to: '/', label: 'Home' },
+  { to: '/about', label: 'About' },
+  { to: '/collections', label: 'Products' },
+  { to: '/portfolio', label: 'Portfolio' },
+  { to: '/services', label: 'Services' },
+  { to: '/track-order', label: 'Track Order' },
+  { to: '/contact', label: 'Contact' },
+] as const
+
 export function Header() {
+  const [mobileOpen, setMobileOpen] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
   const [searchValue, setSearchValue] = useState('')
   const [navbarOfferTexts, setNavbarOfferTexts] = useState<string[]>([])
+  const router = useRouter()
   const navigate = useNavigate()
+  const pathname = router.state.location.pathname
   const { totalItems, setCartOpen } = useCart()
   const { totalItems: wishlistCount } = useWishlist()
 
@@ -39,6 +52,7 @@ export function Header() {
         {hasMarquee ? (
           <div className="overflow-hidden whitespace-nowrap">
             <div className="inline-flex animate-marquee">
+              {/* Duplicate the items for seamless loop */}
               {[...navbarOfferTexts, ...navbarOfferTexts].map((text, i) => (
                 <span key={i} className="inline-flex items-center gap-2 mx-8 text-xs tracking-wide font-medium">
                   <span className="w-1.5 h-1.5 rounded-full bg-white/40 shrink-0" />
@@ -62,10 +76,19 @@ export function Header() {
         )}
       </div>
 
-      {/* Main Header - Logo + Action Icons (no nav menu) */}
+      {/* Main Navigation */}
       <header className="sticky top-0 z-50 bg-white border-b border-gray-100 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 lg:h-20">
+            {/* Mobile Menu Toggle */}
+            <button
+              onClick={() => setMobileOpen(!mobileOpen)}
+              className="lg:hidden p-2 -ml-2 text-black hover:text-gray-600 transition-colors"
+              aria-label="Toggle menu"
+            >
+              {mobileOpen ? <X size={22} /> : <Menu size={22} />}
+            </button>
+
             {/* Logo */}
             <Link to="/" className="flex items-center gap-2 group">
               <div className="flex flex-col items-center leading-none">
@@ -77,6 +100,23 @@ export function Header() {
                 </span>
               </div>
             </Link>
+
+            {/* Desktop Nav */}
+            <nav className="hidden lg:flex items-center gap-8">
+              {navLinks.map((link) => (
+                <Link
+                  key={link.to}
+                  to={link.to}
+                  className={`relative text-[13px] tracking-wide uppercase font-medium transition-colors duration-200 hover:text-black pb-1 ${
+                    pathname === link.to || (link.to !== '/' && pathname.startsWith(link.to))
+                      ? 'text-black after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[2px] after:bg-black'
+                      : 'text-gray-500'
+                  }`}
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </nav>
 
             {/* Right Icons */}
             <div className="flex items-center gap-3">
@@ -144,6 +184,35 @@ export function Header() {
                 <Search size={18} />
               </button>
             </form>
+          </div>
+        )}
+
+        {/* Mobile Nav */}
+        {mobileOpen && (
+          <div className="lg:hidden bg-white border-t border-gray-100 shadow-lg">
+            <nav className="flex flex-col px-6 py-6 gap-1">
+              {navLinks.map((link) => (
+                <Link
+                  key={link.to}
+                  to={link.to}
+                  onClick={() => setMobileOpen(false)}
+                  className={`text-sm tracking-wide uppercase font-medium transition-colors duration-200 py-3 border-b border-gray-50 ${
+                    pathname === link.to
+                      ? 'text-black'
+                      : 'text-gray-500 hover:text-black'
+                  }`}
+                >
+                  {link.label}
+                </Link>
+              ))}
+              <Link
+                to="/contact"
+                onClick={() => setMobileOpen(false)}
+                className="mt-4 inline-flex items-center justify-center px-5 py-3.5 text-xs tracking-widest uppercase bg-black text-white hover:bg-gray-800 transition-colors duration-300 font-medium"
+              >
+                Book a Consultation
+              </Link>
+            </nav>
           </div>
         )}
       </header>
