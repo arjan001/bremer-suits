@@ -64,12 +64,12 @@ export function Header() {
           <div className="flex items-center justify-center gap-6 text-xs tracking-wide">
             <span className="hidden sm:inline-flex items-center gap-1.5">
               <Phone size={12} />
-              By Appointment Only
+              +254 793 880642
             </span>
             <span className="font-medium">FREE CONSULTATION on your first visit</span>
             <span className="hidden sm:inline-flex items-center gap-1.5">
               <Mail size={12} />
-              hello@bremersuits.com
+              brendahwanja6722@gmail.com
             </span>
           </div>
         )}

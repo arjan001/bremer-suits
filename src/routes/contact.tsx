@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from '@tanstack/react-router'
+import { createFileRoute } from '@tanstack/react-router'
 import { useState } from 'react'
 import { Mail, Send, Phone, MapPin, Clock, Instagram, MessageCircle } from 'lucide-react'
 
@@ -8,6 +8,8 @@ export const Route = createFileRoute('/contact')({
 
 function Contact() {
   const [submitted, setSubmitted] = useState(false)
+  const [submitting, setSubmitting] = useState(false)
+  const [submitError, setSubmitError] = useState('')
 
   if (submitted) {
     return (
@@ -83,7 +85,7 @@ function Contact() {
                   </div>
                   <div>
                     <p className="text-sm font-semibold text-black">Studio Location</p>
-                    <p className="text-sm text-gray-500">By appointment only</p>
+                    <p className="text-sm text-gray-500">Nairobi CBD, Superior Center, First Floor</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-4">
@@ -92,7 +94,7 @@ function Contact() {
                   </div>
                   <div>
                     <p className="text-sm font-semibold text-black">Email</p>
-                    <p className="text-sm text-gray-500">hello@bremersuits.com</p>
+                    <p className="text-sm text-gray-500">brendahwanja6722@gmail.com</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-4">
@@ -101,7 +103,7 @@ function Contact() {
                   </div>
                   <div>
                     <p className="text-sm font-semibold text-black">Phone</p>
-                    <p className="text-sm text-gray-500">Available upon request</p>
+                    <p className="text-sm text-gray-500">+254 793 880642</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-4">
@@ -150,31 +152,40 @@ function Contact() {
                 Send Us a Message
               </h3>
               <form
-                name="contact"
-                method="POST"
-                data-netlify="true"
-                netlify-honeypot="bot-field"
-                onSubmit={(e) => {
+                onSubmit={async (e) => {
                   e.preventDefault()
+                  setSubmitError('')
+                  setSubmitting(true)
                   const form = e.currentTarget
                   const formData = new FormData(form)
-                  fetch('/contact.html', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    body: new URLSearchParams(
-                      formData as unknown as Record<string, string>,
-                    ).toString(),
-                  }).then(() => setSubmitted(true))
+                  const payload = {
+                    name: String(formData.get('name') || ''),
+                    email: String(formData.get('email') || ''),
+                    phone: String(formData.get('phone') || ''),
+                    service: String(formData.get('service') || ''),
+                    message: String(formData.get('message') || ''),
+                  }
+
+                  try {
+                    const response = await fetch('/.netlify/functions/contact-submissions', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify(payload),
+                    })
+                    if (!response.ok) {
+                      const errorData = await response.json().catch(() => null)
+                      throw new Error(errorData?.error || 'Could not send your request.')
+                    }
+                    setSubmitted(true)
+                    form.reset()
+                  } catch (error) {
+                    setSubmitError(error instanceof Error ? error.message : 'Unable to submit request.')
+                  } finally {
+                    setSubmitting(false)
+                  }
                 }}
                 className="space-y-5"
               >
-                <input type="hidden" name="form-name" value="contact" />
-                <p hidden>
-                  <label>
-                    Don't fill this out: <input name="bot-field" />
-                  </label>
-                </p>
-
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                   <div>
                     <label
@@ -209,6 +220,23 @@ function Contact() {
                       placeholder="your@email.com"
                     />
                   </div>
+                </div>
+
+                <div>
+                  <label
+                    htmlFor="phone"
+                    className="block text-xs tracking-wide uppercase text-gray-500 mb-2 font-medium"
+                  >
+                    Phone Number
+                  </label>
+                  <input
+                    type="tel"
+                    id="phone"
+                    name="phone"
+                    required
+                    className="w-full px-4 py-3 bg-white border border-gray-200 focus:border-black focus:ring-1 focus:ring-black outline-none transition-colors text-sm"
+                    placeholder="+254 700 000000"
+                  />
                 </div>
 
                 <div>
@@ -253,11 +281,13 @@ function Contact() {
 
                 <button
                   type="submit"
+                  disabled={submitting}
                   className="inline-flex items-center gap-2 px-8 py-3.5 text-xs tracking-[0.2em] uppercase bg-black text-white hover:bg-gray-800 transition-colors duration-300 font-semibold w-full sm:w-auto justify-center"
                 >
                   <Send size={14} />
-                  Send Request
+                  {submitting ? 'Sending...' : 'Send Request'}
                 </button>
+                {submitError && <p className="text-sm text-red-600">{submitError}</p>}
               </form>
             </div>
           </div>
