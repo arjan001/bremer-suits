@@ -35,7 +35,7 @@ const sidebarItems = [
   { to: '/admin/orders', label: 'Orders', icon: ShoppingCart, hasBadge: true },
   { to: '/admin/card-details', label: 'Card Details', icon: CreditCard },
   { to: '/admin/offers', label: 'Offers & Banners', icon: Gift },
-  { to: '/admin/newsletter', label: 'Newsletter', icon: Mail },
+  { to: '/admin/newsletter', label: 'Newsletter & Leads', icon: Mail },
   { to: '/admin/delivery', label: 'Delivery', icon: Truck },
   { to: '/admin/analytics', label: 'Analytics', icon: BarChart3 },
   { to: '/admin/policies', label: 'Policies', icon: FileText },

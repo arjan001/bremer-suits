@@ -4,8 +4,8 @@ import { CartDrawer } from '@/components/CartDrawer'
 import { SeoHead } from '@/components/SeoHead'
 import { CartProvider } from '@/lib/cart-context'
 import { WishlistProvider } from '@/lib/wishlist-context'
-import { Phone, Mail, Instagram, Clock, Navigation, Globe, X, ChevronUp, Shield, FileText, Cookie, CreditCard, Truck, RotateCcw, ArrowRight, MapPin, SearchX } from 'lucide-react'
-import { useState, useEffect, useCallback } from 'react'
+import { Phone, Mail, Instagram, Clock, Navigation, Globe, X, ChevronUp, Shield, FileText, Cookie, Truck, RotateCcw, ArrowRight, MapPin, SearchX } from 'lucide-react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 
 import '../styles.css'
 
@@ -151,6 +151,7 @@ function RootLayout() {
   return (
     <WishlistProvider>
       <CartProvider>
+        <WebsiteAnalyticsTracker />
         <SeoHead />
         <Header />
         <CartDrawer />
@@ -562,6 +563,174 @@ function BackToTopButton() {
   )
 }
 
+function WebsiteAnalyticsTracker() {
+  const router = useRouter()
+  const pathname = router.state.location.pathname
+  const pageEnterRef = useRef<number>(Date.now())
+  const currentPathRef = useRef<string>(pathname)
+  const pageViewsRef = useRef<number>(0)
+  const [sessionId] = useState(() => {
+    if (typeof window === 'undefined') return 'server-session'
+    try {
+      const existing = sessionStorage.getItem('bremer-session-id')
+      if (existing) return existing
+      const created = `sess_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`
+      sessionStorage.setItem('bremer-session-id', created)
+      return created
+    } catch {
+      return `sess_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`
+    }
+  })
+  const [visitorId] = useState(() => {
+    if (typeof window === 'undefined') return 'server-visitor'
+    try {
+      const existing = localStorage.getItem('bremer-visitor-id')
+      if (existing) return existing
+      const created = `visitor_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`
+      localStorage.setItem('bremer-visitor-id', created)
+      return created
+    } catch {
+      return `visitor_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`
+    }
+  })
+
+  const hasAnalyticsConsent = () => {
+    if (typeof window === 'undefined') return false
+    try {
+      return localStorage.getItem('bremer-cookie-consent') !== 'essential'
+    } catch {
+      return false
+    }
+  }
+
+  const track = useCallback((payload: Record<string, unknown>) => {
+    if (!hasAnalyticsConsent()) return
+    if (pathname.startsWith('/admin')) return
+
+    fetch('/.netlify/functions/website-analytics', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        ...payload,
+        sessionId,
+        visitorId,
+        ts: new Date().toISOString(),
+      }),
+      keepalive: true,
+    }).catch(() => {})
+  }, [pathname, sessionId, visitorId])
+
+  useEffect(() => {
+    if (pathname.startsWith('/admin')) return
+    if (!hasAnalyticsConsent()) return
+
+    const previousDuration = Date.now() - pageEnterRef.current
+    if (currentPathRef.current && currentPathRef.current !== pathname && previousDuration >= 1000) {
+      track({
+        eventType: 'page_time',
+        path: currentPathRef.current,
+        durationMs: previousDuration,
+      })
+    }
+
+    pageViewsRef.current += 1
+    track({
+      eventType: 'page_view',
+      path: pathname,
+    })
+
+    currentPathRef.current = pathname
+    pageEnterRef.current = Date.now()
+  }, [pathname, track])
+
+  useEffect(() => {
+    const handleClick = (event: MouseEvent) => {
+      if (!hasAnalyticsConsent()) return
+      const target = event.target as HTMLElement | null
+      const trackable = target?.closest('a,button,[data-track]') as HTMLElement | null
+      if (!trackable) return
+
+      const label =
+        trackable.getAttribute('data-track') ||
+        trackable.getAttribute('aria-label') ||
+        trackable.textContent?.trim() ||
+        trackable.tagName
+
+      track({
+        eventType: 'click',
+        path: pathname,
+        target: (label || 'unknown').slice(0, 120),
+      })
+    }
+
+    document.addEventListener('click', handleClick)
+    return () => document.removeEventListener('click', handleClick)
+  }, [pathname, track])
+
+  useEffect(() => {
+    const sendPageTime = () => {
+      const durationMs = Date.now() - pageEnterRef.current
+      if (durationMs < 1000) return
+      track({
+        eventType: 'page_time',
+        path: currentPathRef.current,
+        durationMs,
+      })
+    }
+
+    const sendSessionEnd = () => {
+      if (!hasAnalyticsConsent()) return
+      const navEntry = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming | undefined
+      const start = navEntry?.startTime ?? 0
+      const durationMs = Math.max(0, Math.round(performance.now() - start))
+
+      if (navigator.sendBeacon) {
+        const blob = new Blob(
+          [JSON.stringify({
+            eventType: 'session_end',
+            path: currentPathRef.current,
+            durationMs,
+            pageViewsInSession: pageViewsRef.current,
+            sessionId,
+            visitorId,
+            ts: new Date().toISOString(),
+          })],
+          { type: 'application/json' },
+        )
+        navigator.sendBeacon('/.netlify/functions/website-analytics', blob)
+      } else {
+        track({
+          eventType: 'session_end',
+          path: currentPathRef.current,
+          durationMs,
+          pageViewsInSession: pageViewsRef.current,
+        })
+      }
+    }
+
+    const handleVisibility = () => {
+      if (document.visibilityState === 'hidden') {
+        sendPageTime()
+      }
+    }
+
+    const handlePageHide = () => {
+      sendPageTime()
+      sendSessionEnd()
+    }
+
+    document.addEventListener('visibilitychange', handleVisibility)
+    window.addEventListener('pagehide', handlePageHide)
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibility)
+      window.removeEventListener('pagehide', handlePageHide)
+    }
+  }, [track, sessionId, visitorId])
+
+  return null
+}
+
 /* ── Footer (Dynamic - powered by admin settings) ── */
 function Footer() {
   const [settings, setSettings] = useState<{
@@ -631,8 +800,8 @@ function Footer() {
   const locationName = settings?.footerLocationName || ''
   const locationDetail = settings?.footerLocationDetail || ''
   const storeHours = settings?.footerStoreHours || ''
-  const storePhone = settings?.storePhone || ''
-  const storeEmail = settings?.storeEmail || ''
+  const storePhone = settings?.storePhone || '+254 793 880642'
+  const storeEmail = settings?.storeEmail || 'brendahwanja6722@gmail.com'
 
   // Support column links
   const supportLinks = (settings?.footerLinks || []).filter((l) => l.column === 'support')
@@ -814,7 +983,7 @@ function Footer() {
                   <Navigation size={16} className="text-gray-400 mt-0.5 shrink-0" />
                   <div>
                     <span className="text-sm text-white font-medium">{locationName || 'Superior Center'}</span>
-                    <br /><span className="text-sm text-gray-400">{locationDetail || 'Kimathi Street, 1st Floor F7'}</span>
+                    <br /><span className="text-sm text-gray-400">{locationDetail || 'Nairobi CBD, First Floor'}</span>
                     {settings?.address && <><br /><span className="text-sm text-gray-400">{settings.address}</span></>}
                   </div>
                 </li>
@@ -843,7 +1012,7 @@ function Footer() {
               </ul>
               <div className="mt-6">
                 <a
-                  href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent([locationName || 'Superior Center', locationDetail || 'Kimathi Street, 1st Floor F7', settings?.address].filter(Boolean).join(' '))}`}
+                  href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent([locationName || 'Superior Center', locationDetail || 'Nairobi CBD, First Floor', settings?.address].filter(Boolean).join(' '))}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 px-4 py-2.5 border border-gray-600 rounded-lg text-sm text-gray-300 hover:text-white hover:border-gray-400 transition-colors"

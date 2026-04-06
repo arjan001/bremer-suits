@@ -119,16 +119,16 @@ function HomePage() {
               className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl leading-[1.15] mb-8 text-white"
               style={{ fontFamily: "'Playfair Display', Georgia, serif", fontStyle: 'italic', fontWeight: 400 }}
             >
-              Garments Designed to{' '}
-              <span className="block">Celebrate Your</span>
-              <span className="block">Individuality</span>
+              Private Luxury Tailoring{' '}
+              <span className="block">for Gentlemen</span>
+              <span className="block">Who Dress with Intent</span>
             </h1>
             <p className="text-sm sm:text-base text-white/70 leading-relaxed mb-6 max-w-xl font-light">
-              Every piece we create is a story of craftsmanship, precision, and style. From bespoke tailoring
-              to ready-made collections, we celebrate your unique identity through garments that define who you are.
+              BREMER SUITS creates premium tailor-made suits by appointment. Every commission is measured,
+              cut, and finished for a precise silhouette, lasting comfort, and unmistakable presence.
             </p>
             <p className="text-xs sm:text-sm tracking-[0.25em] uppercase text-white/50 mb-10 font-light">
-              Style Consultations &mdash; Bespoke Tailoring &mdash; Fashion Design
+              Nairobi CBD Studio &mdash; Appointment-Only Fittings &mdash; Bespoke Luxury Suits
             </p>
             <div className="flex flex-wrap gap-4">
               <Link
