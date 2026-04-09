@@ -8,8 +8,8 @@ const BASE = '/.netlify/functions'
 
 const navLinks = [
   { to: '/', label: 'Home' },
-  { to: '/about', label: 'About' },
   { to: '/portfolio', label: 'Portfolio' },
+  { to: '/about', label: 'About' },
   { to: '/services', label: 'Services' },
   { to: '/contact', label: 'Contact' },
 ] as const
