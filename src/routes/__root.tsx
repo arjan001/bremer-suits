@@ -982,8 +982,8 @@ function Footer() {
                 <li className="flex items-start gap-3">
                   <Navigation size={16} className="text-gray-400 mt-0.5 shrink-0" />
                   <div>
-                    <span className="text-sm text-white font-medium">{locationName || 'Superior Center'}</span>
-                    <br /><span className="text-sm text-gray-400">{locationDetail || 'Nairobi CBD, First Floor'}</span>
+                    <span className="text-sm text-white font-medium">{locationName || 'BREMER SUITS'}</span>
+                    <br /><span className="text-sm text-gray-400">{locationDetail || 'Kimathi St, Nairobi'}</span>
                     {settings?.address && <><br /><span className="text-sm text-gray-400">{settings.address}</span></>}
                   </div>
                 </li>
@@ -1012,7 +1012,7 @@ function Footer() {
               </ul>
               <div className="mt-6">
                 <a
-                  href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent([locationName || 'Superior Center', locationDetail || 'Nairobi CBD, First Floor', settings?.address].filter(Boolean).join(' '))}`}
+                  href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent([locationName || 'BREMER SUITS', locationDetail || 'Kimathi St, Nairobi', settings?.address].filter(Boolean).join(' '))}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 px-4 py-2.5 border border-gray-600 rounded-lg text-sm text-gray-300 hover:text-white hover:border-gray-400 transition-colors"
