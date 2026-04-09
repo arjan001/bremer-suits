@@ -242,7 +242,7 @@ function HomePage() {
             {/* Right: Image with 4-step numbered overlay */}
             <div className="relative overflow-hidden bg-gray-900 aspect-[4/5]">
               <img
-                src="/images/about-model-2.jpg"
+                src="/images/crafted-model.jpg"
                 alt="Tailored garments"
                 className="w-full h-full object-cover opacity-60"
               />
