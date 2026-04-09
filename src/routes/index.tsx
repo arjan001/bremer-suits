@@ -1,15 +1,26 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
+import { useState, useEffect, useCallback } from 'react'
 import {
   ArrowRight,
   Scissors,
   Ruler,
   RefreshCw,
   Shirt,
+  ChevronLeft,
+  ChevronRight,
 } from 'lucide-react'
 
 export const Route = createFileRoute('/')({
   component: HomePage,
 })
+
+const carouselImages = [
+  '/images/carousel-1.webp',
+  '/images/carousel-2.webp',
+  '/images/carousel-3.webp',
+  '/images/carousel-4.webp',
+  '/images/carousel-5.webp',
+]
 
 const pillars = [
   {
@@ -101,50 +112,91 @@ const serviceCards = [
 ]
 
 function HomePage() {
+  const [currentSlide, setCurrentSlide] = useState(0)
+
+  const nextSlide = useCallback(() => {
+    setCurrentSlide((prev) => (prev + 1) % carouselImages.length)
+  }, [])
+
+  const prevSlide = useCallback(() => {
+    setCurrentSlide((prev) => (prev - 1 + carouselImages.length) % carouselImages.length)
+  }, [])
+
+  useEffect(() => {
+    const timer = setInterval(nextSlide, 5000)
+    return () => clearInterval(timer)
+  }, [nextSlide])
+
   return (
     <div className="min-h-screen bg-white">
-      {/* ===== HERO SECTION - Original Landing Page Banner ===== */}
-      <section className="relative bg-black overflow-hidden min-h-[90vh] flex items-center">
-        <div className="absolute inset-0">
-          <img
-            src="/images/tailor-hero-bg.jpg"
-            alt="Tailoring patterns and tools"
-            className="w-full h-full object-cover object-center"
-          />
-          <div className="absolute inset-0 bg-black/50" />
+      {/* ===== HERO SECTION - Dynamic Carousel ===== */}
+      <section className="relative bg-black overflow-hidden h-[100vh] max-h-[100vh] flex items-center">
+        {/* Carousel images */}
+        {carouselImages.map((src, idx) => (
+          <div
+            key={src}
+            className="absolute inset-0 transition-opacity duration-1000 ease-in-out"
+            style={{ opacity: idx === currentSlide ? 1 : 0 }}
+          >
+            <img
+              src={src}
+              alt={`Bremer Suits collection ${idx + 1}`}
+              className="w-full h-full object-cover object-center"
+            />
+          </div>
+        ))}
+        <div className="absolute inset-0 bg-black/55" />
+
+        {/* Carousel controls */}
+        <button
+          onClick={prevSlide}
+          className="absolute left-4 top-1/2 -translate-y-1/2 z-10 w-10 h-10 flex items-center justify-center bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-full transition-colors"
+          aria-label="Previous slide"
+        >
+          <ChevronLeft size={20} className="text-white" />
+        </button>
+        <button
+          onClick={nextSlide}
+          className="absolute right-4 top-1/2 -translate-y-1/2 z-10 w-10 h-10 flex items-center justify-center bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-full transition-colors"
+          aria-label="Next slide"
+        >
+          <ChevronRight size={20} className="text-white" />
+        </button>
+
+        {/* Slide indicators */}
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex gap-2">
+          {carouselImages.map((_, idx) => (
+            <button
+              key={idx}
+              onClick={() => setCurrentSlide(idx)}
+              className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${idx === currentSlide ? 'bg-white w-8' : 'bg-white/40'}`}
+              aria-label={`Go to slide ${idx + 1}`}
+            />
+          ))}
         </div>
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-32 lg:py-48 w-full">
-          <div className="max-w-2xl">
-            <h1
-              className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl leading-[1.15] mb-8 text-white"
-              style={{ fontFamily: "'Playfair Display', Georgia, serif", fontStyle: 'italic', fontWeight: 400 }}
+
+        {/* Hero content - centered */}
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full text-center">
+          <h1
+            className="text-4xl sm:text-5xl lg:text-6xl leading-[1.15] mb-6 text-white"
+            style={{ fontFamily: "'Playfair Display', Georgia, serif", fontStyle: 'italic', fontWeight: 400 }}
+          >
+            Expert Tailoring{' '}
+            <span className="block">for Every Gentleman</span>
+          </h1>
+          <p className="text-sm sm:text-base text-white/70 leading-relaxed mb-8 max-w-lg mx-auto font-light">
+            Custom-made suits crafted to fit your style, your story, and your budget. Walk in, get measured, walk out looking sharp.
+          </p>
+          <p className="text-xs tracking-[0.25em] uppercase text-white/50 mb-10 font-light">
+            Nairobi CBD Studio &mdash; Walk-ins &amp; Appointments Welcome
+          </p>
+          <div className="flex justify-center">
+            <Link
+              to="/contact"
+              className="inline-flex items-center px-10 py-4 text-xs tracking-[0.25em] uppercase bg-[#c8102e] text-white hover:bg-[#a30d25] transition-colors duration-300 font-semibold"
             >
-              Private Luxury Tailoring{' '}
-              <span className="block">for Gentlemen</span>
-              <span className="block">Who Dress with Intent</span>
-            </h1>
-            <p className="text-sm sm:text-base text-white/70 leading-relaxed mb-6 max-w-xl font-light">
-              BREMER SUITS creates premium tailor-made suits by appointment. Every commission is measured,
-              cut, and finished for a precise silhouette, lasting comfort, and unmistakable presence.
-            </p>
-            <p className="text-xs sm:text-sm tracking-[0.25em] uppercase text-white/50 mb-10 font-light">
-              Nairobi CBD Studio &mdash; Appointment-Only Fittings &mdash; Bespoke Luxury Suits
-            </p>
-            <div className="flex flex-wrap gap-4">
-              <Link
-                to="/collections"
-                className="inline-flex items-center px-10 py-4 text-xs tracking-[0.25em] uppercase bg-[#c8102e] text-white hover:bg-[#a30d25] transition-colors duration-300 font-semibold"
-              >
-                Discover More
-              </Link>
-              <Link
-                to="/services"
-                className="inline-flex items-center gap-2 px-10 py-4 text-xs tracking-[0.25em] uppercase border border-white/40 text-white hover:bg-white/10 transition-colors duration-300 font-medium"
-              >
-                Our Services
-                <ArrowRight size={14} />
-              </Link>
-            </div>
+              Book Your Fitting
+            </Link>
           </div>
         </div>
       </section>
