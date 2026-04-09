@@ -157,7 +157,7 @@ function HomePage() {
             {/* Left: Image */}
             <div className="aspect-[4/5] overflow-hidden bg-gray-100">
               <img
-                src="/images/about-model-1.webp"
+                src="/images/about-model-1.jpg"
                 alt="Tailor working on a garment"
                 className="w-full h-full object-cover"
               />
@@ -242,7 +242,7 @@ function HomePage() {
             {/* Right: Image with 4-step numbered overlay */}
             <div className="relative overflow-hidden bg-gray-900 aspect-[4/5]">
               <img
-                src="/images/about-model-2.webp"
+                src="/images/about-model-2.jpg"
                 alt="Tailored garments"
                 className="w-full h-full object-cover opacity-60"
               />
