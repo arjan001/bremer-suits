@@ -85,7 +85,7 @@ function Contact() {
                   </div>
                   <div>
                     <p className="text-sm font-semibold text-black">Studio Location</p>
-                    <p className="text-sm text-gray-500">Nairobi CBD, Superior Center, First Floor</p>
+                    <p className="text-sm text-gray-500">BREMER SUITS, Kimathi St, Nairobi</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-4">
