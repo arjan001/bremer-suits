@@ -6,23 +6,36 @@ export const Route = createFileRoute('/portfolio')({
   component: PortfolioPage,
 })
 
-const portfolioImages = [
-  '/images/portfolio/portfolio-1.webp',
-  '/images/portfolio/portfolio-2.webp',
-  '/images/portfolio/portfolio-3.webp',
-  '/images/portfolio/portfolio-4.webp',
-  '/images/portfolio/portfolio-5.webp',
-  '/images/portfolio/portfolio-6.webp',
-  '/images/portfolio/portfolio-7.webp',
-  '/images/portfolio/portfolio-8.webp',
-  '/images/portfolio/portfolio-9.webp',
-  '/images/portfolio/portfolio-10.webp',
-  '/images/portfolio/portfolio-11.webp',
-  '/images/portfolio/portfolio-12.webp',
+const categories = [
+  { id: 'all', label: 'All' },
+  { id: 'wedding', label: 'Wedding & Events' },
+  { id: 'bespoke', label: 'Bespoke Suits' },
+  { id: 'made-to-measure', label: 'Made-to-Measure' },
+]
+
+const portfolioItems = [
+  { src: '/images/portfolio/wedding-beige-groomsmen.jpg', category: 'wedding' },
+  { src: '/images/portfolio/bespoke-pinstripe.jpg', category: 'bespoke' },
+  { src: '/images/portfolio/wedding-black-suits.jpg', category: 'wedding' },
+  { src: '/images/portfolio/bespoke-cream-double.jpg', category: 'made-to-measure' },
+  { src: '/images/portfolio/wedding-pink-blazers.jpg', category: 'wedding' },
+  { src: '/images/portfolio/bespoke-orange-suit.jpg', category: 'made-to-measure' },
+  { src: '/images/portfolio/bespoke-brown-duo.jpg', category: 'bespoke' },
+  { src: '/images/portfolio/portfolio-1.webp', category: 'bespoke' },
+  { src: '/images/portfolio/portfolio-2.webp', category: 'made-to-measure' },
+  { src: '/images/portfolio/portfolio-3.webp', category: 'wedding' },
+  { src: '/images/portfolio/portfolio-4.webp', category: 'bespoke' },
+  { src: '/images/portfolio/portfolio-5.webp', category: 'made-to-measure' },
 ]
 
 function PortfolioPage() {
   const [selectedImage, setSelectedImage] = useState<string | null>(null)
+  const [activeCategory, setActiveCategory] = useState('all')
+
+  const filteredItems =
+    activeCategory === 'all'
+      ? portfolioItems
+      : portfolioItems.filter((item) => item.category === activeCategory)
 
   return (
     <div className="min-h-screen bg-white">
@@ -30,7 +43,7 @@ function PortfolioPage() {
       <section className="relative bg-black text-white overflow-hidden">
         <div className="absolute inset-0">
           <img
-            src="/images/portfolio/portfolio-7.webp"
+            src="/images/portfolio/wedding-black-suits.jpg"
             alt="Portfolio hero"
             className="w-full h-full object-cover opacity-30"
           />
@@ -53,7 +66,7 @@ function PortfolioPage() {
         </div>
       </section>
 
-      {/* Portfolio Grid - Clean images, no text descriptions */}
+      {/* Portfolio Grid with Category Filters */}
       <section className="py-16 lg:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
@@ -61,22 +74,39 @@ function PortfolioPage() {
               Our Work
             </p>
             <h2
-              className="text-3xl lg:text-4xl font-semibold text-black"
+              className="text-3xl lg:text-4xl font-semibold text-black mb-8"
               style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
             >
               Gallery
             </h2>
+
+            {/* Category Filter Tabs */}
+            <div className="flex flex-wrap items-center justify-center gap-3 mb-10">
+              {categories.map((cat) => (
+                <button
+                  key={cat.id}
+                  onClick={() => setActiveCategory(cat.id)}
+                  className={`px-5 py-2 text-xs tracking-[0.15em] uppercase font-semibold border transition-all duration-300 ${
+                    activeCategory === cat.id
+                      ? 'bg-black text-white border-black'
+                      : 'bg-white text-gray-600 border-gray-300 hover:border-black hover:text-black'
+                  }`}
+                >
+                  {cat.label}
+                </button>
+              ))}
+            </div>
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 lg:gap-4">
-            {portfolioImages.map((src, idx) => (
+            {filteredItems.map((item, idx) => (
               <button
-                key={idx}
-                onClick={() => setSelectedImage(src)}
+                key={`${item.src}-${idx}`}
+                onClick={() => setSelectedImage(item.src)}
                 className="group relative overflow-hidden bg-gray-100 aspect-[3/4] block cursor-pointer"
               >
                 <img
-                  src={src}
+                  src={item.src}
                   alt={`Portfolio piece ${idx + 1}`}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                 />
@@ -91,7 +121,7 @@ function PortfolioPage() {
       <section className="relative overflow-hidden py-24 lg:py-32">
         <div className="absolute inset-0 bg-black" />
         <div className="absolute inset-0">
-          <img src="/images/portfolio/portfolio-5.webp" alt="" className="w-full h-full object-cover opacity-20" />
+          <img src="/images/portfolio/bespoke-pinstripe.jpg" alt="" className="w-full h-full object-cover opacity-20" />
         </div>
         <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <p className="text-xs tracking-[0.4em] uppercase text-[#c9a96e] mb-4 font-semibold">

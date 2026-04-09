@@ -15,11 +15,11 @@ export const Route = createFileRoute('/')({
 })
 
 const carouselImages = [
-  '/images/carousel-1.webp',
-  '/images/carousel-2.webp',
-  '/images/carousel-3.webp',
-  '/images/carousel-4.webp',
-  '/images/carousel-5.webp',
+  '/images/carousel-new-1.jpg',
+  '/images/carousel-new-2.jpg',
+  '/images/carousel-new-3.jpg',
+  '/images/carousel-new-4.jpg',
+  '/images/carousel-new-5.jpg',
 ]
 
 const pillars = [
