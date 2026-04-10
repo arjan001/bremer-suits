@@ -106,19 +106,23 @@ export function Header() {
 
             {/* Desktop Nav */}
             <nav className="hidden lg:flex items-center gap-8">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.to}
-                  to={link.to}
-                  className={`relative text-[13px] tracking-wide uppercase font-medium transition-colors duration-200 hover:text-black pb-1 ${
-                    pathname === link.to || (link.to !== '/' && pathname.startsWith(link.to))
-                      ? 'text-black after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[2px] after:bg-gold'
-                      : 'text-gray-500'
-                  }`}
-                >
-                  {link.label}
-                </Link>
-              ))}
+              {navLinks.map((link) => {
+                const isActive = pathname === link.to || (link.to !== '/' && pathname.startsWith(link.to))
+                const isPortfolio = link.to === '/portfolio'
+                return (
+                  <Link
+                    key={link.to}
+                    to={link.to}
+                    className={`relative text-[13px] tracking-wide uppercase font-medium transition-colors duration-200 hover:text-black pb-1 ${
+                      isActive
+                        ? 'text-black after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[2px] after:bg-gold'
+                        : 'text-gray-500'
+                    } ${isPortfolio && !isActive ? 'nav-shimmer' : ''}`}
+                  >
+                    {link.label}
+                  </Link>
+                )
+              })}
             </nav>
 
             {/* Right Icons */}
@@ -194,20 +198,24 @@ export function Header() {
         {mobileOpen && (
           <div className="lg:hidden bg-white border-t border-gray-100 shadow-lg">
             <nav className="flex flex-col px-6 py-6 gap-1">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.to}
-                  to={link.to}
-                  onClick={() => setMobileOpen(false)}
-                  className={`text-sm tracking-wide uppercase font-medium transition-colors duration-200 py-3 border-b border-gray-50 ${
-                    pathname === link.to
-                      ? 'text-black'
-                      : 'text-gray-500 hover:text-black'
-                  }`}
-                >
-                  {link.label}
-                </Link>
-              ))}
+              {navLinks.map((link) => {
+                const isActive = pathname === link.to
+                const isPortfolio = link.to === '/portfolio'
+                return (
+                  <Link
+                    key={link.to}
+                    to={link.to}
+                    onClick={() => setMobileOpen(false)}
+                    className={`relative text-sm tracking-wide uppercase font-medium transition-colors duration-200 py-3 border-b border-gray-50 ${
+                      isActive
+                        ? 'text-black'
+                        : 'text-gray-500 hover:text-black'
+                    } ${isPortfolio && !isActive ? 'nav-shimmer' : ''}`}
+                  >
+                    {link.label}
+                  </Link>
+                )
+              })}
               <Link
                 to="/contact"
                 onClick={() => setMobileOpen(false)}

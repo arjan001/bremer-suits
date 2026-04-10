@@ -256,3 +256,50 @@ html {
   text-decoration: underline;
   cursor: pointer;
 }
+
+/* Portfolio nav link shimmer effect */
+@keyframes navShimmer {
+  0%, 100% {
+    background-position: -200% center;
+  }
+  50% {
+    background-position: 200% center;
+  }
+}
+
+@keyframes navGlow {
+  0%, 100% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.nav-shimmer {
+  background: linear-gradient(
+    90deg,
+    currentColor 0%,
+    currentColor 40%,
+    #c8a55a 50%,
+    currentColor 60%,
+    currentColor 100%
+  );
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: navShimmer 3s ease-in-out infinite;
+}
+
+.nav-shimmer::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #c8a55a, transparent);
+  animation: navGlow 3s ease-in-out infinite;
+  border-radius: 1px;
+}
