@@ -1,10 +1,7 @@
 import { HeadContent, Link, Outlet, Scripts, createRootRoute, useRouter } from '@tanstack/react-router'
 import { Header } from '@/components/Header'
-import { CartDrawer } from '@/components/CartDrawer'
 import { SeoHead } from '@/components/SeoHead'
 import { StructuredData } from '@/components/StructuredData'
-import { CartProvider } from '@/lib/cart-context'
-import { WishlistProvider } from '@/lib/wishlist-context'
 import { Phone, Mail, Instagram, Clock, Navigation, Globe, X, ChevronUp, Shield, FileText, Cookie, Truck, RotateCcw, ArrowRight, MapPin, SearchX } from 'lucide-react'
 import { useState, useEffect, useCallback, useRef } from 'react'
 
@@ -191,7 +188,7 @@ export const Route = createRootRoute({
             '@type': 'SearchAction',
             target: {
               '@type': 'EntryPoint',
-              urlTemplate: 'https://bremersuits.com/collections?q={search_term_string}',
+              urlTemplate: 'https://bremersuits.com/portfolio?q={search_term_string}',
             },
             'query-input': 'required name=search_term_string',
           },
@@ -244,10 +241,10 @@ function NotFoundPage() {
               <ArrowRight size={14} />
             </Link>
             <Link
-              to="/collections"
+              to="/portfolio"
               className="inline-flex items-center gap-2 px-8 py-3.5 text-xs tracking-[0.2em] uppercase border border-white/30 text-white hover:bg-white/10 transition-colors duration-300 font-semibold"
             >
-              Browse Products
+              View Portfolio
             </Link>
           </div>
         </div>
@@ -261,7 +258,7 @@ function NotFoundPage() {
           </p>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {[
-              { to: '/collections', label: 'Products', desc: 'Browse our collection' },
+              { to: '/portfolio', label: 'Portfolio', desc: 'Browse our work' },
               { to: '/services', label: 'Services', desc: 'What we offer' },
               { to: '/about', label: 'About Us', desc: 'Our story' },
               { to: '/contact', label: 'Contact', desc: 'Get in touch' },
@@ -377,35 +374,28 @@ function RootLayout() {
   const router = useRouter()
   const pathname = router.state.location.pathname
   const isAdmin = pathname.startsWith('/admin')
-  const hideExtras = isAdmin || pathname === '/wishlist' || pathname === '/checkout'
+  const hideExtras = isAdmin
 
   if (isAdmin) {
     return (
-      <WishlistProvider>
-        <CartProvider>
-          <Outlet />
-        </CartProvider>
-      </WishlistProvider>
+      <Outlet />
     )
   }
 
   return (
-    <WishlistProvider>
-      <CartProvider>
-        <WebsiteAnalyticsTracker />
-        <SeoHead />
-        <StructuredData />
-        <Header />
-        <CartDrawer />
-        <main>
-          <Outlet />
-        </main>
-        <Footer />
-        <div className="h-16 lg:hidden" aria-hidden="true" />
-        {!hideExtras && <SubscribeModal />}
-        {!hideExtras && <StickyMobileCTA />}
-      </CartProvider>
-    </WishlistProvider>
+    <>
+      <WebsiteAnalyticsTracker />
+      <SeoHead />
+      <StructuredData />
+      <Header />
+      <main>
+        <Outlet />
+      </main>
+      <Footer />
+      <div className="h-16 lg:hidden" aria-hidden="true" />
+      {!hideExtras && <SubscribeModal />}
+      {!hideExtras && <StickyMobileCTA />}
+    </>
   )
 }
 
@@ -591,7 +581,7 @@ function SubscribeModal() {
 
           {promoCode && !subscribed && (
             <div className="bg-gray-50 border border-dashed border-gray-300 rounded-lg px-4 py-3 mb-5 text-center">
-              <p className="text-xs text-gray-400 mb-1 uppercase tracking-wider">Use code at checkout</p>
+              <p className="text-xs text-gray-400 mb-1 uppercase tracking-wider">Your promo code</p>
               <p className="text-lg font-bold text-black font-mono tracking-widest">{promoCode}</p>
             </div>
           )}
@@ -602,7 +592,7 @@ function SubscribeModal() {
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-green-600"><polyline points="20 6 9 17 4 12"/></svg>
               </div>
               <p className="text-sm font-bold text-black mb-1">Thank you for subscribing!</p>
-              {promoCode && <p className="text-sm text-gray-500">Use code <span className="font-bold font-mono text-black">{promoCode}</span> at checkout.</p>}
+              {promoCode && <p className="text-sm text-gray-500">Your code: <span className="font-bold font-mono text-black">{promoCode}</span></p>}
             </div>
           ) : showNewsletter ? (
             <form onSubmit={handleSubscribe}>
@@ -626,11 +616,11 @@ function SubscribeModal() {
             </form>
           ) : (
             <Link
-              to="/collections"
+              to="/portfolio"
               onClick={handleDismiss}
               className="block w-full py-3.5 bg-black text-white text-sm font-semibold rounded-md hover:bg-gray-800 transition-colors duration-300 text-center"
             >
-              Shop Now
+              View Portfolio
             </Link>
           )}
 
@@ -1197,10 +1187,9 @@ function Footer() {
                     ))
                   ) : (
                     <>
-                      <li><Link to="/collections" className="text-sm text-gray-400 hover:text-white transition-colors duration-200">All Collections</Link></li>
-                      <li><Link to="/collections" className="text-sm text-gray-400 hover:text-white transition-colors duration-200">New Arrivals</Link></li>
                       <li><Link to="/portfolio" className="text-sm text-gray-400 hover:text-white transition-colors duration-200">Portfolio</Link></li>
                       <li><Link to="/services" className="text-sm text-gray-400 hover:text-white transition-colors duration-200">Services</Link></li>
+                      <li><Link to="/about" className="text-sm text-gray-400 hover:text-white transition-colors duration-200">About</Link></li>
                       <li><Link to="/blog" className="text-sm text-gray-400 hover:text-white transition-colors duration-200">Journal</Link></li>
                       <li><Link to="/contact" className="text-sm text-gray-400 hover:text-white transition-colors duration-200">Contact</Link></li>
                     </>

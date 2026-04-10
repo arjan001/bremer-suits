@@ -87,7 +87,7 @@ export function StructuredData() {
           '@type': 'SearchAction',
           target: {
             '@type': 'EntryPoint',
-            urlTemplate: 'https://bremersuits.com/collections?q={search_term_string}',
+            urlTemplate: 'https://bremersuits.com/portfolio?q={search_term_string}',
           },
           'query-input': 'required name=search_term_string',
         },
