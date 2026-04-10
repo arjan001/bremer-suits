@@ -115,12 +115,12 @@ const serviceCards = [
 const portfolioPreviewImages = [
   { src: '/images/portfolio/bespoke-burgundy-mannequin.jpg', span: 'row-span-2' },
   { src: '/images/portfolio/wedding-teal-groomsmen.jpg', span: '' },
-  { src: '/images/portfolio/bespoke-green-pinstripe.jpg', span: '' },
+  { src: '/images/portfolio/bespoke-navy-gold-buttons.jpg', span: '' },
   { src: '/images/portfolio/wedding-camo-black-group.jpg', span: 'row-span-2' },
-  { src: '/images/portfolio/bespoke-navy-pinstripe-man.jpg', span: '' },
-  { src: '/images/portfolio/wedding-pink-green-stairs.jpg', span: '' },
+  { src: '/images/portfolio/bespoke-houndstooth-vest.jpg', span: '' },
+  { src: '/images/portfolio/wedding-black-tuxedo-walk.jpg', span: '' },
   { src: '/images/portfolio/bespoke-cream-double-breasted.jpg', span: '' },
-  { src: '/images/portfolio/wedding-black-suits-outdoor.jpg', span: '' },
+  { src: '/images/portfolio/wedding-green-white-formation.jpg', span: '' },
 ]
 
 const commitmentPoints = [
@@ -258,12 +258,38 @@ function HomePage() {
       <section className="py-16 lg:py-28 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-20 items-center">
-            <div className="aspect-[4/5] overflow-hidden bg-gray-100">
-              <img
-                src="/images/about-model-1.jpg"
-                alt="Master tailor handcrafting a bespoke suit at Bremer Suits Nairobi"
-                className="w-full h-full object-cover"
-              />
+            {/* 3D Cube Rotation on hover (large screens only) */}
+            <div
+              className="aspect-[4/5] overflow-hidden bg-gray-100 group"
+              style={{ perspective: '1200px' }}
+            >
+              <div
+                className="relative w-full h-full transition-transform duration-[800ms] ease-in-out lg:group-hover:[transform:rotateY(180deg)]"
+                style={{ transformStyle: 'preserve-3d' }}
+              >
+                {/* Front face */}
+                <div
+                  className="absolute inset-0"
+                  style={{ backfaceVisibility: 'hidden' }}
+                >
+                  <img
+                    src="/images/about-model-1.jpg"
+                    alt="Master tailor handcrafting a bespoke suit at Bremer Suits Nairobi"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                {/* Back face (revealed on rotation) */}
+                <div
+                  className="absolute inset-0"
+                  style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}
+                >
+                  <img
+                    src="/images/portfolio/bespoke-navy-gold-buttons.jpg"
+                    alt="Navy bespoke double-breasted suit with gold buttons by Bremer Suits Nairobi"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              </div>
             </div>
 
             <div className="flex flex-col justify-center">

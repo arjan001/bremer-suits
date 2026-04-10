@@ -44,6 +44,8 @@ const categories = [
   { id: 'wedding', label: 'Wedding & Events' },
   { id: 'bespoke', label: 'Bespoke Suits' },
   { id: 'made-to-measure', label: 'Made-to-Measure' },
+  { id: 'senator-suit', label: 'Senator Suit' },
+  { id: 'kaunda-suit', label: 'Kaunda Suit' },
 ]
 
 interface PortfolioItem {
@@ -84,6 +86,23 @@ const staticPortfolioItems: PortfolioItem[] = [
   { src: '/images/portfolio/bespoke-cream-double.jpg', category: 'made-to-measure', title: 'Cream Double-Breasted Made-to-Measure Suit by Bremer Suits Nairobi' },
   { src: '/images/portfolio/bespoke-orange-suit.jpg', category: 'made-to-measure', title: 'Orange Custom Made-to-Measure Suit by Bremer Suits Nairobi' },
   { src: '/images/portfolio/bespoke-brown-duo.jpg', category: 'bespoke', title: 'Brown Duo Bespoke Suits by Bremer Suits Nairobi' },
+  // New additions
+  { src: '/images/portfolio/wedding-grey-groomsmen-tux.jpg', category: 'wedding', title: 'Grey Groomsmen with Black Tuxedo Groom by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/wedding-camo-white-groomsmen.jpg', category: 'wedding', title: 'Camo Accent White Jacket Groomsmen by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/wedding-beige-celebration.jpg', category: 'wedding', title: 'Beige Groomsmen Celebration Suits by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/wedding-black-tuxedo-walk.jpg', category: 'wedding', title: 'Black Tuxedo Groomsmen Walk by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/wedding-green-white-formation.jpg', category: 'wedding', title: 'Green and White Groomsmen Formation by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/bespoke-mint-green-duo.jpg', category: 'bespoke', title: 'Mint Green Double-Breasted Blazers by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/bespoke-cream-brown-mannequin.jpg', category: 'made-to-measure', title: 'Cream and Brown Made-to-Measure Ensemble by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/bespoke-grey-blazer-portrait.jpg', category: 'bespoke', title: 'Grey Blazer Fashion Portrait by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/bespoke-navy-gold-buttons.jpg', category: 'bespoke', title: 'Navy Double-Breasted Blazer with Gold Buttons by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/bespoke-orange-store-display.jpg', category: 'made-to-measure', title: 'Orange Double-Breasted Suit Store Display by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/bespoke-white-textured-3piece.jpg', category: 'bespoke', title: 'White Textured Three-Piece Suit by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/bespoke-striped-double-breasted.jpg', category: 'made-to-measure', title: 'Striped Double-Breasted Suit by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/bespoke-houndstooth-vest.jpg', category: 'bespoke', title: 'Houndstooth Suit with Brown Vest by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/bespoke-houndstooth-blazer.jpg', category: 'made-to-measure', title: 'Houndstooth Double-Breasted Blazer by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/bespoke-cream-red-casual.jpg', category: 'bespoke', title: 'Cream Blazer with Red Trousers Casual Style by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/bespoke-navy-store-mannequin.jpg', category: 'bespoke', title: 'Navy Blazer Store Mannequin Display by Bremer Suits Nairobi' },
 ]
 
 function mapCategoryFromTag(tag: string, title: string): string {
@@ -91,6 +110,8 @@ function mapCategoryFromTag(tag: string, title: string): string {
   const tl = (title || '').toLowerCase()
   if (tl.includes('wedding') || t === 'wedding') return 'wedding'
   if (tl.includes('made-to-measure') || t === 'made-to-measure') return 'made-to-measure'
+  if (tl.includes('senator') || t === 'senator-suit') return 'senator-suit'
+  if (tl.includes('kaunda') || t === 'kaunda-suit') return 'kaunda-suit'
   return 'bespoke'
 }
 
@@ -206,6 +227,7 @@ function PortfolioPage() {
           </div>
 
           {/* Masonry Grid */}
+          {paginatedItems.length > 0 ? (
           <div className="columns-2 md:columns-3 lg:columns-4 gap-3 lg:gap-4 space-y-3 lg:space-y-4">
             {paginatedItems.map((item, idx) => (
               <div
@@ -224,6 +246,31 @@ function PortfolioPage() {
               </div>
             ))}
           </div>
+          ) : (
+          <div className="text-center py-20 border border-dashed border-gray-300 bg-gray-50">
+            <Sparkles size={40} className="mx-auto mb-4 text-[#c8502a]/40" />
+            <h3
+              className="text-2xl font-bold text-black mb-3"
+              style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
+            >
+              Coming Soon
+            </h3>
+            <p className="text-gray-500 max-w-md mx-auto mb-6">
+              {activeCategory === 'senator-suit'
+                ? 'Our Senator Suit collection is being curated. Elegant, collarless designs that command presence and respect — stay tuned.'
+                : activeCategory === 'kaunda-suit'
+                ? 'Our Kaunda Suit collection is on the way. Timeless African heritage meets modern tailoring — coming soon.'
+                : 'New pieces are being added to this collection. Check back soon.'}
+            </p>
+            <Link
+              to="/contact"
+              className="inline-flex items-center gap-2 px-8 py-3.5 text-xs tracking-[0.2em] uppercase bg-black text-white hover:bg-gray-800 transition-colors duration-300 font-semibold"
+            >
+              Inquire About This Style
+              <ArrowRight size={14} />
+            </Link>
+          </div>
+          )}
 
           {/* Pagination Controls */}
           {totalPages > 1 && (

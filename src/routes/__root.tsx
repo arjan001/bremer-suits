@@ -220,6 +220,15 @@ function StickyMobileCTA() {
   )
 }
 
+/* ── Facebook icon ── */
+function FacebookIcon({ size = 16 }: { size?: number }) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="currentColor" className="text-white">
+      <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+    </svg>
+  )
+}
+
 /* ── TikTok icon ── */
 function TikTokIcon({ size = 16 }: { size?: number }) {
   return (
@@ -837,9 +846,9 @@ function Footer() {
   // Social links - use admin settings if available, otherwise show defaults
   const adminSocials = (settings?.socialLinks || []).filter((s) => s.isActive)
   const defaultSocials = [
-    { id: 'def-ig', platform: 'instagram', url: '#', label: 'Instagram', isActive: true, sortOrder: 1 },
-    { id: 'def-tt', platform: 'tiktok', url: '#', label: 'TikTok', isActive: true, sortOrder: 2 },
-    { id: 'def-wa', platform: 'whatsapp', url: '#', label: 'WhatsApp', isActive: true, sortOrder: 3 },
+    { id: 'def-fb', platform: 'facebook', url: 'https://www.facebook.com/BREMERSUITS/', label: 'Facebook', isActive: true, sortOrder: 1 },
+    { id: 'def-ig', platform: 'instagram', url: 'https://www.instagram.com/bremer_suits/', label: 'Instagram', isActive: true, sortOrder: 2 },
+    { id: 'def-tt', platform: 'tiktok', url: 'https://www.tiktok.com/@bremersuits', label: 'TikTok', isActive: true, sortOrder: 3 },
   ]
   const displaySocials = adminSocials.length > 0 ? adminSocials : defaultSocials
 
@@ -876,6 +885,7 @@ function Footer() {
       case 'instagram': return <Instagram size={18} className="text-white" />
       case 'tiktok': return <TikTokIcon size={18} />
       case 'whatsapp': return <WhatsAppIcon size={18} />
+      case 'facebook': return <FacebookIcon size={18} />
       default: return <Globe size={16} className="text-white" />
     }
   }
