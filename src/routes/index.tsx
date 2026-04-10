@@ -505,7 +505,7 @@ function HomePage() {
                 style={{ transform: `translateX(-${philosophyOffset * (50 + 0.75)}%)` }}
               >
                 {philosophyImages.map((src, idx) => (
-                  <div key={idx} className="min-w-[calc(50%-6px)] aspect-[3/4] overflow-hidden flex-shrink-0">
+                  <div key={idx} className="min-w-[calc(50%-6px)] h-[300px] lg:h-[500px] overflow-hidden flex-shrink-0">
                     <img
                       src={src}
                       alt={`Philosophy gallery ${idx + 1}`}
