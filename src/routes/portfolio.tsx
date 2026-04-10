@@ -97,6 +97,7 @@ const categories = [
   { id: 'made-to-measure', label: 'Made-to-Measure' },
   { id: 'senator-suit', label: 'Senator Suit' },
   { id: 'kaunda-suit', label: 'Kaunda Suit' },
+  { id: 'couples', label: 'Couples' },
 ]
 
 interface PortfolioItem {
@@ -206,12 +207,26 @@ const staticPortfolioItems: PortfolioItem[] = [
   { src: '/images/portfolio/wedding-black-white-groomsmen-formation.jpg', category: 'wedding', title: 'Black and White Groomsmen Formation by Bremer Suits Nairobi' },
   { src: '/images/portfolio/wedding-green-white-groomsmen.jpg', category: 'wedding', title: 'Green and White Groomsmen Suits by Bremer Suits Nairobi' },
   { src: '/images/portfolio/wedding-grey-groomsmen-group.jpg', category: 'wedding', title: 'Grey Groomsmen Group at Wedding Reception by Bremer Suits Nairobi' },
+  // Couples styling
+  { src: '/images/portfolio/couples-agbada-pink-gown.jpg', category: 'couples', title: 'Agbada and Pink Gown Couples Styling by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/couples-black-dress-burgundy-suit.jpg', category: 'couples', title: 'Black Dress and Burgundy Suit Couple Portrait by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/couples-teal-matching-set.jpg', category: 'couples', title: 'Teal Matching Couples Outfit by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/couples-rust-sequin-black.jpg', category: 'couples', title: 'Rust Sequin Dress and Black Outfit Couple by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/couples-black-suit-roses.jpg', category: 'couples', title: 'Black Suit with Red Roses Couple Portrait by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/couples-polo-sequin-portrait.jpg', category: 'couples', title: 'Casual Polo and Sequin Dress Couple Portrait by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/couples-tan-suit-brown-gown.jpg', category: 'couples', title: 'Tan Suit and Brown Studded Gown Couple by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/couples-black-sequin-gown-train.jpg', category: 'couples', title: 'Black Sequin Gown with Train Couple Styling by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/couples-black-tuxedo-evening.jpg', category: 'couples', title: 'Black Tuxedo Evening Formal Couple by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/couples-maternity-portrait.jpg', category: 'couples', title: 'Maternity Couple Portrait Styling by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/couples-cream-suit-red-gown.jpg', category: 'couples', title: 'Cream Suit and Red Gown Romantic Setting by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/couples-red-matching-set.jpg', category: 'couples', title: 'Red Matching Couples Outfit by Bremer Suits Nairobi' },
 ]
 
 function mapCategoryFromTag(tag: string, title: string): string {
   const t = (tag || '').toLowerCase()
   const tl = (title || '').toLowerCase()
   if (tl.includes('wedding') || t === 'wedding') return 'wedding'
+  if (tl.includes('couples') || t === 'couples') return 'couples'
   if (tl.includes('made-to-measure') || t === 'made-to-measure') return 'made-to-measure'
   if (tl.includes('senator') || t === 'senator-suit') return 'senator-suit'
   if (tl.includes('kaunda') || t === 'kaunda-suit') return 'kaunda-suit'

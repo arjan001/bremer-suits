@@ -521,6 +521,31 @@ function About() {
         </div>
       </section>
 
+      {/* Couples Styling Gallery */}
+      <section className="py-4 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-6">
+            <p className="text-xs tracking-[0.3em] uppercase text-gray-400 font-medium">
+              Couples Styling
+            </p>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <div className="aspect-[3/4] overflow-hidden">
+              <img src="/images/portfolio/couples-agbada-pink-gown.jpg" alt="Agbada and pink gown couples styling by Bremer Suits Nairobi" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+            </div>
+            <div className="aspect-[3/4] overflow-hidden">
+              <img src="/images/portfolio/couples-teal-matching-set.jpg" alt="Teal matching couples outfit by Bremer Suits Nairobi" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+            </div>
+            <div className="aspect-[3/4] overflow-hidden">
+              <img src="/images/portfolio/couples-black-tuxedo-evening.jpg" alt="Black tuxedo evening formal couple by Bremer Suits Nairobi" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+            </div>
+            <div className="aspect-[3/4] overflow-hidden">
+              <img src="/images/portfolio/couples-cream-suit-red-gown.jpg" alt="Cream suit and red gown romantic couple by Bremer Suits Nairobi" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* CTA */}
       <section className="bg-black py-20 lg:py-28">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
