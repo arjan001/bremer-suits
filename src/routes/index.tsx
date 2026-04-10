@@ -49,66 +49,42 @@ const pillars = [
   },
 ]
 
-const processSteps = [
-  {
-    number: '1',
-    title: 'Consultation & Style Exploration',
-    paragraphs: [
-      'Your journey begins with a personal consultation, either in our atelier or at a location of your choice. We take time to understand your needs, your lifestyle, and your style preferences.',
-      'Together, we explore fabrics, linings, and design details, from lapel shape to button style, ensuring that every choice reflects your personality.',
-    ],
-  },
-  {
-    number: '2',
-    title: 'Precise Measurements & Pattern Drafting',
-    paragraphs: [
-      'We capture over 20 individual measurements, along with posture and shoulder slope, to create a garment pattern that is uniquely yours.',
-      'This is where our technical skill meets artistic intuition, ensuring the blueprint of your garment perfectly matches your frame.',
-    ],
-  },
-  {
-    number: '3',
-    title: 'First Fitting & Adjustments',
-    paragraphs: [
-      "You'll try on a basted (loosely assembled) version of your garment. This fitting allows us to fine-tune the shape, drape, and balance before committing to the final stitching.",
-      'Our tailors adjust with millimeter-level precision, ensuring exceptional comfort and style.',
-    ],
-  },
-  {
-    number: '4',
-    title: 'Final Fitting & Delivery',
-    paragraphs: [
-      'Your completed garment is ready for the final fitting. We inspect every seam, every detail, and ensure it fits exactly as intended.',
-      'Once approved, your bespoke piece is pressed, packaged, and presented to you, ready to wear, ready to impress.',
-    ],
-  },
-]
-
 const serviceCards = [
   {
     icon: Scissors,
     title: 'Bespoke Garments',
     description:
-      'Custom-made suits, jackets, and trousers, designed from scratch to reflect your style and fit your body. From fabric to stitching is chosen in collaboration with you.',
+      'Custom-made suits designed from scratch to reflect your style and fit your body.',
   },
   {
     icon: RefreshCw,
     title: 'Alterations & Repairs',
     description:
-      'Adjustments to improve fit, comfort, and style. From trousers to resizing jackets, we also repair worn seams, replace zippers, and restore.',
+      'Expert adjustments to improve fit, comfort, and style on any garment.',
   },
   {
     icon: Ruler,
     title: 'Made-to-Measure',
     description:
-      'A balance between ready-to-wear and bespoke. Choose from set styles and fabrics, with adjustments made to your measurements for a refined fit.',
+      'Choose from set styles with adjustments made to your measurements for a refined fit.',
   },
   {
     icon: Shirt,
     title: 'Restyling & Upcycling',
     description:
-      'We can modernize outdated garments, repurpose fabrics, and transform older pieces into fresh, stylish looks while preserving their quality.',
+      'Modernize outdated garments and transform older pieces into fresh, stylish looks.',
   },
+]
+
+const portfolioPreviewImages = [
+  { src: '/images/portfolio/bespoke-burgundy-mannequin.jpg', span: 'row-span-2' },
+  { src: '/images/portfolio/wedding-teal-groomsmen.jpg', span: '' },
+  { src: '/images/portfolio/bespoke-green-pinstripe.jpg', span: '' },
+  { src: '/images/portfolio/wedding-camo-black-group.jpg', span: 'row-span-2' },
+  { src: '/images/portfolio/bespoke-navy-pinstripe-man.jpg', span: '' },
+  { src: '/images/portfolio/wedding-pink-green-stairs.jpg', span: '' },
+  { src: '/images/portfolio/bespoke-cream-double-breasted.jpg', span: '' },
+  { src: '/images/portfolio/wedding-black-suits-outdoor.jpg', span: '' },
 ]
 
 function HomePage() {
@@ -131,7 +107,6 @@ function HomePage() {
     <div className="min-h-screen bg-white">
       {/* ===== HERO SECTION - Dynamic Carousel ===== */}
       <section className="relative bg-black overflow-hidden h-[100vh] max-h-[100vh] flex items-center">
-        {/* Carousel images */}
         {carouselImages.map((src, idx) => (
           <div
             key={src}
@@ -147,7 +122,6 @@ function HomePage() {
         ))}
         <div className="absolute inset-0 bg-black/55" />
 
-        {/* Carousel controls */}
         <button
           onClick={prevSlide}
           className="absolute left-4 top-1/2 -translate-y-1/2 z-10 w-10 h-10 flex items-center justify-center bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-full transition-colors"
@@ -163,7 +137,6 @@ function HomePage() {
           <ChevronRight size={20} className="text-white" />
         </button>
 
-        {/* Slide indicators */}
         <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex gap-2">
           {carouselImages.map((_, idx) => (
             <button
@@ -175,7 +148,6 @@ function HomePage() {
           ))}
         </div>
 
-        {/* Hero content - centered */}
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full text-center">
           <h1
             className="text-4xl sm:text-5xl lg:text-6xl leading-[1.15] mb-6 text-white"
@@ -184,11 +156,8 @@ function HomePage() {
             Expert Tailoring{' '}
             <span className="block">for Every Gentleman</span>
           </h1>
-          <p className="text-sm sm:text-base text-white/70 leading-relaxed mb-8 max-w-lg mx-auto font-light">
-            Custom-made suits crafted to fit your style, your story, and your budget. Walk in, get measured, walk out looking sharp.
-          </p>
-          <p className="text-xs tracking-[0.25em] uppercase text-white/50 mb-10 font-light">
-            Nairobi CBD Studio &mdash; Walk-ins &amp; Appointments Welcome
+          <p className="text-sm sm:text-base text-white/70 leading-relaxed mb-8 max-w-md mx-auto font-light">
+            Custom-made suits crafted to fit your style, your story, and your budget.
           </p>
           <div className="flex justify-center">
             <Link
@@ -202,11 +171,9 @@ function HomePage() {
       </section>
 
       {/* ===== ABOUT US SECTION ===== */}
-      {/* Image LEFT, text RIGHT */}
       <section className="py-16 lg:py-28 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-20 items-center">
-            {/* Left: Image */}
             <div className="aspect-[4/5] overflow-hidden bg-gray-100">
               <img
                 src="/images/about-model-1.jpg"
@@ -215,10 +182,9 @@ function HomePage() {
               />
             </div>
 
-            {/* Right: Text content */}
             <div className="flex flex-col justify-center">
               <p className="text-sm tracking-wide text-[#c8502a] mb-3 font-medium">
-                Focus on Heritage &amp; Trust
+                Heritage &amp; Trust
               </p>
               <h2
                 className="text-3xl lg:text-5xl font-bold text-black leading-tight mb-8"
@@ -228,12 +194,9 @@ function HomePage() {
               </h2>
               <p className="text-base text-gray-600 leading-relaxed mb-10">
                 At Bremer, tailoring is more than our craft &mdash; it&apos;s our calling.
-                Every garment we create or alter is a blend of precision, artistry, and personal attention.
-                Whether it&apos;s a bespoke suit, a gown redesign, or a simple hem adjustment, we treat every
-                project with the same dedication.
+                Every garment we create is a blend of precision, artistry, and personal attention.
               </p>
 
-              {/* Our Four Pillars */}
               <h3
                 className="text-xl font-bold text-black mb-6"
                 style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
@@ -255,133 +218,113 @@ function HomePage() {
         </div>
       </section>
 
-      {/* ===== CRAFTED FOR YOU SECTION ===== */}
-      {/* Text LEFT, image with numbered overlay RIGHT */}
-      <section className="py-16 lg:py-28 bg-white">
+      {/* ===== A TAILORING EXPERIENCE BUILT AROUND YOU ===== */}
+      {/* Text LEFT, Image RIGHT */}
+      <section className="py-16 lg:py-28 bg-[#f7f5f2]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
             {/* Left: Text */}
             <div className="flex flex-col justify-center">
               <p className="text-sm tracking-wide text-[#c8502a] mb-3 font-medium">
-                Bringing integrity and consciousness to your garments.
+                Our process is designed to make you feel understood and involved.
               </p>
               <h2
                 className="text-3xl lg:text-5xl font-bold text-black leading-tight mb-6"
                 style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
               >
-                Crafted for You.{' '}
-                <span className="block">Cut to Perfection.</span>
+                A Tailoring Experience{' '}
+                <span className="block">Built Around You</span>
               </h2>
-              <div className="w-24 border-t border-dashed border-gray-300 mb-6" />
-              <p className="text-base text-gray-600 leading-relaxed mb-4">
-                At Bremer, we believe clothing should do more than fit, it should speak. Whether you&apos;re
-                seeking timeless bespoke suits, expert alterations, or thoughtful tailoring that enhances every
-                silhouette, our mission is to bring precision, style, and individuality to every stitch.
+              <p className="text-base text-gray-600 leading-relaxed mb-6">
+                From your first consultation to the final fitting, every step is guided by your vision. We listen, measure, craft, and refine &mdash; ensuring a garment that fits you perfectly in every way.
               </p>
-              <p className="text-base text-gray-600 leading-relaxed mb-8 border-l-2 border-[#c8502a] pl-4">
-                Step into a space where craftsmanship meets character, and walk out wearing confidence, made just for you.
-              </p>
+
+              <div className="grid grid-cols-2 gap-4 mb-8">
+                <div className="border-l-2 border-[#c8502a] pl-4">
+                  <h4 className="text-sm font-bold text-black mb-1">Consultation</h4>
+                  <p className="text-xs text-gray-500">Understanding your style and needs.</p>
+                </div>
+                <div className="border-l-2 border-[#c8502a] pl-4">
+                  <h4 className="text-sm font-bold text-black mb-1">Measurements</h4>
+                  <p className="text-xs text-gray-500">Precision patterns crafted for you.</p>
+                </div>
+                <div className="border-l-2 border-[#c8502a] pl-4">
+                  <h4 className="text-sm font-bold text-black mb-1">Fittings</h4>
+                  <p className="text-xs text-gray-500">Fine-tuning shape, drape, and balance.</p>
+                </div>
+                <div className="border-l-2 border-[#c8502a] pl-4">
+                  <h4 className="text-sm font-bold text-black mb-1">Delivery</h4>
+                  <p className="text-xs text-gray-500">Ready to wear, ready to impress.</p>
+                </div>
+              </div>
+
               <div>
                 <Link
                   to="/services"
                   className="inline-flex items-center px-8 py-3.5 text-xs tracking-[0.2em] uppercase bg-[#c8502a] text-white hover:bg-[#a83e1f] transition-colors duration-300 font-semibold"
                 >
-                  View Services
+                  Learn More
                 </Link>
               </div>
             </div>
 
-            {/* Right: Image with 4-step numbered overlay */}
-            <div className="relative overflow-hidden bg-gray-900 aspect-[4/5]">
+            {/* Right: Image */}
+            <div className="aspect-[4/5] overflow-hidden bg-gray-100">
               <img
-                src="/images/crafted-model.webp"
-                alt="Tailored garments"
-                className="w-full h-full object-cover opacity-60"
+                src="/images/portfolio/bespoke-navy-pinstripe-man.jpg"
+                alt="Bespoke tailoring experience"
+                className="w-full h-full object-cover"
               />
-              <div className="absolute top-4 left-4 sm:top-6 sm:left-6">
-                <span className="inline-block px-4 py-2 bg-[#2d3a2e] text-white text-[10px] tracking-widest uppercase font-semibold rounded-full">
-                  Tailoring is more than our craft
-                </span>
-              </div>
-              {/* 4-step grid overlay */}
-              <div className="absolute inset-0 grid grid-cols-2 grid-rows-2">
-                <div className="flex flex-col justify-end p-5 sm:p-8 border-r border-b border-white/20">
-                  <span className="text-3xl sm:text-4xl font-bold text-white/80 mb-2" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>1.</span>
-                  <h4 className="text-sm sm:text-base font-bold text-white mb-1">Consultation &amp; Design</h4>
-                  <p className="text-[11px] sm:text-xs text-white/70 leading-relaxed">
-                    We discuss your needs, style preferences, and occasion, selecting fabrics and cuts that reflect personality.
-                  </p>
-                </div>
-                <div className="flex flex-col justify-end p-5 sm:p-8 border-b border-white/20">
-                  <span className="text-3xl sm:text-4xl font-bold text-white/80 mb-2" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>2.</span>
-                  <h4 className="text-sm sm:text-base font-bold text-white mb-1">Measurement &amp; Pattern</h4>
-                  <p className="text-[11px] sm:text-xs text-white/70 leading-relaxed">
-                    Precise body measurements and posture analysis are taken to create a unique pattern drafted exclusively for you.
-                  </p>
-                </div>
-                <div className="flex flex-col justify-end p-5 sm:p-8 border-r border-white/20">
-                  <span className="text-3xl sm:text-4xl font-bold text-white/80 mb-2" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>3.</span>
-                  <h4 className="text-sm sm:text-base font-bold text-white mb-1">Fittings &amp; Adjustments</h4>
-                  <p className="text-[11px] sm:text-xs text-white/70 leading-relaxed">
-                    Your garment is assembled in stages, with one or more fittings to refine the fit, comfort, and proportions.
-                  </p>
-                </div>
-                <div className="flex flex-col justify-end p-5 sm:p-8">
-                  <span className="text-3xl sm:text-4xl font-bold text-white/80 mb-2" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>4.</span>
-                  <h4 className="text-sm sm:text-base font-bold text-white mb-1">Finishing &amp; Delivery</h4>
-                  <p className="text-[11px] sm:text-xs text-white/70 leading-relaxed">
-                    The piece is completed with expert hand-finishing and final pressing, then delivered ready to wear with confidence.
-                  </p>
-                </div>
-              </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* ===== TAILORING EXPERIENCE / PROCESS SECTION ===== */}
-      <section className="py-16 lg:py-28 bg-[#f7f5f2]">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <p className="text-sm tracking-wide text-[#c8502a] mb-3 font-medium">
-            Our process is designed to make you feel understood and involved.
-          </p>
-          <h2
-            className="text-3xl lg:text-5xl font-bold text-black leading-tight mb-16"
-            style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
-          >
-            A Tailoring Experience{' '}
-            <span className="block">Built Around You</span>
-          </h2>
+      {/* ===== PORTFOLIO PREVIEW SECTION - Masonry Style ===== */}
+      <section className="py-16 lg:py-28 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <p className="text-sm tracking-wide text-[#c8502a] mb-3 font-medium">
+              Our Collection
+            </p>
+            <h2
+              className="text-3xl lg:text-5xl font-bold text-black leading-tight mb-4"
+              style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
+            >
+              Featured Work
+            </h2>
+            <p className="text-base text-gray-500 max-w-lg mx-auto">
+              A glimpse into our bespoke creations and wedding collections.
+            </p>
+          </div>
 
-          <div className="flex flex-col divide-y divide-dashed divide-gray-300">
-            {processSteps.map((step) => (
-              <div key={step.number} className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-16 py-12 first:pt-0 last:pb-0">
-                {/* Left: Number + Title */}
-                <div className="flex items-start gap-5 lg:gap-8">
-                  <span
-                    className="text-5xl lg:text-7xl font-light text-[#c8502a]/70 leading-none shrink-0 -mt-1"
-                    style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
-                  >
-                    {step.number}
-                  </span>
-                  <h3
-                    className="text-xl lg:text-2xl font-bold text-black leading-snug pt-2"
-                    style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
-                  >
-                    {step.title}
-                  </h3>
-                </div>
-
-                {/* Right: Description with left border accent */}
-                <div className="border-l-2 border-[#c8502a] pl-6 flex flex-col gap-4">
-                  {step.paragraphs.map((p, i) => (
-                    <p key={i} className="text-sm sm:text-base text-gray-600 leading-relaxed">
-                      {p}
-                    </p>
-                  ))}
+          {/* Masonry-style grid */}
+          <div className="columns-2 md:columns-3 lg:columns-4 gap-3 lg:gap-4 space-y-3 lg:space-y-4">
+            {portfolioPreviewImages.map((item, idx) => (
+              <div
+                key={idx}
+                className="break-inside-avoid overflow-hidden group cursor-pointer"
+              >
+                <div className="relative overflow-hidden">
+                  <img
+                    src={item.src}
+                    alt={`Portfolio piece ${idx + 1}`}
+                    className="w-full h-auto object-cover group-hover:scale-105 transition-transform duration-700"
+                  />
+                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/15 transition-colors duration-300" />
                 </div>
               </div>
             ))}
+          </div>
+
+          <div className="text-center mt-12">
+            <Link
+              to="/portfolio"
+              className="inline-flex items-center gap-2 px-10 py-4 text-xs tracking-[0.2em] uppercase bg-black text-white hover:bg-gray-800 transition-colors duration-300 font-semibold"
+            >
+              See More of Our Collection
+              <ArrowRight size={14} />
+            </Link>
           </div>
         </div>
       </section>
@@ -390,13 +333,13 @@ function HomePage() {
       <section className="py-16 lg:py-28 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <p className="text-sm tracking-wide text-[#c8502a] mb-3 font-medium">
-            Crafting excellence with masterful tools and unmatched skills.
+            What We Offer
           </p>
           <h2
             className="text-3xl lg:text-5xl font-bold text-black leading-tight mb-14 max-w-2xl"
             style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
           >
-            Perfecting our craft with the finest tools and timeless skills.
+            Our Services
           </h2>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -437,7 +380,6 @@ function HomePage() {
           <div className="absolute inset-0 bg-black/65" />
         </div>
         <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          {/* Stars */}
           <div className="flex items-center justify-center gap-1 mb-6">
             {[...Array(5)].map((_, i) => (
               <svg key={i} xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="#c9a96e" stroke="none">
@@ -449,7 +391,7 @@ function HomePage() {
             className="text-xl sm:text-2xl lg:text-3xl font-medium text-white leading-relaxed mb-10 italic"
             style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
           >
-            &ldquo;A suit should be a reflection of the man wearing it &mdash; his character, his confidence, his story. At Bremer, we don&apos;t just tailor garments, we tailor identities.&rdquo;
+            &ldquo;A suit should be a reflection of the man wearing it &mdash; his character, his confidence, his story.&rdquo;
           </blockquote>
           <p className="text-sm text-white/60 tracking-widest uppercase font-medium">
             &mdash; Bremer Suits &amp; Style

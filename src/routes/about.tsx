@@ -63,9 +63,9 @@ function About() {
       <section className="relative bg-black overflow-hidden">
         <div className="absolute inset-0">
           <img
-            src="/images/about-hero.webp"
+            src="/images/about-wedding-group.jpg"
             alt="About Bremer Suits"
-            className="w-full h-full object-cover opacity-40"
+            className="w-full h-full object-cover opacity-35"
           />
         </div>
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-28 text-center">
@@ -85,7 +85,7 @@ function About() {
         </div>
       </section>
 
-      {/* Story */}
+      {/* Story - Image RIGHT (new bespoke man image), Text LEFT */}
       <section className="py-16 lg:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
@@ -125,8 +125,8 @@ function About() {
             <div className="relative">
               <div className="aspect-[4/5] overflow-hidden">
                 <img
-                  src="/images/about-patterns.jpg"
-                  alt="Bremer Suits tailoring patterns"
+                  src="/images/about-bespoke-man.jpg"
+                  alt="Bespoke suit craftsmanship"
                   className="w-full h-full object-cover"
                 />
               </div>
@@ -143,7 +143,27 @@ function About() {
         </div>
       </section>
 
-      {/* Why Choose Us — Reference design layout */}
+      {/* Image Gallery Strip */}
+      <section className="py-4 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <div className="aspect-square overflow-hidden">
+              <img src="/images/portfolio/bespoke-green-pinstripe.jpg" alt="Green pinstripe suit" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+            </div>
+            <div className="aspect-square overflow-hidden">
+              <img src="/images/portfolio/wedding-black-suits-outdoor.jpg" alt="Black suits group" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+            </div>
+            <div className="aspect-square overflow-hidden">
+              <img src="/images/portfolio/bespoke-orange-mannequin.jpg" alt="Orange suit" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+            </div>
+            <div className="aspect-square overflow-hidden">
+              <img src="/images/portfolio/wedding-cream-bridal-lineup.jpg" alt="Cream bridal lineup" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Why Choose Us */}
       <section className="py-16 lg:py-24 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-start">
@@ -151,8 +171,8 @@ function About() {
             <div className="relative">
               <div className="aspect-[3/4] overflow-hidden">
                 <img
-                  src="/images/about-cutting.jpg"
-                  alt="Precision fabric cutting"
+                  src="/images/about-burgundy-suit.jpg"
+                  alt="Burgundy bespoke suit"
                   className="w-full h-full object-cover"
                 />
               </div>
@@ -191,7 +211,6 @@ function About() {
               >
                 Why Choose Our Atelier
               </h2>
-              {/* Dashed divider */}
               <div className="border-t-2 border-dashed border-amber-700/40 w-48 mb-10" />
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
@@ -226,11 +245,10 @@ function About() {
         </div>
       </section>
 
-      {/* Stellar Tailor Services — Reference design layout */}
+      {/* Stellar Tailor Services — Text LEFT, Image RIGHT (new image) */}
       <section className="py-16 lg:py-24 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-            {/* Left: Services list */}
             <div>
               <p
                 className="text-sm italic text-amber-700 mb-3 font-medium"
@@ -244,7 +262,6 @@ function About() {
               >
                 Stellar Tailor Services
               </h2>
-              {/* Dashed divider */}
               <div className="border-t-2 border-dashed border-amber-700/40 w-48 mb-10" />
 
               <div className="space-y-8">
@@ -264,11 +281,10 @@ function About() {
               </div>
             </div>
 
-            {/* Right: Thread spools image */}
             <div className="aspect-[3/4] overflow-hidden">
               <img
-                src="/images/about-threads.jpg"
-                alt="Premium thread collection"
+                src="/images/about-style-portrait.jpg"
+                alt="Style portrait"
                 className="w-full h-full object-cover"
               />
             </div>
@@ -276,7 +292,33 @@ function About() {
         </div>
       </section>
 
-      {/* Philosophy */}
+      {/* More Images Gallery */}
+      <section className="py-4 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-3 md:grid-cols-6 gap-2">
+            <div className="aspect-square overflow-hidden">
+              <img src="/images/portfolio/bespoke-maroon-mannequin.jpg" alt="Maroon suit" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+            </div>
+            <div className="aspect-square overflow-hidden">
+              <img src="/images/portfolio/wedding-pink-green-stairs.jpg" alt="Wedding group" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+            </div>
+            <div className="aspect-square overflow-hidden">
+              <img src="/images/portfolio/bespoke-brown-duo-mannequin.jpg" alt="Brown suits" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+            </div>
+            <div className="aspect-square overflow-hidden">
+              <img src="/images/portfolio/wedding-beach-beige.jpg" alt="Beach suits" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+            </div>
+            <div className="aspect-square overflow-hidden">
+              <img src="/images/portfolio/bespoke-grey-tweed.jpg" alt="Grey tweed suit" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+            </div>
+            <div className="aspect-square overflow-hidden">
+              <img src="/images/portfolio/wedding-red-suits-group.jpg" alt="Red suits" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Philosophy - Image RIGHT (new image), Text LEFT */}
       <section className="py-16 lg:py-24 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
@@ -310,8 +352,8 @@ function About() {
             </div>
             <div className="aspect-[4/3] overflow-hidden order-1 lg:order-2">
               <img
-                src="/images/fabrics.png"
-                alt="Premium fabrics"
+                src="/images/portfolio/wedding-brown-beige-group.jpg"
+                alt="Wedding group styling"
                 className="w-full h-full object-cover"
               />
             </div>
