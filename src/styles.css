@@ -209,6 +209,16 @@ html {
   animation: slideInFromRight 0.3s ease-out;
 }
 
+/* Mobile menu slide-in from left */
+@keyframes slideInFromLeft {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(0); }
+}
+
+.slide-in-from-left {
+  animation: slideInFromLeft 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
 /* TipTap Rich Text Editor styles */
 .tiptap {
   outline: none;
@@ -302,4 +312,52 @@ html {
   background: linear-gradient(90deg, transparent, #c8a55a, transparent);
   animation: navGlow 3s ease-in-out infinite;
   border-radius: 1px;
+}
+
+/* Portfolio gold text shimmer */
+@keyframes goldTextShimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+.portfolio-gold-text {
+  background: linear-gradient(
+    90deg,
+    #ffffff 0%,
+    #ffffff 30%,
+    #c9a96e 45%,
+    #e8d5a3 50%,
+    #c9a96e 55%,
+    #ffffff 70%,
+    #ffffff 100%
+  );
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: goldTextShimmer 4s ease-in-out infinite;
+}
+
+/* Portfolio gold shimmer overlay */
+@keyframes goldShimmerOverlay {
+  0% { background-position: -200% -200%; }
+  100% { background-position: 200% 200%; }
+}
+
+.portfolio-gold-shimmer {
+  background: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 8px,
+    rgba(201, 169, 110, 0.06) 8px,
+    rgba(201, 169, 110, 0.06) 16px
+  ),
+  linear-gradient(
+    135deg,
+    transparent 20%,
+    rgba(201, 169, 110, 0.15) 40%,
+    transparent 60%
+  );
+  background-size: 200% 200%;
+  animation: goldShimmerOverlay 8s linear infinite;
 }

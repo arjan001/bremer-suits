@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { useState, useEffect, useMemo } from 'react'
-import { ArrowRight, Sparkles, X, ChevronLeft, ChevronRight } from 'lucide-react'
+import { useState, useEffect, useMemo, useRef } from 'react'
+import { ArrowRight, Sparkles, X, ChevronLeft, ChevronRight, Star } from 'lucide-react'
 
 const ITEMS_PER_PAGE = 12
 
@@ -161,6 +161,116 @@ function mapCategoryFromTag(tag: string, title: string): string {
   return 'bespoke'
 }
 
+function GoldStars() {
+  const canvasRef = useRef<HTMLCanvasElement>(null)
+
+  useEffect(() => {
+    const canvas = canvasRef.current
+    if (!canvas) return
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return
+
+    let animId: number
+    const dpr = window.devicePixelRatio || 1
+
+    const resize = () => {
+      const parent = canvas.parentElement
+      if (!parent) return
+      canvas.width = parent.offsetWidth * dpr
+      canvas.height = parent.offsetHeight * dpr
+      ctx.scale(dpr, dpr)
+      canvas.style.width = parent.offsetWidth + 'px'
+      canvas.style.height = parent.offsetHeight + 'px'
+    }
+    resize()
+    window.addEventListener('resize', resize)
+
+    const stars = Array.from({ length: 35 }, () => ({
+      x: Math.random() * (canvas.width / dpr),
+      y: Math.random() * (canvas.height / dpr),
+      size: Math.random() * 2.5 + 1,
+      speed: Math.random() * 0.3 + 0.1,
+      opacity: Math.random() * 0.6 + 0.2,
+      twinkleSpeed: Math.random() * 0.02 + 0.005,
+      phase: Math.random() * Math.PI * 2,
+    }))
+
+    const glitters = Array.from({ length: 20 }, () => ({
+      x: Math.random() * (canvas.width / dpr),
+      y: Math.random() * (canvas.height / dpr),
+      size: Math.random() * 1.5 + 0.5,
+      life: Math.random() * Math.PI * 2,
+      speed: Math.random() * 0.04 + 0.02,
+    }))
+
+    const drawStar = (cx: number, cy: number, r: number, alpha: number) => {
+      ctx.save()
+      ctx.globalAlpha = alpha
+      ctx.fillStyle = '#c9a96e'
+      ctx.shadowColor = '#c9a96e'
+      ctx.shadowBlur = r * 3
+      ctx.beginPath()
+      for (let i = 0; i < 5; i++) {
+        const angle = (i * 4 * Math.PI) / 5 - Math.PI / 2
+        const method = i === 0 ? 'moveTo' : 'lineTo'
+        ctx[method](cx + r * Math.cos(angle), cy + r * Math.sin(angle))
+      }
+      ctx.closePath()
+      ctx.fill()
+      ctx.restore()
+    }
+
+    let t = 0
+    const animate = () => {
+      t++
+      const w = canvas.width / dpr
+      const h = canvas.height / dpr
+      ctx.clearRect(0, 0, w, h)
+
+      stars.forEach((s) => {
+        s.y -= s.speed
+        if (s.y < -5) { s.y = h + 5; s.x = Math.random() * w }
+        const alpha = s.opacity * (0.5 + 0.5 * Math.sin(t * s.twinkleSpeed + s.phase))
+        drawStar(s.x, s.y, s.size, alpha)
+      })
+
+      glitters.forEach((g) => {
+        g.life += g.speed
+        const alpha = 0.4 * Math.abs(Math.sin(g.life))
+        if (alpha < 0.02) {
+          g.x = Math.random() * w
+          g.y = Math.random() * h
+        }
+        ctx.save()
+        ctx.globalAlpha = alpha
+        ctx.fillStyle = '#e8d5a3'
+        ctx.shadowColor = '#e8d5a3'
+        ctx.shadowBlur = 6
+        ctx.beginPath()
+        ctx.arc(g.x, g.y, g.size, 0, Math.PI * 2)
+        ctx.fill()
+        ctx.restore()
+      })
+
+      animId = requestAnimationFrame(animate)
+    }
+    animate()
+
+    return () => {
+      cancelAnimationFrame(animId)
+      window.removeEventListener('resize', resize)
+    }
+  }, [])
+
+  return (
+    <canvas
+      ref={canvasRef}
+      className="absolute inset-0 pointer-events-none z-10"
+      aria-hidden="true"
+    />
+  )
+}
+
 function PortfolioPage() {
   const [selectedImage, setSelectedImage] = useState<string | null>(null)
   const [activeCategory, setActiveCategory] = useState('all')
@@ -213,22 +323,28 @@ function PortfolioPage() {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Hero Section */}
+      {/* Hero Section - Gold & Stars */}
       <section className="relative bg-black text-white overflow-hidden">
         <div className="absolute inset-0">
           <img
             src="/images/portfolio/wedding-camo-black-group.jpg"
             alt="Bremer Suits Bespoke Gallery - Custom Wedding and Formal Suits Nairobi"
-            className="w-full h-full object-cover opacity-30"
+            className="w-full h-full object-cover opacity-25"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-black via-black/80 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-black/80" />
         </div>
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 lg:py-36">
-          <p className="text-xs tracking-[0.4em] uppercase text-white/50 mb-4 font-medium flex items-center gap-2">
-            <Sparkles size={14} /> Our Portfolio
-          </p>
+        <GoldStars />
+        <div className="absolute inset-0 portfolio-gold-shimmer opacity-20 pointer-events-none z-[5]" />
+        <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 lg:py-36">
+          <div className="flex items-center gap-2 mb-4">
+            <Star size={14} className="text-[#c9a96e] fill-[#c9a96e]" />
+            <p className="text-xs tracking-[0.4em] uppercase text-[#c9a96e] font-medium">
+              Our Portfolio
+            </p>
+            <Star size={14} className="text-[#c9a96e] fill-[#c9a96e]" />
+          </div>
           <h1
-            className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6 max-w-2xl"
+            className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6 max-w-2xl portfolio-gold-text"
             style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
           >
             Bremer Suits — Craftsmanship in Every Stitch
@@ -237,6 +353,12 @@ function PortfolioPage() {
             Explore our collection of bespoke work and the moments
             that define the Bremer legacy.
           </p>
+          <div className="flex items-center gap-1.5 mt-6">
+            {[...Array(5)].map((_, i) => (
+              <Star key={i} size={16} className="text-[#c9a96e] fill-[#c9a96e]" />
+            ))}
+            <span className="ml-2 text-xs text-[#c9a96e]/70 tracking-widest uppercase">Premium Collection</span>
+          </div>
         </div>
       </section>
 
@@ -244,9 +366,15 @@ function PortfolioPage() {
       <section className="py-16 lg:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <p className="text-xs tracking-[0.3em] uppercase text-[#c8502a] mb-2 font-semibold">
-              Our Work
-            </p>
+            <div className="flex items-center justify-center gap-3 mb-2">
+              <span className="h-px w-8 bg-gradient-to-r from-transparent to-[#c9a96e]" />
+              <Sparkles size={16} className="text-[#c9a96e]" />
+              <p className="text-xs tracking-[0.3em] uppercase text-[#c9a96e] font-semibold">
+                Our Work
+              </p>
+              <Sparkles size={16} className="text-[#c9a96e]" />
+              <span className="h-px w-8 bg-gradient-to-l from-transparent to-[#c9a96e]" />
+            </div>
             <h2
               className="text-3xl lg:text-4xl font-semibold text-black mb-8"
               style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
@@ -366,13 +494,19 @@ function PortfolioPage() {
         </div>
       </section>
 
-      {/* CTA Section */}
+      {/* CTA Section - Gold Accents */}
       <section className="relative overflow-hidden py-24 lg:py-32">
         <div className="absolute inset-0 bg-black" />
         <div className="absolute inset-0">
           <img src="/images/portfolio/bespoke-burgundy-mannequin.jpg" alt="Burgundy Bespoke Suit by Bremer Suits Nairobi" className="w-full h-full object-cover opacity-20" />
         </div>
-        <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <GoldStars />
+        <div className="relative z-20 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <div className="flex items-center justify-center gap-1.5 mb-4">
+            {[...Array(5)].map((_, i) => (
+              <Star key={i} size={14} className="text-[#c9a96e] fill-[#c9a96e]" />
+            ))}
+          </div>
           <p className="text-xs tracking-[0.4em] uppercase text-[#c9a96e] mb-4 font-semibold">
             Let&apos;s Work Together
           </p>
@@ -388,7 +522,7 @@ function PortfolioPage() {
           </p>
           <Link
             to="/contact"
-            className="inline-flex items-center gap-2 px-10 py-4 text-xs tracking-[0.2em] uppercase bg-white text-black hover:bg-gray-100 transition-colors duration-300 font-semibold"
+            className="inline-flex items-center gap-2 px-10 py-4 text-xs tracking-[0.2em] uppercase bg-gradient-to-r from-[#c9a96e] to-[#e8d5a3] text-black hover:from-[#b8985d] hover:to-[#d4c192] transition-all duration-300 font-semibold shadow-lg shadow-[#c9a96e]/20"
           >
             Book a Consultation <ArrowRight size={14} />
           </Link>
