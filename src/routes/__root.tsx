@@ -99,12 +99,27 @@ export const Route = createRootRoute({
     links: [
       {
         rel: 'icon',
+        type: 'image/x-icon',
+        href: '/favicon.ico',
+      },
+      {
+        rel: 'icon',
         type: 'image/jpeg',
+        sizes: '192x192',
         href: '/images/og-logo-gold-black.jpg',
       },
       {
         rel: 'apple-touch-icon',
+        sizes: '180x180',
         href: '/images/og-logo-gold-black.jpg',
+      },
+      {
+        rel: 'shortcut icon',
+        href: '/favicon.ico',
+      },
+      {
+        rel: 'manifest',
+        href: '/manifest.json',
       },
     ],
   }),
@@ -948,21 +963,21 @@ function Footer() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-4">
               <div className="flex items-center justify-center gap-3">
-                <Truck size={22} className="text-gray-400 shrink-0" />
+                <Truck size={22} className="text-gold shrink-0" />
                 <div>
                   <p className="text-sm font-semibold text-white">Nationwide Delivery</p>
                   <p className="text-xs text-gray-500">Dispatch every Tue &amp; Fri</p>
                 </div>
               </div>
               <div className="flex items-center justify-center gap-3">
-                <Shield size={22} className="text-gray-400 shrink-0" />
+                <Shield size={22} className="text-gold shrink-0" />
                 <div>
                   <p className="text-sm font-semibold text-white">Quality Guaranteed</p>
                   <p className="text-xs text-gray-500">Curated denim picks</p>
                 </div>
               </div>
               <div className="flex items-center justify-center gap-3">
-                <RotateCcw size={22} className="text-gray-400 shrink-0" />
+                <RotateCcw size={22} className="text-gold shrink-0" />
                 <div>
                   <p className="text-sm font-semibold text-white">Easy Returns</p>
                   <p className="text-xs text-gray-500">Hassle-free refund policy</p>
@@ -979,12 +994,18 @@ function Footer() {
             {/* Column 1: Brand + Description + Social Icons */}
             <div>
               <div className="mb-5">
+                <img
+                  src="/images/bremer-logo.jpeg"
+                  alt="Bremer Suits Logo"
+                  className="h-12 w-auto object-contain mb-3"
+                />
                 <h3
                   className="text-2xl font-bold tracking-wider"
                   style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
                 >
                   {storeName}
                 </h3>
+                <div className="w-12 h-0.5 bg-gold mt-2" />
               </div>
               <p className="text-sm text-gray-400 leading-relaxed mb-6 max-w-xs">
                 {footerText}
