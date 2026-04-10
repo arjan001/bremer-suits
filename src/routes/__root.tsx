@@ -63,12 +63,48 @@ export const Route = createRootRoute({
         name: 'twitter:description',
         content: 'Nairobi\'s leading specialists in high-end, custom-made suits for weddings, corporate leadership, and special occasions.',
       },
+      {
+        property: 'og:image',
+        content: 'https://bremersuits.com/images/og-logo-gold-black.jpg',
+      },
+      {
+        property: 'og:image:width',
+        content: '1200',
+      },
+      {
+        property: 'og:image:height',
+        content: '630',
+      },
+      {
+        property: 'og:image:alt',
+        content: 'Bremer Suits - Premier Bespoke Tailoring in Nairobi',
+      },
+      {
+        name: 'twitter:image',
+        content: 'https://bremersuits.com/images/og-logo-gold-black.jpg',
+      },
+      {
+        property: 'og:url',
+        content: 'https://bremersuits.com',
+      },
+      {
+        name: 'theme-color',
+        content: '#000000',
+      },
+      {
+        name: 'msapplication-TileColor',
+        content: '#000000',
+      },
     ],
     links: [
       {
         rel: 'icon',
-        type: 'image/png',
-        href: '/images/stemtrix-logo.png',
+        type: 'image/jpeg',
+        href: '/images/og-logo-gold-black.jpg',
+      },
+      {
+        rel: 'apple-touch-icon',
+        href: '/images/og-logo-gold-black.jpg',
       },
     ],
   }),

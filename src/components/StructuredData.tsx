@@ -21,12 +21,13 @@ export function StructuredData() {
       '@type': 'Organization',
       name: 'Bremer Suits',
       url: typeof window !== 'undefined' ? window.location.origin : '',
-      logo: typeof window !== 'undefined' ? `${window.location.origin}/images/stemtrix-logo.png` : '',
+      logo: typeof window !== 'undefined' ? `${window.location.origin}/images/og-logo-gold-black.jpg` : '',
       description:
         "Nairobi's leading specialists in high-end, custom-made suits for weddings, corporate leadership, and special occasions.",
       sameAs: [
-        'https://www.instagram.com/bremersuitskenya',
-        'https://www.tiktok.com/@bremersuitskenya',
+        'https://www.facebook.com/BREMERSUITS/',
+        'https://www.instagram.com/bremer_suits/',
+        'https://www.tiktok.com/@bremersuits',
       ],
     })
 
@@ -39,7 +40,7 @@ export function StructuredData() {
       description:
         'Premier bespoke tailoring and custom-made suits in Nairobi. Specializing in wedding suits, corporate attire, Ruracio styling, and expert alterations.',
       url: typeof window !== 'undefined' ? window.location.origin : '',
-      image: typeof window !== 'undefined' ? `${window.location.origin}/images/suit-hero.webp` : '',
+      image: typeof window !== 'undefined' ? `${window.location.origin}/images/og-logo-gold-black.jpg` : '',
       address: {
         '@type': 'PostalAddress',
         addressLocality: 'Nairobi',

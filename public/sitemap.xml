@@ -1,62 +1,62 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://bremer-suits.netlify.app/</loc>
+    <loc>https://bremersuits.com/</loc>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://bremer-suits.netlify.app/about</loc>
+    <loc>https://bremersuits.com/about</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://bremer-suits.netlify.app/services</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://bremer-suits.netlify.app/portfolio</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://bremer-suits.netlify.app/contact</loc>
+    <loc>https://bremersuits.com/services</loc>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://bremer-suits.netlify.app/collections</loc>
+    <loc>https://bremersuits.com/portfolio</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://bremer-suits.netlify.app/blog</loc>
+    <loc>https://bremersuits.com/contact</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://bremersuits.com/collections</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://bremersuits.com/blog</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://bremer-suits.netlify.app/faq</loc>
+    <loc>https://bremersuits.com/faq</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://bremer-suits.netlify.app/privacy-policy</loc>
+    <loc>https://bremersuits.com/privacy-policy</loc>
     <changefreq>yearly</changefreq>
     <priority>0.2</priority>
   </url>
   <url>
-    <loc>https://bremer-suits.netlify.app/terms-of-service</loc>
+    <loc>https://bremersuits.com/terms-of-service</loc>
     <changefreq>yearly</changefreq>
     <priority>0.2</priority>
   </url>
   <url>
-    <loc>https://bremer-suits.netlify.app/refund-policy</loc>
+    <loc>https://bremersuits.com/refund-policy</loc>
     <changefreq>yearly</changefreq>
     <priority>0.2</priority>
   </url>
   <url>
-    <loc>https://bremer-suits.netlify.app/shipping-policy</loc>
+    <loc>https://bremersuits.com/shipping-policy</loc>
     <changefreq>yearly</changefreq>
     <priority>0.2</priority>
   </url>

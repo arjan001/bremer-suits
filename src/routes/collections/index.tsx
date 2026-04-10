@@ -48,6 +48,30 @@ export const Route = createFileRoute('/collections/')({
         name: 'twitter:card',
         content: 'summary_large_image',
       },
+      {
+        property: 'og:image',
+        content: 'https://bremersuits.com/images/og-gold-striped-suit.jpg',
+      },
+      {
+        property: 'og:image:width',
+        content: '1200',
+      },
+      {
+        property: 'og:image:height',
+        content: '630',
+      },
+      {
+        property: 'og:image:alt',
+        content: 'Bremer Suits Collections - Premium Suits & Menswear',
+      },
+      {
+        name: 'twitter:image',
+        content: 'https://bremersuits.com/images/og-gold-striped-suit.jpg',
+      },
+      {
+        property: 'og:url',
+        content: 'https://bremersuits.com/collections',
+      },
     ],
   }),
   component: Collections,

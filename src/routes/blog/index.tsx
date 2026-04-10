@@ -32,6 +32,30 @@ export const Route = createFileRoute('/blog/')({
         name: 'twitter:card',
         content: 'summary_large_image',
       },
+      {
+        property: 'og:image',
+        content: 'https://bremersuits.com/images/og-logo-gold-black.jpg',
+      },
+      {
+        property: 'og:image:width',
+        content: '1200',
+      },
+      {
+        property: 'og:image:height',
+        content: '630',
+      },
+      {
+        property: 'og:image:alt',
+        content: 'The Journal - Style Tips & Tailoring Insights from Bremer Suits',
+      },
+      {
+        name: 'twitter:image',
+        content: 'https://bremersuits.com/images/og-logo-gold-black.jpg',
+      },
+      {
+        property: 'og:url',
+        content: 'https://bremersuits.com/blog',
+      },
     ],
   }),
   component: BlogIndex,

@@ -45,6 +45,30 @@ export const Route = createFileRoute('/')({
         name: 'twitter:card',
         content: 'summary_large_image',
       },
+      {
+        property: 'og:image',
+        content: 'https://bremersuits.com/images/og-logo-gold-black.jpg',
+      },
+      {
+        property: 'og:image:width',
+        content: '1200',
+      },
+      {
+        property: 'og:image:height',
+        content: '630',
+      },
+      {
+        property: 'og:image:alt',
+        content: 'Bremer Suits - Premier Bespoke Tailoring in Nairobi',
+      },
+      {
+        name: 'twitter:image',
+        content: 'https://bremersuits.com/images/og-logo-gold-black.jpg',
+      },
+      {
+        property: 'og:url',
+        content: 'https://bremersuits.com',
+      },
     ],
   }),
   component: HomePage,

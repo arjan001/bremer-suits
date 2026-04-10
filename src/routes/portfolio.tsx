@@ -34,6 +34,30 @@ export const Route = createFileRoute('/portfolio')({
         name: 'twitter:card',
         content: 'summary_large_image',
       },
+      {
+        property: 'og:image',
+        content: 'https://bremersuits.com/images/og-groomsmen-black-tux.jpg',
+      },
+      {
+        property: 'og:image:width',
+        content: '1200',
+      },
+      {
+        property: 'og:image:height',
+        content: '630',
+      },
+      {
+        property: 'og:image:alt',
+        content: 'Bremer Suits Portfolio - Black Tuxedo Groomsmen Collection',
+      },
+      {
+        name: 'twitter:image',
+        content: 'https://bremersuits.com/images/og-groomsmen-black-tux.jpg',
+      },
+      {
+        property: 'og:url',
+        content: 'https://bremersuits.com/portfolio',
+      },
     ],
   }),
   component: PortfolioPage,

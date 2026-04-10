@@ -8,4 +8,4 @@ Disallow: /wishlist
 Disallow: /.netlify/
 
 # Sitemap
-Sitemap: https://bremer-suits.netlify.app/sitemap.xml
+Sitemap: https://bremersuits.com/sitemap.xml
