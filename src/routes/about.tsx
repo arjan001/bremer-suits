@@ -355,7 +355,7 @@ function About() {
                 </p>
               </div>
             </div>
-            <div className="aspect-[4/3] overflow-hidden order-1 lg:order-2">
+            <div className="overflow-hidden order-1 lg:order-2 max-h-[400px] lg:max-h-[500px]">
               <img
                 src="/images/portfolio/wedding-brown-beige-group.jpg"
                 alt="Wedding group styling"

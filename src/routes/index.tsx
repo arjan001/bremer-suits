@@ -534,7 +534,7 @@ function HomePage() {
       <section className="relative overflow-hidden">
         <div className="grid grid-cols-1 lg:grid-cols-2 min-h-[500px]">
           {/* Left: Image */}
-          <div className="relative h-[300px] lg:h-auto">
+          <div className="relative h-[300px] lg:h-auto lg:max-h-[500px] overflow-hidden">
             <img
               src="/images/gallery-18.jpg"
               alt="Bremer Suits craftsmanship"
