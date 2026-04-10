@@ -170,6 +170,15 @@ const staticPortfolioItems: PortfolioItem[] = [
   { src: '/images/portfolio/bespoke-houndstooth-brown-vest-3piece.jpg', category: 'bespoke', title: 'Houndstooth Blazer with Brown Vest Three-Piece by Bremer Suits Nairobi' },
   { src: '/images/portfolio/bespoke-white-houndstooth-double.jpg', category: 'made-to-measure', title: 'White Houndstooth Double-Breasted Blazer by Bremer Suits Nairobi' },
   { src: '/images/portfolio/bespoke-cream-blazer-red-trousers.jpg', category: 'bespoke', title: 'Cream Blazer with Red Trousers Street Style by Bremer Suits Nairobi' },
+  // Previously missing images
+  { src: '/images/portfolio/bespoke-cream-brown-mannequin-double.jpg', category: 'bespoke', title: 'Cream and Brown Double-Breasted Mannequin Display by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/bespoke-gold-striped-double.jpg', category: 'bespoke', title: 'Gold Striped Double-Breasted Bespoke Suit by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/bespoke-houndstooth-gold-buttons.jpg', category: 'bespoke', title: 'Houndstooth Blazer with Gold Buttons by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/wedding-beige-groomsmen-celebration.jpg', category: 'wedding', title: 'Beige Groomsmen Celebration at Wedding Reception by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/wedding-black-tux-groomsmen-walk.jpg', category: 'wedding', title: 'Black Tuxedo Groomsmen Walking Together by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/wedding-black-white-groomsmen-formation.jpg', category: 'wedding', title: 'Black and White Groomsmen Formation by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/wedding-green-white-groomsmen.jpg', category: 'wedding', title: 'Green and White Groomsmen Suits by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/wedding-grey-groomsmen-group.jpg', category: 'wedding', title: 'Grey Groomsmen Group at Wedding Reception by Bremer Suits Nairobi' },
 ]
 
 function mapCategoryFromTag(tag: string, title: string): string {
@@ -303,15 +312,18 @@ function PortfolioPage() {
       .then((res) => res.json())
       .then((data) => {
         if (Array.isArray(data) && data.length > 0) {
-          const items: PortfolioItem[] = data
+          const dynamicItems: PortfolioItem[] = data
             .filter((item: Record<string, unknown>) => item.image)
             .map((item: Record<string, unknown>) => ({
               src: item.image as string,
               category: mapCategoryFromTag(item.tag as string, item.title as string),
               title: item.title as string,
             }))
-          if (items.length > 0) {
-            setPortfolioItems(items)
+          if (dynamicItems.length > 0) {
+            // Merge dynamic items with static items, avoiding duplicates by image src
+            const staticSrcs = new Set(staticPortfolioItems.map((item) => item.src))
+            const newItems = dynamicItems.filter((item) => !staticSrcs.has(item.src))
+            setPortfolioItems([...staticPortfolioItems, ...newItems])
           }
         }
       })
