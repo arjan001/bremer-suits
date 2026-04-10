@@ -3,6 +3,7 @@ title: "Building a Professional Wardrobe: The Essential Guide"
 date: "2026-02-20"
 summary: "A strategic approach to building a versatile, high-quality wardrobe that serves every context of your professional life."
 tags: ["Wardrobe", "Professional Style", "Essentials"]
+category: "Style Guide"
 author: "Bremer Suits"
 ---
 
