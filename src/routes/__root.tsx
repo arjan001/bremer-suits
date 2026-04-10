@@ -104,18 +104,20 @@ export const Route = createRootRoute({
       },
       {
         rel: 'icon',
-        type: 'image/jpeg',
-        sizes: '192x192',
-        href: '/images/og-logo-gold-black.jpg',
+        type: 'image/png',
+        sizes: '32x32',
+        href: '/favicon-32x32.png',
+      },
+      {
+        rel: 'icon',
+        type: 'image/png',
+        sizes: '16x16',
+        href: '/favicon-16x16.png',
       },
       {
         rel: 'apple-touch-icon',
         sizes: '180x180',
-        href: '/images/og-logo-gold-black.jpg',
-      },
-      {
-        rel: 'shortcut icon',
-        href: '/favicon.ico',
+        href: '/apple-touch-icon.png',
       },
       {
         rel: 'manifest',

@@ -149,6 +149,27 @@ const staticPortfolioItems: PortfolioItem[] = [
   { src: '/images/portfolio/wedding-green-groomsmen-white-groom-deck.jpg', category: 'wedding', title: 'Green Groomsmen with White Groom on Garden Deck by Bremer Suits Nairobi' },
   // New bespoke/event formal wear
   { src: '/images/portfolio/bespoke-orange-rust-couple-event.jpg', category: 'bespoke', title: 'Orange Rust Bespoke Suit at Formal Event by Bremer Suits Nairobi' },
+  // New official images batch
+  { src: '/images/portfolio/bespoke-navy-pinstripe-3piece.jpg', category: 'bespoke', title: 'Navy Pinstripe Three-Piece Bespoke Suit by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/bespoke-lightblue-blazer-mannequin.jpg', category: 'made-to-measure', title: 'Light Blue Blazer Made-to-Measure by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/bespoke-rust-red-blazer-mannequin.jpg', category: 'made-to-measure', title: 'Rust Red Blazer Made-to-Measure by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/bespoke-navy-double-breasted-gold.jpg', category: 'bespoke', title: 'Navy Double-Breasted Suit with Gold Buttons by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/bespoke-camel-double-breasted-bowtie.jpg', category: 'wedding', title: 'Camel Double-Breasted Wedding Suit with Bow Tie by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/bespoke-burnt-orange-double-breasted.jpg', category: 'bespoke', title: 'Burnt Orange Double-Breasted Blazer by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/bespoke-cream-double-seated.jpg', category: 'bespoke', title: 'Cream Double-Breasted Blazer Formal Style by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/bespoke-brown-double-breasted-studio.jpg', category: 'bespoke', title: 'Brown Double-Breasted Bespoke Suit by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/bespoke-tan-double-breasted-studio.jpg', category: 'bespoke', title: 'Tan Double-Breasted Bespoke Suit by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/bespoke-grey-blazer-street-style.jpg', category: 'bespoke', title: 'Grey Blazer Street Style by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/bespoke-green-houndstooth-mannequin.jpg', category: 'made-to-measure', title: 'Green Houndstooth Double-Breasted Blazer by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/bespoke-cream-double-mannequin.jpg', category: 'made-to-measure', title: 'Cream Double-Breasted Blazer on Mannequin by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/bespoke-navy-blazer-white-trousers.jpg', category: 'bespoke', title: 'Navy Blazer with White Trousers by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/senator-white-textured-3piece.jpg', category: 'senator-suit', title: 'White Textured Senator Three-Piece Suit by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/bespoke-orange-blazer-store.jpg', category: 'made-to-measure', title: 'Orange Double-Breasted Blazer Store Display by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/bespoke-navy-blazer-store-display.jpg', category: 'made-to-measure', title: 'Navy Blazer with Cream Trousers Store Display by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/bespoke-olive-gold-striped.jpg', category: 'bespoke', title: 'Olive Gold Striped Double-Breasted Suit by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/bespoke-houndstooth-brown-vest-3piece.jpg', category: 'bespoke', title: 'Houndstooth Blazer with Brown Vest Three-Piece by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/bespoke-white-houndstooth-double.jpg', category: 'made-to-measure', title: 'White Houndstooth Double-Breasted Blazer by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/bespoke-cream-blazer-red-trousers.jpg', category: 'bespoke', title: 'Cream Blazer with Red Trousers Street Style by Bremer Suits Nairobi' },
 ]
 
 function mapCategoryFromTag(tag: string, title: string): string {
