@@ -14,7 +14,7 @@ export const Route = createFileRoute('/blog/')({
       },
       {
         name: 'keywords',
-        content: 'men\'s fashion blog Nairobi, suit styling tips Kenya, bespoke tailoring insights, wedding suit guide, Bremer Suits journal',
+        content: 'Bremer Suits, Bremer, BremerSuits, BREMER SUITS, men\'s fashion blog Nairobi, suit styling tips Kenya, bespoke tailoring insights, wedding suit guide, Bremer Suits journal, bremer suits blog',
       },
       {
         property: 'og:title',

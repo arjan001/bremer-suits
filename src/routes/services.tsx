@@ -17,7 +17,7 @@ export const Route = createFileRoute('/services')({
   head: () => ({
     meta: [
       {
-        title: 'Custom Tailoring Services | Ruracio Styling, Corporate & Alterations',
+        title: 'Bremer Suits | Custom Tailoring Services | Ruracio Styling, Corporate & Alterations',
       },
       {
         name: 'description',
@@ -25,7 +25,7 @@ export const Route = createFileRoute('/services')({
       },
       {
         name: 'keywords',
-        content: 'Ruracio outfits for men, traditional ceremony styling Kenya, corporate styling workshops Nairobi, suit alterations Nairobi, executive image consulting, Ruracio suits for groom, modern African wedding suits',
+        content: 'Bremer Suits, Bremer, BremerSuits, BREMER SUITS, Ruracio outfits for men, traditional ceremony styling Kenya, corporate styling workshops Nairobi, suit alterations Nairobi, executive image consulting, Ruracio suits for groom, modern African wedding suits, bremer suits services',
       },
       {
         property: 'og:title',
@@ -191,7 +191,7 @@ function Services() {
             className="text-4xl lg:text-6xl text-white mb-2 italic"
             style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
           >
-            What We Do
+            Bremer Suits — What We Do
           </h1>
         </div>
       </section>

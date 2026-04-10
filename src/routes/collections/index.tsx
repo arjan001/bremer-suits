@@ -30,7 +30,7 @@ export const Route = createFileRoute('/collections/')({
       },
       {
         name: 'keywords',
-        content: 'premium suits Nairobi, custom suits collection, men\'s wear Kenya, luxury suits online, Bremer Suits collection, ready-to-wear suits Nairobi',
+        content: 'Bremer Suits, Bremer, BremerSuits, BREMER SUITS, premium suits Nairobi, custom suits collection, men\'s wear Kenya, luxury suits online, Bremer Suits collection, ready-to-wear suits Nairobi, bremer suits shop',
       },
       {
         property: 'og:title',

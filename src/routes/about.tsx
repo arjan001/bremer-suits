@@ -13,7 +13,7 @@ export const Route = createFileRoute('/about')({
       },
       {
         name: 'keywords',
-        content: 'Tailoring expertise Kenya, luxury fabric sourcing, Bremer Suits history, master tailors Nairobi, bespoke suit process, Bremer custom suits, Bremer luxury tailoring',
+        content: 'Bremer Suits, Bremer, BremerSuits, BREMER SUITS, tailoring expertise Kenya, luxury fabric sourcing, Bremer Suits history, master tailors Nairobi, bespoke suit process, bremer custom suits, bremer luxury tailoring',
       },
       {
         property: 'og:title',

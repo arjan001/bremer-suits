@@ -8,7 +8,7 @@ export const Route = createFileRoute('/portfolio')({
   head: () => ({
     meta: [
       {
-        title: 'Bespoke Gallery | Wedding Tuxedos & High-End Suit Portfolio',
+        title: 'Bremer Suits | Bespoke Gallery | Wedding Tuxedos & High-End Suit Portfolio',
       },
       {
         name: 'description',
@@ -16,7 +16,7 @@ export const Route = createFileRoute('/portfolio')({
       },
       {
         name: 'keywords',
-        content: 'Wedding suit ideas Kenya, bespoke suit gallery, men\'s fashion portfolio Nairobi, custom tuxedo designs, Bremer Suits lookbook, bespoke tuxedos Nairobi',
+        content: 'Bremer Suits, Bremer, BremerSuits, BREMER SUITS, wedding suit ideas Kenya, bespoke suit gallery, men\'s fashion portfolio Nairobi, custom tuxedo designs, Bremer Suits lookbook, bespoke tuxedos Nairobi, bremer suits portfolio',
       },
       {
         property: 'og:title',
@@ -209,7 +209,7 @@ function PortfolioPage() {
             className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6 max-w-2xl"
             style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
           >
-            Craftsmanship in Every Stitch
+            Bremer Suits — Craftsmanship in Every Stitch
           </h1>
           <p className="text-lg text-white/60 max-w-xl font-light leading-relaxed">
             Explore our collection of bespoke work and the moments

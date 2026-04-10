@@ -14,7 +14,7 @@ export const Route = createFileRoute('/contact')({
       },
       {
         name: 'keywords',
-        content: 'Book tailor appointment Nairobi, suit fitting consultation, Bremer Suits location, custom suit price Kenya, bespoke tailor contact, suit alterations near me',
+        content: 'Bremer Suits, Bremer, BremerSuits, BREMER SUITS, book tailor appointment Nairobi, suit fitting consultation, Bremer Suits location, custom suit price Kenya, bespoke tailor contact, suit alterations near me, bremer suits contact',
       },
       {
         property: 'og:title',
@@ -114,7 +114,7 @@ function Contact() {
             className="text-4xl lg:text-6xl font-bold text-white mb-4"
             style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
           >
-            Book a Consultation
+            Book a Consultation with Bremer Suits
           </h1>
           <div className="w-16 h-0.5 bg-gold mx-auto mb-4" />
           <p className="text-white/60 max-w-lg mx-auto font-light">

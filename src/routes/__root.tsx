@@ -29,7 +29,7 @@ export const Route = createRootRoute({
       },
       {
         name: 'keywords',
-        content: 'Bespoke suits Nairobi, custom made suits Kenya, premium men\'s tailoring, luxury wedding suits, Bremer Suits, made-to-order suits Nairobi, Ruracio suits, best suit tailors in Nairobi',
+        content: 'Bremer Suits, Bremer, BremerSuits, BREMER SUITS, bremer suits Nairobi, bremer suits Kenya, bespoke suits Nairobi, custom made suits Kenya, premium men\'s tailoring, luxury wedding suits, made-to-order suits Nairobi, Ruracio suits, best suit tailors in Nairobi, bremer bespoke tailoring',
       },
       {
         name: 'robots',
@@ -121,6 +121,10 @@ export const Route = createRootRoute({
         rel: 'manifest',
         href: '/manifest.json',
       },
+      {
+        rel: 'canonical',
+        href: 'https://bremersuits.com',
+      },
     ],
   }),
   component: RootLayout,
@@ -207,10 +211,87 @@ function NotFoundPage() {
 }
 
 function RootDocument({ children }: { children: React.ReactNode }) {
+  const coreStructuredData = [
+    {
+      '@context': 'https://schema.org',
+      '@type': 'Organization',
+      name: 'Bremer Suits',
+      alternateName: ['BREMER SUITS', 'BremerSuits', 'Bremer', 'bremer suits', 'Bremer Suits & Style'],
+      url: 'https://bremersuits.com',
+      logo: 'https://bremersuits.com/images/og-logo-gold-black.jpg',
+      description: "Nairobi's leading specialists in high-end, custom-made suits for weddings, corporate leadership, and special occasions.",
+      sameAs: [
+        'https://www.facebook.com/BREMERSUITS/',
+        'https://www.instagram.com/bremer_suits/',
+        'https://www.tiktok.com/@bremersuits',
+      ],
+    },
+    {
+      '@context': 'https://schema.org',
+      '@type': 'LocalBusiness',
+      '@id': 'https://bremersuits.com/#localbusiness',
+      name: 'Bremer Suits',
+      alternateName: ['BREMER SUITS', 'BremerSuits', 'Bremer', 'bremer suits', 'Bremer Suits & Style'],
+      description: 'Premier bespoke tailoring and custom-made suits in Nairobi. Specializing in wedding suits, corporate attire, Ruracio styling, and expert alterations.',
+      url: 'https://bremersuits.com',
+      image: 'https://bremersuits.com/images/og-logo-gold-black.jpg',
+      address: {
+        '@type': 'PostalAddress',
+        streetAddress: 'Nairobi',
+        addressLocality: 'Nairobi',
+        addressRegion: 'Nairobi',
+        addressCountry: 'KE',
+      },
+      geo: {
+        '@type': 'GeoCoordinates',
+        latitude: -1.2921,
+        longitude: 36.8219,
+      },
+      priceRange: '$$$$',
+      openingHoursSpecification: [
+        {
+          '@type': 'OpeningHoursSpecification',
+          dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
+          opens: '09:00',
+          closes: '18:00',
+        },
+        {
+          '@type': 'OpeningHoursSpecification',
+          dayOfWeek: 'Saturday',
+          opens: '09:00',
+          closes: '16:00',
+        },
+      ],
+    },
+    {
+      '@context': 'https://schema.org',
+      '@type': 'WebSite',
+      name: 'Bremer Suits',
+      alternateName: ['BREMER SUITS', 'BremerSuits', 'Bremer'],
+      url: 'https://bremersuits.com',
+      description: "Experience the art of perfection with Bremer Suits. Nairobi's leading specialists in high-end, custom-made suits.",
+      potentialAction: {
+        '@type': 'SearchAction',
+        target: {
+          '@type': 'EntryPoint',
+          urlTemplate: 'https://bremersuits.com/collections?q={search_term_string}',
+        },
+        'query-input': 'required name=search_term_string',
+      },
+    },
+  ]
+
   return (
     <html lang="en">
       <head>
         <HeadContent />
+        {coreStructuredData.map((schema, i) => (
+          <script
+            key={`ssr-schema-${i}`}
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+          />
+        ))}
       </head>
       <body>
         {children}

@@ -14,7 +14,7 @@ export const Route = createFileRoute('/faq')({
       },
       {
         name: 'keywords',
-        content: 'custom suit FAQ, bespoke tailoring questions, suit fitting process, Bremer Suits pricing, tailoring turnaround time Nairobi',
+        content: 'Bremer Suits, Bremer, BremerSuits, BREMER SUITS, custom suit FAQ, bespoke tailoring questions, suit fitting process, Bremer Suits pricing, tailoring turnaround time Nairobi, bremer suits FAQ',
       },
       {
         property: 'og:title',
