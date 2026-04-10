@@ -181,11 +181,21 @@ const philosophyImages = [
   '/images/gallery-6.jpg',
 ]
 
+const cubeImages = [
+  { src: '/images/cube-face-1.jpg', alt: 'Bremer Suits bespoke tailoring showcase - Front' },
+  { src: '/images/cube-face-2.jpg', alt: 'Bremer Suits custom suit craftsmanship - Right' },
+  { src: '/images/cube-face-3.jpg', alt: 'Bremer Suits luxury suit details - Back' },
+  { src: '/images/about-model-1.jpg', alt: 'Master tailor handcrafting a bespoke suit - Left' },
+]
+
 function HomePage() {
   const [currentSlide, setCurrentSlide] = useState(0)
   const [philosophyOffset, setPhilosophyOffset] = useState(0)
   const [lightboxImage, setLightboxImage] = useState<string | null>(null)
   const philosophyRef = useRef<HTMLDivElement>(null)
+  const [cubeFace, setCubeFace] = useState(0)
+  const cubeContainerRef = useRef<HTMLDivElement>(null)
+  const [cubeDepth, setCubeDepth] = useState(0)
 
   const nextSlide = useCallback(() => {
     setCurrentSlide((prev) => (prev + 1) % carouselImages.length)
@@ -199,6 +209,26 @@ function HomePage() {
     const timer = setInterval(nextSlide, 5000)
     return () => clearInterval(timer)
   }, [nextSlide])
+
+  // Measure cube container width for 3D depth
+  useEffect(() => {
+    const updateDepth = () => {
+      if (cubeContainerRef.current) {
+        setCubeDepth(cubeContainerRef.current.offsetWidth / 2)
+      }
+    }
+    updateDepth()
+    window.addEventListener('resize', updateDepth)
+    return () => window.removeEventListener('resize', updateDepth)
+  }, [])
+
+  // 3D cube auto-rotate
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCubeFace((prev) => (prev + 1) % 4)
+    }, 4000)
+    return () => clearInterval(timer)
+  }, [])
 
   // Philosophy carousel auto-scroll
   useEffect(() => {
@@ -279,40 +309,90 @@ function HomePage() {
       </section>
 
       {/* ===== ABOUT US SECTION ===== */}
-      <section className="py-16 lg:py-28 bg-white">
+      <section className="py-16 lg:py-28 bg-white overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-20 items-center">
-            {/* 3D Cube Rotation on hover (large screens only) */}
-            <div
-              className="aspect-[4/5] overflow-hidden bg-gray-100 group"
-              style={{ perspective: '1200px' }}
-            >
+            {/* 3D Cube Rotation */}
+            <div className="aspect-[4/5] overflow-hidden bg-gray-100" ref={cubeContainerRef}>
               <div
-                className="relative w-full h-full transition-transform duration-[800ms] ease-in-out lg:group-hover:[transform:rotateY(180deg)]"
-                style={{ transformStyle: 'preserve-3d' }}
+                className="relative w-full h-full"
+                style={{ perspective: '1200px' }}
               >
-                {/* Front face */}
                 <div
-                  className="absolute inset-0"
-                  style={{ backfaceVisibility: 'hidden' }}
+                  className="relative w-full h-full transition-transform duration-[1200ms] ease-[cubic-bezier(0.4,0,0.2,1)]"
+                  style={{
+                    transformStyle: 'preserve-3d',
+                    transform: `translateZ(${-cubeDepth}px) rotateY(${cubeFace * -90}deg)`,
+                  }}
                 >
-                  <img
-                    src="/images/about-model-1.jpg"
-                    alt="Master tailor handcrafting a bespoke suit at Bremer Suits Nairobi"
-                    className="w-full h-full object-cover"
-                  />
+                  {/* Front face (0deg) */}
+                  <div
+                    className="absolute inset-0"
+                    style={{
+                      backfaceVisibility: 'hidden',
+                      transform: `rotateY(0deg) translateZ(${cubeDepth}px)`,
+                    }}
+                  >
+                    <img
+                      src={cubeImages[0].src}
+                      alt={cubeImages[0].alt}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  {/* Right face (90deg) */}
+                  <div
+                    className="absolute inset-0"
+                    style={{
+                      backfaceVisibility: 'hidden',
+                      transform: `rotateY(90deg) translateZ(${cubeDepth}px)`,
+                    }}
+                  >
+                    <img
+                      src={cubeImages[1].src}
+                      alt={cubeImages[1].alt}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  {/* Back face (180deg) */}
+                  <div
+                    className="absolute inset-0"
+                    style={{
+                      backfaceVisibility: 'hidden',
+                      transform: `rotateY(180deg) translateZ(${cubeDepth}px)`,
+                    }}
+                  >
+                    <img
+                      src={cubeImages[2].src}
+                      alt={cubeImages[2].alt}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  {/* Left face (270deg) */}
+                  <div
+                    className="absolute inset-0"
+                    style={{
+                      backfaceVisibility: 'hidden',
+                      transform: `rotateY(270deg) translateZ(${cubeDepth}px)`,
+                    }}
+                  >
+                    <img
+                      src={cubeImages[3].src}
+                      alt={cubeImages[3].alt}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
                 </div>
-                {/* Back face (revealed on rotation) */}
-                <div
-                  className="absolute inset-0"
-                  style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}
-                >
-                  <img
-                    src="/images/portfolio/bespoke-navy-gold-buttons.jpg"
-                    alt="Navy bespoke double-breasted suit with gold buttons by Bremer Suits Nairobi"
-                    className="w-full h-full object-cover"
+              </div>
+              {/* Cube face indicators */}
+              <div className="flex justify-center gap-2 mt-3">
+                {cubeImages.map((_, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => setCubeFace(idx)}
+                    className={`w-2 h-2 rounded-full transition-all duration-300 ${idx === cubeFace % 4 ? 'bg-[#c8502a] w-6' : 'bg-gray-300'}`}
+                    aria-label={`Show cube face ${idx + 1}`}
                   />
-                </div>
+                ))}
               </div>
             </div>
 
