@@ -8,8 +8,7 @@ export default async function handler(req: Request, _context: Context) {
 
   try {
     const supabase = getSupabase()
-    const url = new URL(req.url)
-    const baseUrl = `${url.protocol}//${url.host}`
+    const baseUrl = 'https://bremersuits.com'
 
     const { data: settings } = await supabase
       .from('settings')
@@ -23,8 +22,13 @@ export default async function handler(req: Request, _context: Context) {
       robotsContent = `User-agent: *
 Allow: /
 Disallow: /admin
+Disallow: /admin/
 Disallow: /checkout
-Disallow: /wishlist`
+Disallow: /wishlist
+Disallow: /.netlify/
+
+User-agent: Googlebot
+Allow: /`
     }
 
     if (seoGlobal.sitemapEnabled !== false) {
@@ -43,7 +47,7 @@ Disallow: /wishlist`
     })
   } catch {
     return new Response(
-      `User-agent: *\nAllow: /\nDisallow: /admin`,
+      `User-agent: *\nAllow: /\nDisallow: /admin\nDisallow: /admin/\nDisallow: /checkout\nDisallow: /wishlist\nDisallow: /.netlify/\n\nUser-agent: Googlebot\nAllow: /\n\nSitemap: https://bremersuits.com/sitemap.xml`,
       {
         status: 200,
         headers: { 'Content-Type': 'text/plain', ...corsHeaders() },

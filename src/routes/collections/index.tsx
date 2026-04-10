@@ -73,6 +73,12 @@ export const Route = createFileRoute('/collections/')({
         content: 'https://bremersuits.com/collections',
       },
     ],
+    links: [
+      {
+        rel: 'canonical',
+        href: 'https://bremersuits.com/collections',
+      },
+    ],
   }),
   component: Collections,
   validateSearch: collectionsSearchSchema,

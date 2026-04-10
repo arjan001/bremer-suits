@@ -59,6 +59,12 @@ export const Route = createFileRoute('/portfolio')({
         content: 'https://bremersuits.com/portfolio',
       },
     ],
+    links: [
+      {
+        rel: 'canonical',
+        href: 'https://bremersuits.com/portfolio',
+      },
+    ],
   }),
   component: PortfolioPage,
 })

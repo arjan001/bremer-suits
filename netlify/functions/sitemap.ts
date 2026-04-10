@@ -12,8 +12,7 @@ export default async function handler(req: Request, _context: Context) {
 
   try {
     const supabase = getSupabase()
-    const url = new URL(req.url)
-    const baseUrl = `${url.protocol}//${url.host}`
+    const baseUrl = 'https://bremersuits.com'
     const today = new Date().toISOString().split('T')[0]
 
     // Fetch settings to check if sitemap is enabled and get SEO pages
@@ -36,16 +35,18 @@ export default async function handler(req: Request, _context: Context) {
     // Static pages with priorities
     const staticPages = [
       { path: '/', priority: '1.0', changefreq: 'daily' },
+      { path: '/portfolio', priority: '0.9', changefreq: 'weekly' },
       { path: '/collections', priority: '0.9', changefreq: 'daily' },
       { path: '/services', priority: '0.8', changefreq: 'weekly' },
       { path: '/about', priority: '0.7', changefreq: 'monthly' },
       { path: '/contact', priority: '0.7', changefreq: 'monthly' },
       { path: '/blog', priority: '0.8', changefreq: 'daily' },
-      { path: '/wishlist', priority: '0.3', changefreq: 'weekly' },
+      { path: '/faq', priority: '0.6', changefreq: 'monthly' },
       { path: '/privacy-policy', priority: '0.3', changefreq: 'yearly' },
       { path: '/terms-of-service', priority: '0.3', changefreq: 'yearly' },
       { path: '/refund-policy', priority: '0.3', changefreq: 'yearly' },
       { path: '/shipping-policy', priority: '0.3', changefreq: 'yearly' },
+      { path: '/cookie-policy', priority: '0.3', changefreq: 'yearly' },
     ].filter((p) => !noIndexPaths.has(p.path))
 
     // Fetch products for dynamic product pages

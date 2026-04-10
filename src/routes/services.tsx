@@ -68,6 +68,12 @@ export const Route = createFileRoute('/services')({
         content: 'https://bremersuits.com/services',
       },
     ],
+    links: [
+      {
+        rel: 'canonical',
+        href: 'https://bremersuits.com/services',
+      },
+    ],
   }),
   component: Services,
 })
