@@ -127,6 +127,28 @@ const staticPortfolioItems: PortfolioItem[] = [
   { src: '/images/portfolio/bespoke-houndstooth-blazer.jpg', category: 'made-to-measure', title: 'Houndstooth Double-Breasted Blazer by Bremer Suits Nairobi' },
   { src: '/images/portfolio/bespoke-cream-red-casual.jpg', category: 'bespoke', title: 'Cream Blazer with Red Trousers Casual Style by Bremer Suits Nairobi' },
   { src: '/images/portfolio/bespoke-navy-store-mannequin.jpg', category: 'bespoke', title: 'Navy Blazer Store Mannequin Display by Bremer Suits Nairobi' },
+  // New wedding & event photos
+  { src: '/images/portfolio/wedding-green-tux-groom-bride.jpg', category: 'wedding', title: 'Green Double-Breasted Tuxedo Groom with Bride by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/wedding-pink-green-groomsmen-stairs.jpg', category: 'wedding', title: 'Pink Suit Groom with Green Groomsmen on Staircase by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/wedding-brown-beige-groomsmen-indoor.jpg', category: 'wedding', title: 'Brown and Beige Wedding Groomsmen Indoor by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/wedding-white-blazer-groom-bride-arch.jpg', category: 'wedding', title: 'White Blazer Groom with Bride at Archway Venue by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/wedding-white-teal-groomsmen-hallway.jpg', category: 'wedding', title: 'White Tuxedo Groom with Teal Groomsmen in Hallway by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/wedding-grey-groomsmen-lifting-groom.jpg', category: 'wedding', title: 'Grey Suited Groomsmen Lifting Groom at Reception by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/wedding-white-camo-black-groomsmen-formal.jpg', category: 'wedding', title: 'Camo Accent White Blazer Groom with Black Tux Party by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/wedding-beige-3piece-groomsmen-dancing.jpg', category: 'wedding', title: 'Beige Three-Piece Groomsmen Dancing at Reception by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/wedding-mint-green-double-breasted-duo.jpg', category: 'wedding', title: 'Mint Green Double-Breasted Wedding Suits by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/wedding-black-tux-chains-outdoor.jpg', category: 'wedding', title: 'Black Tuxedo Groomsmen with Chain Details Outdoor by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/wedding-black-tux-groomsmen-walking.jpg', category: 'wedding', title: 'Black Tuxedo Groomsmen Walking Together by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/wedding-green-tux-white-groom-outdoor.jpg', category: 'wedding', title: 'Green Tuxedo Groomsmen with White Groom Formation by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/wedding-red-burgundy-groomsmen-cream-groom.jpg', category: 'wedding', title: 'Red Burgundy Groomsmen with Cream Groom Suit by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/wedding-pink-blazer-groomsmen-flowerwall.jpg', category: 'wedding', title: 'Pink Blazer Groomsmen at Flower Wall by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/wedding-white-tux-olive-bridesmaids.jpg', category: 'wedding', title: 'White Tuxedo Groom with Olive Bridesmaids by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/wedding-cream-sage-green-bridal-party.jpg', category: 'wedding', title: 'Cream Groomsmen with Sage Green Bridal Party by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/wedding-beige-groomsmen-beach.jpg', category: 'wedding', title: 'Beige Groomsmen with Rust Vests Beach Wedding by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/wedding-emerald-green-groomsmen-studio.jpg', category: 'wedding', title: 'Emerald Green Groomsmen Studio Portrait by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/wedding-green-groomsmen-white-groom-deck.jpg', category: 'wedding', title: 'Green Groomsmen with White Groom on Garden Deck by Bremer Suits Nairobi' },
+  // New bespoke/event formal wear
+  { src: '/images/portfolio/bespoke-orange-rust-couple-event.jpg', category: 'bespoke', title: 'Orange Rust Bespoke Suit at Formal Event by Bremer Suits Nairobi' },
 ]
 
 function mapCategoryFromTag(tag: string, title: string): string {

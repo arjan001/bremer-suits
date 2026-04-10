@@ -576,18 +576,22 @@ function SubscribeModal() {
   )
 }
 
-/* ── Cookie Consent Banner ── */
+/* ── Cookie Consent Banner (only shown on /contact page) ── */
 function CookieConsent() {
   const [visible, setVisible] = useState(false)
+  const router = useRouter()
+  const pathname = router.state.location.pathname
 
   useEffect(() => {
     try {
-      if (!localStorage.getItem('bremer-cookie-consent')) {
+      if (pathname === '/contact' && !localStorage.getItem('bremer-cookie-consent')) {
         const timer = setTimeout(() => setVisible(true), 1500)
         return () => clearTimeout(timer)
+      } else {
+        setVisible(false)
       }
     } catch { /* ignore */ }
-  }, [])
+  }, [pathname])
 
   const acceptAll = () => {
     try { localStorage.setItem('bremer-cookie-consent', 'all') } catch { /* ignore */ }
