@@ -72,6 +72,99 @@ function ProductDetail() {
     return () => { cancelled = true }
   }, [slug])
 
+  // Dynamic SEO meta tags for product detail
+  useEffect(() => {
+    if (!product) return
+    document.title = `${product.title} | Bremer Suits Collections`
+    const setMeta = (name: string, content: string) => {
+      let el = document.querySelector(`meta[name="${name}"]`) as HTMLMetaElement | null
+      if (!el) { el = document.createElement('meta'); el.name = name; document.head.appendChild(el) }
+      el.content = content
+    }
+    const setProperty = (property: string, content: string) => {
+      let el = document.querySelector(`meta[property="${property}"]`) as HTMLMetaElement | null
+      if (!el) { el = document.createElement('meta'); el.setAttribute('property', property); document.head.appendChild(el) }
+      el.content = content
+    }
+    const setCanonical = (href: string) => {
+      let el = document.querySelector('link[rel="canonical"]') as HTMLLinkElement | null
+      if (!el) { el = document.createElement('link'); el.rel = 'canonical'; document.head.appendChild(el) }
+      el.href = href
+    }
+    const desc = product.description || `Shop ${product.title} from Bremer Suits. Premium quality menswear handcrafted in Nairobi, Kenya.`
+    const displayPrice = product.salePrice || product.price
+    const keywords = [
+      'Bremer Suits', product.title, product.category, product.fabric,
+      'buy suits online Kenya', 'premium menswear Nairobi', 'custom suits Kenya',
+      'men\'s fashion Nairobi', 'bespoke tailoring', 'Bremer Suits collection'
+    ].filter(Boolean).join(', ')
+    const productImage = product.image || 'https://bremersuits.com/images/og-logo-gold-black.jpg'
+    // Core SEO
+    setMeta('description', desc)
+    setMeta('keywords', keywords)
+    setMeta('robots', 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1')
+    setMeta('author', 'Bremer Suits')
+    setMeta('publisher', 'Bremer Suits')
+    setMeta('language', 'en')
+    setMeta('revisit-after', '3 days')
+    setMeta('rating', 'general')
+    setMeta('distribution', 'global')
+    setMeta('format-detection', 'telephone=no')
+    setMeta('theme-color', '#1a1a1a')
+    setMeta('apple-mobile-web-app-title', 'Bremer Suits')
+    setMeta('application-name', 'Bremer Suits')
+    setMeta('msapplication-TileColor', '#1a1a1a')
+    setMeta('mobile-web-app-capable', 'yes')
+    setMeta('apple-mobile-web-app-capable', 'yes')
+    // Open Graph - Product
+    setProperty('og:title', `${product.title} | Bremer Suits`)
+    setProperty('og:description', desc)
+    setProperty('og:type', 'product')
+    setProperty('og:url', `https://bremersuits.com/collections/${slug}`)
+    setProperty('og:site_name', 'Bremer Suits')
+    setProperty('og:locale', 'en_KE')
+    setProperty('og:image', productImage)
+    setProperty('og:image:alt', `${product.title} - Bremer Suits`)
+    setProperty('og:image:type', 'image/jpeg')
+    setProperty('product:price:amount', String(product.numericPrice))
+    setProperty('product:price:currency', 'KES')
+    setProperty('product:brand', 'Bremer Suits')
+    setProperty('product:condition', 'new')
+    if (product.category) setProperty('product:category', product.category)
+    // Twitter Card
+    setMeta('twitter:card', 'summary_large_image')
+    setMeta('twitter:site', '@bremersuits')
+    setMeta('twitter:creator', '@bremersuits')
+    setMeta('twitter:title', `${product.title} | Bremer Suits`)
+    setMeta('twitter:description', desc)
+    setMeta('twitter:image', productImage)
+    setMeta('twitter:image:alt', `${product.title} - Bremer Suits`)
+    setMeta('twitter:label1', 'Price')
+    setMeta('twitter:data1', `KES ${displayPrice}`)
+    setMeta('twitter:label2', 'Category')
+    setMeta('twitter:data2', product.category || 'Menswear')
+    // Geo
+    setMeta('geo.region', 'KE-110')
+    setMeta('geo.placename', 'Nairobi')
+    setMeta('geo.position', '-1.2864;36.8172')
+    setMeta('ICBM', '-1.2864, 36.8172')
+    // Business
+    setProperty('business:contact_data:street_address', 'Kimathi St')
+    setProperty('business:contact_data:locality', 'Nairobi')
+    setProperty('business:contact_data:country_name', 'Kenya')
+    setProperty('business:contact_data:email', 'brendahwanja6722@gmail.com')
+    setProperty('business:contact_data:phone_number', '+254 793 880642')
+    // Additional
+    setMeta('subject', product.title)
+    setMeta('classification', 'Business')
+    setMeta('category', 'Fashion & Tailoring')
+    setMeta('coverage', 'Kenya')
+    setMeta('HandheldFriendly', 'True')
+    setMeta('MobileOptimized', '320')
+    // Canonical
+    setCanonical(`https://bremersuits.com/collections/${slug}`)
+  }, [product, slug])
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-white">
