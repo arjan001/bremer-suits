@@ -152,15 +152,71 @@ const serviceCards = [
   },
 ]
 
-const portfolioPreviewImages = [
-  { src: '/images/portfolio/bespoke-burgundy-mannequin.jpg', span: 'row-span-2' },
-  { src: '/images/portfolio/wedding-teal-groomsmen.jpg', span: '' },
-  { src: '/images/portfolio/bespoke-navy-gold-buttons.jpg', span: '' },
-  { src: '/images/portfolio/wedding-camo-black-group.jpg', span: 'row-span-2' },
-  { src: '/images/portfolio/bespoke-houndstooth-vest.jpg', span: '' },
-  { src: '/images/portfolio/wedding-black-tuxedo-walk.jpg', span: '' },
-  { src: '/images/portfolio/bespoke-cream-double-breasted.jpg', span: '' },
-  { src: '/images/portfolio/wedding-green-white-formation.jpg', span: '' },
+const bestPickProducts = [
+  {
+    src: '/images/portfolio/bespoke-burgundy-mannequin.jpg',
+    name: 'The Burgundy Classic',
+    priceKES: 25000,
+    priceUSD: 195,
+    colors: ['#722F37', '#1a1a2e', '#2c2c2c'],
+    colorNames: ['Burgundy', 'Navy', 'Charcoal'],
+  },
+  {
+    src: '/images/portfolio/bespoke-navy-gold-buttons.jpg',
+    name: 'Navy Gold-Button Blazer',
+    priceKES: 22000,
+    priceUSD: 170,
+    colors: ['#1a1a4e', '#2c2c2c', '#3b2f2f'],
+    colorNames: ['Navy', 'Black', 'Dark Brown'],
+  },
+  {
+    src: '/images/portfolio/bespoke-cream-double-breasted.jpg',
+    name: 'Ivory Double-Breasted Set',
+    priceKES: 30000,
+    priceUSD: 230,
+    colors: ['#f5f0e1', '#d4c5a9', '#1a1a2e'],
+    colorNames: ['Ivory', 'Champagne', 'Navy'],
+  },
+  {
+    src: '/images/portfolio/bespoke-camel-double-breasted-bowtie.jpg',
+    name: 'Camel Tuxedo with Bowtie',
+    priceKES: 35000,
+    priceUSD: 270,
+    colors: ['#c19a6b', '#f5f0e1', '#2c2c2c'],
+    colorNames: ['Camel', 'Ivory', 'Charcoal'],
+  },
+  {
+    src: '/images/portfolio/bespoke-houndstooth-vest.jpg',
+    name: 'Houndstooth 3-Piece Vest Set',
+    priceKES: 28000,
+    priceUSD: 215,
+    colors: ['#8B8589', '#3b2f2f', '#1a1a2e'],
+    colorNames: ['Houndstooth Grey', 'Brown', 'Navy'],
+  },
+  {
+    src: '/images/portfolio/senator-navy-gold-embroidered-cane.jpg',
+    name: 'Senator Navy Gold Embroidered',
+    priceKES: 20000,
+    priceUSD: 155,
+    colors: ['#1a1a4e', '#2c2c2c', '#f5f0e1'],
+    colorNames: ['Navy', 'Black', 'White'],
+  },
+  {
+    src: '/images/portfolio/kaunda-brown-pinstripe-gold-buttons.jpg',
+    name: 'Kaunda Brown Pinstripe Safari',
+    priceKES: 18000,
+    priceUSD: 140,
+    colors: ['#6b4423', '#3b3b3b', '#556b2f'],
+    colorNames: ['Brown', 'Charcoal', 'Olive'],
+  },
+  {
+    src: '/images/portfolio/bespoke-gold-striped-double.jpg',
+    name: 'Gold Striped Double-Breasted',
+    priceKES: 32000,
+    priceUSD: 245,
+    colors: ['#c9a96e', '#722F37', '#1a1a4e'],
+    colorNames: ['Gold', 'Burgundy', 'Navy'],
+  },
 ]
 
 const commitmentPoints = [
@@ -208,6 +264,8 @@ function HomePage() {
   const [currentSlide, setCurrentSlide] = useState(0)
   const [philosophyOffset, setPhilosophyOffset] = useState(0)
   const [lightboxImage, setLightboxImage] = useState<string | null>(null)
+  const [currency, setCurrency] = useState<'KES' | 'USD'>('KES')
+  const [selectedColors, setSelectedColors] = useState<Record<number, number>>({})
   const philosophyRef = useRef<HTMLDivElement>(null)
   const [cubeFace, setCubeFace] = useState(0)
   const cubeContainerRef = useRef<HTMLDivElement>(null)
@@ -448,6 +506,110 @@ function HomePage() {
         </div>
       </section>
 
+      {/* ===== BREMER'S BEST PICK - Product Gallery ===== */}
+      <section className="py-16 lg:py-28 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <p className="text-sm tracking-wide text-[#c8502a] mb-3 font-medium">
+              Our Collection
+            </p>
+            <h2
+              className="text-3xl lg:text-5xl font-bold text-black leading-tight mb-4"
+              style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
+            >
+              Bremer&apos;s Best Pick
+            </h2>
+            <p className="text-base text-gray-500 max-w-lg mx-auto mb-6">
+              A glimpse into our bespoke creations and wedding collections.
+            </p>
+            {/* Currency Toggle */}
+            <div className="inline-flex items-center border border-gray-300 rounded-full overflow-hidden text-xs">
+              <button
+                onClick={() => setCurrency('KES')}
+                className={`px-4 py-2 font-semibold transition-colors duration-200 ${currency === 'KES' ? 'bg-black text-white' : 'bg-white text-gray-600 hover:bg-gray-100'}`}
+              >
+                KES
+              </button>
+              <button
+                onClick={() => setCurrency('USD')}
+                className={`px-4 py-2 font-semibold transition-colors duration-200 ${currency === 'USD' ? 'bg-black text-white' : 'bg-white text-gray-600 hover:bg-gray-100'}`}
+              >
+                USD
+              </button>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 lg:gap-6">
+            {bestPickProducts.map((product, idx) => {
+              const activeColor = selectedColors[idx] ?? 0
+              return (
+                <div
+                  key={idx}
+                  className="group border border-gray-100 bg-white hover:shadow-xl transition-shadow duration-300"
+                >
+                  {/* Product Image */}
+                  <div
+                    className="relative aspect-[3/4] overflow-hidden cursor-pointer"
+                    onClick={() => setLightboxImage(product.src)}
+                  >
+                    <img
+                      src={product.src}
+                      alt={product.name}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                    />
+                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
+                  </div>
+
+                  {/* Product Info */}
+                  <div className="p-3 lg:p-4">
+                    <h3 className="text-xs lg:text-sm font-bold text-black mb-1 leading-tight">
+                      {product.name}
+                    </h3>
+                    <p className="text-sm lg:text-base font-semibold text-[#c8502a] mb-3">
+                      {currency === 'KES'
+                        ? `KES ${product.priceKES.toLocaleString()}`
+                        : `$${product.priceUSD.toLocaleString()}`}
+                    </p>
+
+                    {/* Color Variants */}
+                    <div className="flex items-center gap-1.5 mb-3">
+                      {product.colors.map((color, cIdx) => (
+                        <button
+                          key={cIdx}
+                          onClick={() => setSelectedColors((prev) => ({ ...prev, [idx]: cIdx }))}
+                          className={`w-5 h-5 rounded-full border-2 transition-all duration-200 ${activeColor === cIdx ? 'border-[#c8502a] scale-110' : 'border-gray-200 hover:border-gray-400'}`}
+                          style={{ backgroundColor: color }}
+                          title={product.colorNames[cIdx]}
+                          aria-label={`Color: ${product.colorNames[cIdx]}`}
+                        />
+                      ))}
+                    </div>
+
+                    {/* Buy Now → Contact */}
+                    <Link
+                      to="/contact"
+                      className="block w-full text-center py-2 text-[10px] lg:text-xs tracking-[0.15em] uppercase bg-black text-white hover:bg-[#c8502a] transition-colors duration-300 font-semibold"
+                    >
+                      Buy Now
+                    </Link>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+
+          <div className="text-center mt-12">
+            <Link
+              to="/portfolio"
+              className="inline-flex items-center gap-2 px-10 py-4 text-xs tracking-[0.2em] uppercase bg-black text-white hover:bg-gray-800 transition-colors duration-300 font-semibold"
+            >
+              See More of Our Collection
+              <ArrowRight size={14} />
+            </Link>
+          </div>
+        </div>
+      </section>
+
       {/* ===== A TAILORING EXPERIENCE BUILT AROUND YOU ===== */}
       <section className="py-16 lg:py-28 bg-[#f7f5f2]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -503,55 +665,6 @@ function HomePage() {
                 className="w-full h-full object-cover"
               />
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ===== PORTFOLIO PREVIEW SECTION - Masonry Style ===== */}
-      <section className="py-16 lg:py-28 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <p className="text-sm tracking-wide text-[#c8502a] mb-3 font-medium">
-              Our Collection
-            </p>
-            <h2
-              className="text-3xl lg:text-5xl font-bold text-black leading-tight mb-4"
-              style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
-            >
-              Featured Work
-            </h2>
-            <p className="text-base text-gray-500 max-w-lg mx-auto">
-              A glimpse into our bespoke creations and wedding collections.
-            </p>
-          </div>
-
-          <div className="columns-2 md:columns-3 lg:columns-4 gap-3 lg:gap-4 space-y-3 lg:space-y-4">
-            {portfolioPreviewImages.map((item, idx) => (
-              <div
-                key={idx}
-                className="break-inside-avoid overflow-hidden group cursor-pointer"
-                onClick={() => setLightboxImage(item.src)}
-              >
-                <div className="relative overflow-hidden">
-                  <img
-                    src={item.src}
-                    alt={`Custom made suit portfolio by Bremer Suits Nairobi - Piece ${idx + 1}`}
-                    className="w-full h-auto object-cover group-hover:scale-105 transition-transform duration-700"
-                  />
-                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/15 transition-colors duration-300" />
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <div className="text-center mt-12">
-            <Link
-              to="/portfolio"
-              className="inline-flex items-center gap-2 px-10 py-4 text-xs tracking-[0.2em] uppercase bg-black text-white hover:bg-gray-800 transition-colors duration-300 font-semibold"
-            >
-              See More of Our Collection
-              <ArrowRight size={14} />
-            </Link>
           </div>
         </div>
       </section>
