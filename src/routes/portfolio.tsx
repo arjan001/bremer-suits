@@ -1,6 +1,8 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { useState, useEffect } from 'react'
-import { ArrowRight, Sparkles, X } from 'lucide-react'
+import { useState, useEffect, useMemo } from 'react'
+import { ArrowRight, Sparkles, X, ChevronLeft, ChevronRight } from 'lucide-react'
+
+const ITEMS_PER_PAGE = 12
 
 export const Route = createFileRoute('/portfolio')({
   component: PortfolioPage,
@@ -64,6 +66,7 @@ function mapCategoryFromTag(tag: string, title: string): string {
 function PortfolioPage() {
   const [selectedImage, setSelectedImage] = useState<string | null>(null)
   const [activeCategory, setActiveCategory] = useState('all')
+  const [currentPage, setCurrentPage] = useState(1)
   const [portfolioItems, setPortfolioItems] = useState<PortfolioItem[]>(staticPortfolioItems)
 
   useEffect(() => {
@@ -88,10 +91,27 @@ function PortfolioPage() {
       })
   }, [])
 
-  const filteredItems =
-    activeCategory === 'all'
+  const filteredItems = useMemo(() => {
+    return activeCategory === 'all'
       ? portfolioItems
       : portfolioItems.filter((item) => item.category === activeCategory)
+  }, [activeCategory, portfolioItems])
+
+  const totalPages = Math.ceil(filteredItems.length / ITEMS_PER_PAGE)
+  const paginatedItems = filteredItems.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  )
+
+  // Reset to page 1 when category changes
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [activeCategory])
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page)
+    window.scrollTo({ top: 400, behavior: 'smooth' })
+  }
 
   return (
     <div className="min-h-screen bg-white">
@@ -156,7 +176,7 @@ function PortfolioPage() {
 
           {/* Masonry Grid */}
           <div className="columns-2 md:columns-3 lg:columns-4 gap-3 lg:gap-4 space-y-3 lg:space-y-4">
-            {filteredItems.map((item, idx) => (
+            {paginatedItems.map((item, idx) => (
               <div
                 key={`${item.src}-${idx}`}
                 className="break-inside-avoid overflow-hidden group cursor-pointer"
@@ -173,6 +193,52 @@ function PortfolioPage() {
               </div>
             ))}
           </div>
+
+          {/* Pagination Controls */}
+          {totalPages > 1 && (
+            <div className="flex items-center justify-center gap-2 mt-14">
+              <button
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 1}
+                className="w-10 h-10 flex items-center justify-center border border-gray-300 text-gray-600 hover:border-black hover:text-black transition-colors duration-300 disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:border-gray-300 disabled:hover:text-gray-600"
+                aria-label="Previous page"
+              >
+                <ChevronLeft size={16} />
+              </button>
+
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                <button
+                  key={page}
+                  onClick={() => handlePageChange(page)}
+                  className={`w-10 h-10 flex items-center justify-center text-xs font-semibold tracking-wider border transition-all duration-300 ${
+                    page === currentPage
+                      ? 'bg-black text-white border-black'
+                      : 'bg-white text-gray-600 border-gray-300 hover:border-black hover:text-black'
+                  }`}
+                  aria-label={`Page ${page}`}
+                  aria-current={page === currentPage ? 'page' : undefined}
+                >
+                  {page}
+                </button>
+              ))}
+
+              <button
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPage === totalPages}
+                className="w-10 h-10 flex items-center justify-center border border-gray-300 text-gray-600 hover:border-black hover:text-black transition-colors duration-300 disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:border-gray-300 disabled:hover:text-gray-600"
+                aria-label="Next page"
+              >
+                <ChevronRight size={16} />
+              </button>
+            </div>
+          )}
+
+          {/* Item count */}
+          {totalPages > 1 && (
+            <p className="text-center text-xs text-gray-400 mt-4 tracking-wide">
+              Showing {(currentPage - 1) * ITEMS_PER_PAGE + 1}–{Math.min(currentPage * ITEMS_PER_PAGE, filteredItems.length)} of {filteredItems.length} items
+            </p>
+          )}
         </div>
       </section>
 

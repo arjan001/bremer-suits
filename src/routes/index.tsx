@@ -12,6 +12,7 @@ import {
   Award,
   Handshake,
   Sparkles,
+  X,
 } from 'lucide-react'
 
 export const Route = createFileRoute('/')({
@@ -128,6 +129,7 @@ const philosophyImages = [
 function HomePage() {
   const [currentSlide, setCurrentSlide] = useState(0)
   const [philosophyOffset, setPhilosophyOffset] = useState(0)
+  const [lightboxImage, setLightboxImage] = useState<string | null>(null)
   const philosophyRef = useRef<HTMLDivElement>(null)
 
   const nextSlide = useCallback(() => {
@@ -351,6 +353,7 @@ function HomePage() {
               <div
                 key={idx}
                 className="break-inside-avoid overflow-hidden group cursor-pointer"
+                onClick={() => setLightboxImage(item.src)}
               >
                 <div className="relative overflow-hidden">
                   <img
@@ -581,6 +584,31 @@ function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* Lightbox */}
+      {lightboxImage && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-sm"
+          onClick={() => setLightboxImage(null)}
+        >
+          <div
+            className="relative max-w-3xl w-full max-h-[90vh]"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <img
+              src={lightboxImage}
+              alt="Featured work detail"
+              className="w-full h-auto max-h-[85vh] object-contain rounded-lg"
+            />
+            <button
+              onClick={() => setLightboxImage(null)}
+              className="absolute -top-3 -right-3 w-10 h-10 bg-white text-black rounded-full flex items-center justify-center hover:bg-gray-200 transition-colors shadow-lg"
+            >
+              <X size={18} />
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
