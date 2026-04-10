@@ -293,6 +293,7 @@ export interface AdminPortfolioItem {
   isFeatured: boolean
   sortOrder: number
   status: 'active' | 'draft' | 'archived'
+  pageLocation: string
   createdAt: string
   updatedAt: string
 }

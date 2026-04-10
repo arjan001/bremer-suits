@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { ArrowRight, Sparkles, X } from 'lucide-react'
 
 export const Route = createFileRoute('/portfolio')({
@@ -13,8 +13,13 @@ const categories = [
   { id: 'made-to-measure', label: 'Made-to-Measure' },
 ]
 
-const portfolioItems = [
-  // Wedding & Events
+interface PortfolioItem {
+  src: string
+  category: string
+  title?: string
+}
+
+const staticPortfolioItems: PortfolioItem[] = [
   { src: '/images/portfolio/wedding-pink-green-stairs.jpg', category: 'wedding' },
   { src: '/images/portfolio/wedding-brown-beige-group.jpg', category: 'wedding' },
   { src: '/images/portfolio/wedding-white-suit-bride.jpg', category: 'wedding' },
@@ -29,19 +34,16 @@ const portfolioItems = [
   { src: '/images/portfolio/wedding-cream-bridal-lineup.jpg', category: 'wedding' },
   { src: '/images/portfolio/wedding-beach-beige.jpg', category: 'wedding' },
   { src: '/images/portfolio/wedding-grey-suits.jpg', category: 'wedding' },
-  // Bespoke
   { src: '/images/portfolio/bespoke-navy-pinstripe-man.jpg', category: 'bespoke' },
   { src: '/images/portfolio/bespoke-grey-tweed.jpg', category: 'bespoke' },
   { src: '/images/portfolio/bespoke-white-black-blazer.jpg', category: 'bespoke' },
   { src: '/images/portfolio/bespoke-burgundy-mannequin.jpg', category: 'bespoke' },
   { src: '/images/portfolio/bespoke-maroon-mannequin.jpg', category: 'bespoke' },
   { src: '/images/portfolio/bespoke-brown-pinstripe.jpg', category: 'bespoke' },
-  // Made-to-Measure
   { src: '/images/portfolio/bespoke-cream-double-breasted.jpg', category: 'made-to-measure' },
   { src: '/images/portfolio/bespoke-orange-mannequin.jpg', category: 'made-to-measure' },
   { src: '/images/portfolio/bespoke-brown-duo-mannequin.jpg', category: 'made-to-measure' },
   { src: '/images/portfolio/bespoke-green-pinstripe.jpg', category: 'made-to-measure' },
-  // Existing portfolio images
   { src: '/images/portfolio/wedding-beige-groomsmen.jpg', category: 'wedding' },
   { src: '/images/portfolio/wedding-black-suits.jpg', category: 'wedding' },
   { src: '/images/portfolio/wedding-pink-blazers.jpg', category: 'wedding' },
@@ -51,9 +53,40 @@ const portfolioItems = [
   { src: '/images/portfolio/bespoke-brown-duo.jpg', category: 'bespoke' },
 ]
 
+function mapCategoryFromTag(tag: string, title: string): string {
+  const t = (tag || '').toLowerCase()
+  const tl = (title || '').toLowerCase()
+  if (tl.includes('wedding') || t === 'wedding') return 'wedding'
+  if (tl.includes('made-to-measure') || t === 'made-to-measure') return 'made-to-measure'
+  return 'bespoke'
+}
+
 function PortfolioPage() {
   const [selectedImage, setSelectedImage] = useState<string | null>(null)
   const [activeCategory, setActiveCategory] = useState('all')
+  const [portfolioItems, setPortfolioItems] = useState<PortfolioItem[]>(staticPortfolioItems)
+
+  useEffect(() => {
+    fetch('/.netlify/functions/admin-portfolio?status=active')
+      .then((res) => res.json())
+      .then((data) => {
+        if (Array.isArray(data) && data.length > 0) {
+          const items: PortfolioItem[] = data
+            .filter((item: Record<string, unknown>) => item.image)
+            .map((item: Record<string, unknown>) => ({
+              src: item.image as string,
+              category: mapCategoryFromTag(item.tag as string, item.title as string),
+              title: item.title as string,
+            }))
+          if (items.length > 0) {
+            setPortfolioItems(items)
+          }
+        }
+      })
+      .catch(() => {
+        // Keep static fallback
+      })
+  }, [])
 
   const filteredItems =
     activeCategory === 'all'
@@ -132,7 +165,7 @@ function PortfolioPage() {
                 <div className="relative overflow-hidden bg-gray-100">
                   <img
                     src={item.src}
-                    alt={`Portfolio piece ${idx + 1}`}
+                    alt={item.title || `Portfolio piece ${idx + 1}`}
                     className="w-full h-auto object-cover group-hover:scale-105 transition-transform duration-700"
                   />
                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/15 transition-colors duration-300" />

@@ -22,6 +22,7 @@ export const Route = createFileRoute('/admin/portfolio')({
 const TAG_OPTIONS = ['new', 'partnership', 'featured', 'gallery']
 const CATEGORY_OPTIONS = ['Recent Work', 'Partnerships', 'Gallery']
 const STATUS_OPTIONS = ['active', 'draft', 'archived'] as const
+const PAGE_LOCATION_OPTIONS = ['portfolio', 'homepage', 'about', 'all'] as const
 
 function AdminPortfolio() {
   const {
@@ -48,6 +49,7 @@ function AdminPortfolio() {
   const [isFeatured, setIsFeatured] = useState(false)
   const [sortOrder, setSortOrder] = useState(0)
   const [status, setStatus] = useState<'active' | 'draft' | 'archived'>('active')
+  const [pageLocation, setPageLocation] = useState('portfolio')
 
   const resetForm = () => {
     setTitle('')
@@ -59,6 +61,7 @@ function AdminPortfolio() {
     setIsFeatured(false)
     setSortOrder(0)
     setStatus('active')
+    setPageLocation('portfolio')
     setEditing(null)
     setShowForm(false)
   }
@@ -74,6 +77,7 @@ function AdminPortfolio() {
     setIsFeatured(item.isFeatured)
     setSortOrder(item.sortOrder || 0)
     setStatus(item.status)
+    setPageLocation((item as unknown as Record<string, string>).pageLocation || 'portfolio')
     setShowForm(true)
   }
 
@@ -105,6 +109,7 @@ function AdminPortfolio() {
       isFeatured,
       sortOrder,
       status,
+      pageLocation,
     }
 
     if (editing) {
@@ -355,7 +360,7 @@ function AdminPortfolio() {
               </div>
 
               {/* Sort Order & Featured */}
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-3 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1.5">Sort Order</label>
                   <input
@@ -364,6 +369,18 @@ function AdminPortfolio() {
                     onChange={(e) => setSortOrder(Number(e.target.value))}
                     className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:border-black focus:ring-1 focus:ring-black outline-none"
                   />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1.5">Page Location</label>
+                  <select
+                    value={pageLocation}
+                    onChange={(e) => setPageLocation(e.target.value)}
+                    className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm bg-white focus:border-black outline-none"
+                  >
+                    {PAGE_LOCATION_OPTIONS.map((loc) => (
+                      <option key={loc} value={loc}>{loc.charAt(0).toUpperCase() + loc.slice(1)}</option>
+                    ))}
+                  </select>
                 </div>
                 <div className="flex items-end pb-1">
                   <label className="flex items-center gap-2.5 cursor-pointer">

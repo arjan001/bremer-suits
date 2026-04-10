@@ -146,15 +146,21 @@ function About() {
       {/* Image Gallery Strip */}
       <section className="py-4 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
+            <div className="aspect-square overflow-hidden">
+              <img src="/images/gallery-1.jpg" alt="Bremer collection" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+            </div>
             <div className="aspect-square overflow-hidden">
               <img src="/images/portfolio/bespoke-green-pinstripe.jpg" alt="Green pinstripe suit" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
             </div>
             <div className="aspect-square overflow-hidden">
-              <img src="/images/portfolio/wedding-black-suits-outdoor.jpg" alt="Black suits group" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+              <img src="/images/gallery-19.jpg" alt="Bremer craftsmanship" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
             </div>
             <div className="aspect-square overflow-hidden">
               <img src="/images/portfolio/bespoke-orange-mannequin.jpg" alt="Orange suit" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+            </div>
+            <div className="aspect-square overflow-hidden">
+              <img src="/images/gallery-20.jpg" alt="Bremer style" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
             </div>
             <div className="aspect-square overflow-hidden">
               <img src="/images/portfolio/wedding-cream-bridal-lineup.jpg" alt="Cream bridal lineup" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
@@ -297,22 +303,22 @@ function About() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-3 md:grid-cols-6 gap-2">
             <div className="aspect-square overflow-hidden">
-              <img src="/images/portfolio/bespoke-maroon-mannequin.jpg" alt="Maroon suit" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+              <img src="/images/gallery-21.jpg" alt="Bremer craftsmanship" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
             </div>
             <div className="aspect-square overflow-hidden">
-              <img src="/images/portfolio/wedding-pink-green-stairs.jpg" alt="Wedding group" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+              <img src="/images/gallery-22.jpg" alt="Bremer style" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
             </div>
             <div className="aspect-square overflow-hidden">
-              <img src="/images/portfolio/bespoke-brown-duo-mannequin.jpg" alt="Brown suits" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+              <img src="/images/gallery-40.jpg" alt="Bremer collection" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
             </div>
             <div className="aspect-square overflow-hidden">
-              <img src="/images/portfolio/wedding-beach-beige.jpg" alt="Beach suits" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+              <img src="/images/gallery-41.jpg" alt="Bremer tailoring" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
             </div>
             <div className="aspect-square overflow-hidden">
-              <img src="/images/portfolio/bespoke-grey-tweed.jpg" alt="Grey tweed suit" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+              <img src="/images/gallery-23.jpg" alt="Bremer suits" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
             </div>
             <div className="aspect-square overflow-hidden">
-              <img src="/images/portfolio/wedding-red-suits-group.jpg" alt="Red suits" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+              <img src="/images/gallery-24.jpg" alt="Bremer design" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
             </div>
           </div>
         </div>

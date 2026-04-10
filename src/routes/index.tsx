@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import {
   ArrowRight,
   Scissors,
@@ -8,6 +8,10 @@ import {
   Shirt,
   ChevronLeft,
   ChevronRight,
+  Star,
+  Award,
+  Handshake,
+  Sparkles,
 } from 'lucide-react'
 
 export const Route = createFileRoute('/')({
@@ -87,8 +91,44 @@ const portfolioPreviewImages = [
   { src: '/images/portfolio/wedding-black-suits-outdoor.jpg', span: '' },
 ]
 
+const commitmentPoints = [
+  {
+    icon: Star,
+    title: 'Quality Without Compromise',
+    description: 'We source only the finest fabrics and employ time-tested techniques to create garments that last.',
+  },
+  {
+    icon: Award,
+    title: 'Attention to Detail',
+    description: 'From buttonhole placement to lining selection, every element is considered with intention.',
+  },
+  {
+    icon: Handshake,
+    title: 'Client-First Approach',
+    description: 'Your satisfaction drives everything we do. We don\'t rest until the fit is flawless.',
+  },
+  {
+    icon: Sparkles,
+    title: 'Modern Elegance',
+    description: 'Traditional craftsmanship meets contemporary style for a look that\'s both classic and current.',
+  },
+]
+
+const philosophyImages = [
+  '/images/gallery-1.jpg',
+  '/images/gallery-2.jpg',
+  '/images/gallery-19.jpg',
+  '/images/gallery-20.jpg',
+  '/images/gallery-21.jpg',
+  '/images/gallery-40.jpg',
+  '/images/gallery-41.jpg',
+  '/images/gallery-6.jpg',
+]
+
 function HomePage() {
   const [currentSlide, setCurrentSlide] = useState(0)
+  const [philosophyOffset, setPhilosophyOffset] = useState(0)
+  const philosophyRef = useRef<HTMLDivElement>(null)
 
   const nextSlide = useCallback(() => {
     setCurrentSlide((prev) => (prev + 1) % carouselImages.length)
@@ -102,6 +142,17 @@ function HomePage() {
     const timer = setInterval(nextSlide, 5000)
     return () => clearInterval(timer)
   }, [nextSlide])
+
+  // Philosophy carousel auto-scroll
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setPhilosophyOffset((prev) => {
+        const maxOffset = Math.max(0, philosophyImages.length - 2)
+        return prev >= maxOffset ? 0 : prev + 1
+      })
+    }, 3000)
+    return () => clearInterval(timer)
+  }, [])
 
   return (
     <div className="min-h-screen bg-white">
@@ -219,11 +270,9 @@ function HomePage() {
       </section>
 
       {/* ===== A TAILORING EXPERIENCE BUILT AROUND YOU ===== */}
-      {/* Text LEFT, Image RIGHT */}
       <section className="py-16 lg:py-28 bg-[#f7f5f2]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
-            {/* Left: Text */}
             <div className="flex flex-col justify-center">
               <p className="text-sm tracking-wide text-[#c8502a] mb-3 font-medium">
                 Our process is designed to make you feel understood and involved.
@@ -268,7 +317,6 @@ function HomePage() {
               </div>
             </div>
 
-            {/* Right: Image */}
             <div className="aspect-[4/5] overflow-hidden bg-gray-100">
               <img
                 src="/images/portfolio/bespoke-navy-pinstripe-man.jpg"
@@ -298,7 +346,6 @@ function HomePage() {
             </p>
           </div>
 
-          {/* Masonry-style grid */}
           <div className="columns-2 md:columns-3 lg:columns-4 gap-3 lg:gap-4 space-y-3 lg:space-y-4">
             {portfolioPreviewImages.map((item, idx) => (
               <div
@@ -325,6 +372,52 @@ function HomePage() {
               See More of Our Collection
               <ArrowRight size={14} />
             </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* ===== OUR COMMITMENT SECTION ===== */}
+      <section className="py-16 lg:py-28 bg-[#f7f5f2]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+            <div className="aspect-[4/5] overflow-hidden">
+              <img
+                src="/images/gallery-15.jpg"
+                alt="Master tailor at work"
+                className="w-full h-full object-cover"
+              />
+            </div>
+
+            <div className="flex flex-col justify-center">
+              <p className="text-sm tracking-wide text-[#c8502a] mb-3 font-medium">
+                Dedicated to Excellence in Every Thread
+              </p>
+              <h2
+                className="text-3xl lg:text-5xl font-bold text-black leading-tight mb-6"
+                style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
+              >
+                Our Commitment{' '}
+                <span className="block">to Your Style</span>
+              </h2>
+              <p className="text-base text-gray-600 leading-relaxed mb-8">
+                We believe a well-crafted suit does more than dress a man &mdash; it transforms how he carries himself.
+                Every piece we create is an investment in your confidence, your presence, and your story.
+              </p>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                {commitmentPoints.map((point) => (
+                  <div key={point.title} className="flex gap-3">
+                    <div className="w-10 h-10 bg-white border border-gray-200 flex items-center justify-center shrink-0">
+                      <point.icon size={18} className="text-[#c8502a]" strokeWidth={1.5} />
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-bold text-black mb-1">{point.title}</h4>
+                      <p className="text-xs text-gray-500 leading-relaxed">{point.description}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -369,33 +462,123 @@ function HomePage() {
         </div>
       </section>
 
-      {/* ===== TESTIMONIAL / QUOTE BANNER ===== */}
-      <section className="relative overflow-hidden py-20 lg:py-28">
-        <div className="absolute inset-0">
-          <img
-            src="/images/banner-quote.webp"
-            alt="Fashion editorial"
-            className="w-full h-full object-cover"
-          />
-          <div className="absolute inset-0 bg-black/65" />
-        </div>
-        <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="flex items-center justify-center gap-1 mb-6">
-            {[...Array(5)].map((_, i) => (
-              <svg key={i} xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="#c9a96e" stroke="none">
-                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-              </svg>
-            ))}
+      {/* ===== OUR PHILOSOPHY - 2-image carousel ===== */}
+      <section className="py-16 lg:py-24 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+            <div>
+              <p className="text-xs tracking-[0.3em] uppercase text-gray-400 mb-4 font-medium">
+                Our Philosophy
+              </p>
+              <h2
+                className="text-3xl lg:text-4xl font-bold text-black mb-6"
+                style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
+              >
+                Dress with Intention
+              </h2>
+              <div className="space-y-4 text-gray-500 leading-relaxed">
+                <p>
+                  We believe that every garment in your wardrobe should earn its place.
+                  No filler, no trends for trend&apos;s sake &mdash; just thoughtful, well-made
+                  pieces that serve your life and communicate your values.
+                </p>
+                <p>
+                  Our approach blends the time-honored art of bespoke tailoring with
+                  contemporary style strategy. We draw on decades of sartorial tradition
+                  while keeping a sharp eye on the modern professional landscape.
+                </p>
+                <p>
+                  The result is a wardrobe that doesn&apos;t just look good &mdash; it works.
+                  It moves with you through meetings and milestones, first impressions
+                  and lasting legacies.
+                </p>
+              </div>
+            </div>
+
+            {/* 2-image carousel */}
+            <div className="overflow-hidden" ref={philosophyRef}>
+              <div
+                className="flex gap-3 transition-transform duration-700 ease-in-out"
+                style={{ transform: `translateX(-${philosophyOffset * (50 + 0.75)}%)` }}
+              >
+                {philosophyImages.map((src, idx) => (
+                  <div key={idx} className="min-w-[calc(50%-6px)] aspect-[3/4] overflow-hidden flex-shrink-0">
+                    <img
+                      src={src}
+                      alt={`Philosophy gallery ${idx + 1}`}
+                      className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+                    />
+                  </div>
+                ))}
+              </div>
+              {/* Carousel indicators */}
+              <div className="flex justify-center gap-1.5 mt-4">
+                {Array.from({ length: Math.max(1, philosophyImages.length - 1) }).map((_, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => setPhilosophyOffset(idx)}
+                    className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${idx === philosophyOffset ? 'bg-black w-5' : 'bg-gray-300'}`}
+                    aria-label={`Go to slide ${idx + 1}`}
+                  />
+                ))}
+              </div>
+            </div>
           </div>
-          <blockquote
-            className="text-xl sm:text-2xl lg:text-3xl font-medium text-white leading-relaxed mb-10 italic"
-            style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
-          >
-            &ldquo;A suit should be a reflection of the man wearing it &mdash; his character, his confidence, his story.&rdquo;
-          </blockquote>
-          <p className="text-sm text-white/60 tracking-widest uppercase font-medium">
-            &mdash; Bremer Suits &amp; Style
-          </p>
+        </div>
+      </section>
+
+      {/* ===== MODERN CTA BANNER ===== */}
+      <section className="relative overflow-hidden">
+        <div className="grid grid-cols-1 lg:grid-cols-2 min-h-[500px]">
+          {/* Left: Image */}
+          <div className="relative h-[300px] lg:h-auto">
+            <img
+              src="/images/gallery-18.jpg"
+              alt="Bremer Suits craftsmanship"
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent to-black/30 lg:bg-gradient-to-r lg:from-transparent lg:to-black/50" />
+          </div>
+
+          {/* Right: Content */}
+          <div className="bg-black flex items-center justify-center p-10 lg:p-16">
+            <div className="max-w-md">
+              <div className="flex items-center gap-1 mb-6">
+                {[...Array(5)].map((_, i) => (
+                  <svg key={i} xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="#c9a96e" stroke="none">
+                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                  </svg>
+                ))}
+              </div>
+              <h2
+                className="text-3xl lg:text-4xl font-bold text-white leading-tight mb-6"
+                style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
+              >
+                Your Next Chapter{' '}
+                <span className="block text-[#c9a96e]">Starts Here</span>
+              </h2>
+              <p className="text-sm text-white/60 leading-relaxed mb-8">
+                Whether it&apos;s your wedding day, a career milestone, or simply the
+                decision to invest in yourself &mdash; we&apos;re here to craft the suit
+                that marks the moment.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-3">
+                <Link
+                  to="/contact"
+                  className="inline-flex items-center justify-center gap-2 px-8 py-3.5 text-xs tracking-[0.2em] uppercase bg-white text-black hover:bg-gray-100 transition-colors duration-300 font-semibold"
+                >
+                  Book a Consultation
+                  <ArrowRight size={14} />
+                </Link>
+                <Link
+                  to="/portfolio"
+                  className="inline-flex items-center justify-center gap-2 px-8 py-3.5 text-xs tracking-[0.2em] uppercase border border-white/30 text-white hover:bg-white/10 transition-colors duration-300 font-semibold"
+                >
+                  View Our Work
+                </Link>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
     </div>
