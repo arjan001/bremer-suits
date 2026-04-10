@@ -1,28 +1,117 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { useState } from 'react'
-import { ArrowRight, Sparkles } from 'lucide-react'
+import { useState, useEffect, useMemo } from 'react'
+import { ArrowRight, Sparkles, X, ChevronLeft, ChevronRight } from 'lucide-react'
+
+const ITEMS_PER_PAGE = 12
 
 export const Route = createFileRoute('/portfolio')({
   component: PortfolioPage,
 })
 
-const portfolioImages = [
-  '/images/portfolio/portfolio-1.webp',
-  '/images/portfolio/portfolio-2.webp',
-  '/images/portfolio/portfolio-3.webp',
-  '/images/portfolio/portfolio-4.webp',
-  '/images/portfolio/portfolio-5.webp',
-  '/images/portfolio/portfolio-6.webp',
-  '/images/portfolio/portfolio-7.webp',
-  '/images/portfolio/portfolio-8.webp',
-  '/images/portfolio/portfolio-9.webp',
-  '/images/portfolio/portfolio-10.webp',
-  '/images/portfolio/portfolio-11.webp',
-  '/images/portfolio/portfolio-12.webp',
+const categories = [
+  { id: 'all', label: 'All' },
+  { id: 'wedding', label: 'Wedding & Events' },
+  { id: 'bespoke', label: 'Bespoke Suits' },
+  { id: 'made-to-measure', label: 'Made-to-Measure' },
 ]
+
+interface PortfolioItem {
+  src: string
+  category: string
+  title?: string
+}
+
+const staticPortfolioItems: PortfolioItem[] = [
+  { src: '/images/portfolio/wedding-pink-green-stairs.jpg', category: 'wedding' },
+  { src: '/images/portfolio/wedding-brown-beige-group.jpg', category: 'wedding' },
+  { src: '/images/portfolio/wedding-white-suit-bride.jpg', category: 'wedding' },
+  { src: '/images/portfolio/wedding-teal-groomsmen.jpg', category: 'wedding' },
+  { src: '/images/portfolio/wedding-camo-black-group.jpg', category: 'wedding' },
+  { src: '/images/portfolio/wedding-beige-reception.jpg', category: 'wedding' },
+  { src: '/images/portfolio/wedding-black-suits-outdoor.jpg', category: 'wedding' },
+  { src: '/images/portfolio/wedding-green-white-groom.jpg', category: 'wedding' },
+  { src: '/images/portfolio/wedding-red-suits-group.jpg', category: 'wedding' },
+  { src: '/images/portfolio/wedding-pink-blazers-wall.jpg', category: 'wedding' },
+  { src: '/images/portfolio/wedding-party-green-dresses.jpg', category: 'wedding' },
+  { src: '/images/portfolio/wedding-cream-bridal-lineup.jpg', category: 'wedding' },
+  { src: '/images/portfolio/wedding-beach-beige.jpg', category: 'wedding' },
+  { src: '/images/portfolio/wedding-grey-suits.jpg', category: 'wedding' },
+  { src: '/images/portfolio/bespoke-navy-pinstripe-man.jpg', category: 'bespoke' },
+  { src: '/images/portfolio/bespoke-grey-tweed.jpg', category: 'bespoke' },
+  { src: '/images/portfolio/bespoke-white-black-blazer.jpg', category: 'bespoke' },
+  { src: '/images/portfolio/bespoke-burgundy-mannequin.jpg', category: 'bespoke' },
+  { src: '/images/portfolio/bespoke-maroon-mannequin.jpg', category: 'bespoke' },
+  { src: '/images/portfolio/bespoke-brown-pinstripe.jpg', category: 'bespoke' },
+  { src: '/images/portfolio/bespoke-cream-double-breasted.jpg', category: 'made-to-measure' },
+  { src: '/images/portfolio/bespoke-orange-mannequin.jpg', category: 'made-to-measure' },
+  { src: '/images/portfolio/bespoke-brown-duo-mannequin.jpg', category: 'made-to-measure' },
+  { src: '/images/portfolio/bespoke-green-pinstripe.jpg', category: 'made-to-measure' },
+  { src: '/images/portfolio/wedding-beige-groomsmen.jpg', category: 'wedding' },
+  { src: '/images/portfolio/wedding-black-suits.jpg', category: 'wedding' },
+  { src: '/images/portfolio/wedding-pink-blazers.jpg', category: 'wedding' },
+  { src: '/images/portfolio/bespoke-pinstripe.jpg', category: 'bespoke' },
+  { src: '/images/portfolio/bespoke-cream-double.jpg', category: 'made-to-measure' },
+  { src: '/images/portfolio/bespoke-orange-suit.jpg', category: 'made-to-measure' },
+  { src: '/images/portfolio/bespoke-brown-duo.jpg', category: 'bespoke' },
+]
+
+function mapCategoryFromTag(tag: string, title: string): string {
+  const t = (tag || '').toLowerCase()
+  const tl = (title || '').toLowerCase()
+  if (tl.includes('wedding') || t === 'wedding') return 'wedding'
+  if (tl.includes('made-to-measure') || t === 'made-to-measure') return 'made-to-measure'
+  return 'bespoke'
+}
 
 function PortfolioPage() {
   const [selectedImage, setSelectedImage] = useState<string | null>(null)
+  const [activeCategory, setActiveCategory] = useState('all')
+  const [currentPage, setCurrentPage] = useState(1)
+  const [portfolioItems, setPortfolioItems] = useState<PortfolioItem[]>(staticPortfolioItems)
+
+  useEffect(() => {
+    fetch('/.netlify/functions/admin-portfolio?status=active')
+      .then((res) => res.json())
+      .then((data) => {
+        if (Array.isArray(data) && data.length > 0) {
+          const items: PortfolioItem[] = data
+            .filter((item: Record<string, unknown>) => item.image)
+            .map((item: Record<string, unknown>) => ({
+              src: item.image as string,
+              category: mapCategoryFromTag(item.tag as string, item.title as string),
+              title: item.title as string,
+            }))
+          if (items.length > 0) {
+            setPortfolioItems(items)
+          }
+        }
+      })
+      .catch(() => {
+        // Keep static fallback
+      })
+  }, [])
+
+  const filteredItems = useMemo(() => {
+    return activeCategory === 'all'
+      ? portfolioItems
+      : portfolioItems.filter((item) => item.category === activeCategory)
+  }, [activeCategory, portfolioItems])
+
+  const totalPages = Math.ceil(filteredItems.length / ITEMS_PER_PAGE)
+  const paginatedItems = filteredItems.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  )
+
+  // Reset to page 1 when category changes
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [activeCategory])
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page)
+    window.scrollTo({ top: 400, behavior: 'smooth' })
+  }
 
   return (
     <div className="min-h-screen bg-white">
@@ -30,7 +119,7 @@ function PortfolioPage() {
       <section className="relative bg-black text-white overflow-hidden">
         <div className="absolute inset-0">
           <img
-            src="/images/portfolio/portfolio-7.webp"
+            src="/images/portfolio/wedding-camo-black-group.jpg"
             alt="Portfolio hero"
             className="w-full h-full object-cover opacity-30"
           />
@@ -53,7 +142,7 @@ function PortfolioPage() {
         </div>
       </section>
 
-      {/* Portfolio Grid - Clean images, no text descriptions */}
+      {/* Portfolio Grid with Category Filters */}
       <section className="py-16 lg:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
@@ -61,29 +150,95 @@ function PortfolioPage() {
               Our Work
             </p>
             <h2
-              className="text-3xl lg:text-4xl font-semibold text-black"
+              className="text-3xl lg:text-4xl font-semibold text-black mb-8"
               style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
             >
               Gallery
             </h2>
+
+            {/* Category Filter Tabs */}
+            <div className="flex flex-wrap items-center justify-center gap-3 mb-10">
+              {categories.map((cat) => (
+                <button
+                  key={cat.id}
+                  onClick={() => setActiveCategory(cat.id)}
+                  className={`px-5 py-2 text-xs tracking-[0.15em] uppercase font-semibold border transition-all duration-300 ${
+                    activeCategory === cat.id
+                      ? 'bg-black text-white border-black'
+                      : 'bg-white text-gray-600 border-gray-300 hover:border-black hover:text-black'
+                  }`}
+                >
+                  {cat.label}
+                </button>
+              ))}
+            </div>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 lg:gap-4">
-            {portfolioImages.map((src, idx) => (
-              <button
-                key={idx}
-                onClick={() => setSelectedImage(src)}
-                className="group relative overflow-hidden bg-gray-100 aspect-[3/4] block cursor-pointer"
+          {/* Masonry Grid */}
+          <div className="columns-2 md:columns-3 lg:columns-4 gap-3 lg:gap-4 space-y-3 lg:space-y-4">
+            {paginatedItems.map((item, idx) => (
+              <div
+                key={`${item.src}-${idx}`}
+                className="break-inside-avoid overflow-hidden group cursor-pointer"
+                onClick={() => setSelectedImage(item.src)}
               >
-                <img
-                  src={src}
-                  alt={`Portfolio piece ${idx + 1}`}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                />
-                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/15 transition-colors duration-300" />
-              </button>
+                <div className="relative overflow-hidden bg-gray-100">
+                  <img
+                    src={item.src}
+                    alt={item.title || `Portfolio piece ${idx + 1}`}
+                    className="w-full h-auto object-cover group-hover:scale-105 transition-transform duration-700"
+                  />
+                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/15 transition-colors duration-300" />
+                </div>
+              </div>
             ))}
           </div>
+
+          {/* Pagination Controls */}
+          {totalPages > 1 && (
+            <div className="flex items-center justify-center gap-2 mt-14">
+              <button
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 1}
+                className="w-10 h-10 flex items-center justify-center border border-gray-300 text-gray-600 hover:border-black hover:text-black transition-colors duration-300 disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:border-gray-300 disabled:hover:text-gray-600"
+                aria-label="Previous page"
+              >
+                <ChevronLeft size={16} />
+              </button>
+
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                <button
+                  key={page}
+                  onClick={() => handlePageChange(page)}
+                  className={`w-10 h-10 flex items-center justify-center text-xs font-semibold tracking-wider border transition-all duration-300 ${
+                    page === currentPage
+                      ? 'bg-black text-white border-black'
+                      : 'bg-white text-gray-600 border-gray-300 hover:border-black hover:text-black'
+                  }`}
+                  aria-label={`Page ${page}`}
+                  aria-current={page === currentPage ? 'page' : undefined}
+                >
+                  {page}
+                </button>
+              ))}
+
+              <button
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPage === totalPages}
+                className="w-10 h-10 flex items-center justify-center border border-gray-300 text-gray-600 hover:border-black hover:text-black transition-colors duration-300 disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:border-gray-300 disabled:hover:text-gray-600"
+                aria-label="Next page"
+              >
+                <ChevronRight size={16} />
+              </button>
+            </div>
+          )}
+
+          {/* Item count */}
+          {totalPages > 1 && (
+            <p className="text-center text-xs text-gray-400 mt-4 tracking-wide">
+              Showing {(currentPage - 1) * ITEMS_PER_PAGE + 1}–{Math.min(currentPage * ITEMS_PER_PAGE, filteredItems.length)} of {filteredItems.length} items
+            </p>
+          )}
         </div>
       </section>
 
@@ -91,7 +246,7 @@ function PortfolioPage() {
       <section className="relative overflow-hidden py-24 lg:py-32">
         <div className="absolute inset-0 bg-black" />
         <div className="absolute inset-0">
-          <img src="/images/portfolio/portfolio-5.webp" alt="" className="w-full h-full object-cover opacity-20" />
+          <img src="/images/portfolio/bespoke-burgundy-mannequin.jpg" alt="" className="w-full h-full object-cover opacity-20" />
         </div>
         <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <p className="text-xs tracking-[0.4em] uppercase text-[#c9a96e] mb-4 font-semibold">
@@ -133,9 +288,9 @@ function PortfolioPage() {
             />
             <button
               onClick={() => setSelectedImage(null)}
-              className="absolute -top-3 -right-3 w-10 h-10 bg-white text-black rounded-full flex items-center justify-center text-lg font-bold hover:bg-gray-200 transition-colors shadow-lg"
+              className="absolute -top-3 -right-3 w-10 h-10 bg-white text-black rounded-full flex items-center justify-center hover:bg-gray-200 transition-colors shadow-lg"
             >
-              &times;
+              <X size={18} />
             </button>
           </div>
         </div>

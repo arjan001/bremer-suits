@@ -27,6 +27,9 @@ export default async function handler(req: Request, _context: Context) {
       const featured = url.searchParams.get('featured')
       if (featured === 'true') query = query.eq('is_featured', true)
 
+      const pageLocation = url.searchParams.get('page_location')
+      if (pageLocation) query = query.or(`page_location.eq.${pageLocation},page_location.eq.all`)
+
       query = query.order('sort_order', { ascending: true }).order('created_at', { ascending: false })
 
       const { data, error } = await query
