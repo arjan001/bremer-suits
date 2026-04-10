@@ -313,7 +313,7 @@ function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-20 items-center">
             {/* 3D Cube Rotation */}
-            <div className="aspect-[4/5] overflow-visible bg-gray-100" ref={cubeContainerRef}>
+            <div className="aspect-[4/5] overflow-hidden bg-gray-100" ref={cubeContainerRef}>
               <div
                 className="relative w-full h-full"
                 style={{ perspective: '1200px' }}
@@ -322,7 +322,7 @@ function HomePage() {
                   className="relative w-full h-full transition-transform duration-[1200ms] ease-[cubic-bezier(0.4,0,0.2,1)]"
                   style={{
                     transformStyle: 'preserve-3d',
-                    transform: `rotateY(${cubeFace * -90}deg)`,
+                    transform: `translateZ(${-cubeDepth}px) rotateY(${cubeFace * -90}deg)`,
                   }}
                 >
                   {/* Front face (0deg) */}
