@@ -49,6 +49,14 @@ export const Route = createRootRoute({
         content: 'Bremer Suits',
       },
       {
+        property: 'og:url',
+        content: 'https://bremersuits.com',
+      },
+      {
+        property: 'og:locale',
+        content: 'en_KE',
+      },
+      {
         name: 'twitter:card',
         content: 'summary_large_image',
       },
@@ -145,18 +153,19 @@ export const Route = createRootRoute({
           description: 'Premier bespoke tailoring and custom-made suits in Nairobi. Specializing in wedding suits, corporate attire, Ruracio styling, and expert alterations.',
           url: 'https://bremersuits.com',
           image: 'https://bremersuits.com/images/og-logo-gold-black.jpg',
-          telephone: '+254700000000',
+          telephone: '+254793880642',
+          email: 'brendahwanja6722@gmail.com',
           address: {
             '@type': 'PostalAddress',
-            streetAddress: 'Nairobi',
+            streetAddress: 'Kimathi St',
             addressLocality: 'Nairobi',
             addressRegion: 'Nairobi',
             addressCountry: 'KE',
           },
           geo: {
             '@type': 'GeoCoordinates',
-            latitude: -1.2921,
-            longitude: 36.8219,
+            latitude: -1.2864,
+            longitude: 36.8172,
           },
           priceRange: '$$$$',
           openingHoursSpecification: [
@@ -192,6 +201,22 @@ export const Route = createRootRoute({
             },
             'query-input': 'required name=search_term_string',
           },
+        }),
+      },
+      {
+        type: 'application/ld+json',
+        children: JSON.stringify({
+          '@context': 'https://schema.org',
+          '@type': 'SiteNavigationElement',
+          name: 'Main Navigation',
+          hasPart: [
+            { '@type': 'SiteNavigationElement', name: 'Home', url: 'https://bremersuits.com/' },
+            { '@type': 'SiteNavigationElement', name: 'About', url: 'https://bremersuits.com/about' },
+            { '@type': 'SiteNavigationElement', name: 'Services', url: 'https://bremersuits.com/services' },
+            { '@type': 'SiteNavigationElement', name: 'Portfolio', url: 'https://bremersuits.com/portfolio' },
+            { '@type': 'SiteNavigationElement', name: 'Contact', url: 'https://bremersuits.com/contact' },
+            { '@type': 'SiteNavigationElement', name: 'FAQ', url: 'https://bremersuits.com/faq' },
+          ],
         }),
       },
     ],
@@ -304,17 +329,19 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       description: 'Premier bespoke tailoring and custom-made suits in Nairobi. Specializing in wedding suits, corporate attire, Ruracio styling, and expert alterations.',
       url: 'https://bremersuits.com',
       image: 'https://bremersuits.com/images/og-logo-gold-black.jpg',
+      telephone: '+254793880642',
+      email: 'brendahwanja6722@gmail.com',
       address: {
         '@type': 'PostalAddress',
-        streetAddress: 'Nairobi',
+        streetAddress: 'Kimathi St',
         addressLocality: 'Nairobi',
         addressRegion: 'Nairobi',
         addressCountry: 'KE',
       },
       geo: {
         '@type': 'GeoCoordinates',
-        latitude: -1.2921,
-        longitude: 36.8219,
+        latitude: -1.2864,
+        longitude: 36.8172,
       },
       priceRange: '$$$$',
       openingHoursSpecification: [
@@ -343,10 +370,23 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         '@type': 'SearchAction',
         target: {
           '@type': 'EntryPoint',
-          urlTemplate: 'https://bremersuits.com/collections?q={search_term_string}',
+          urlTemplate: 'https://bremersuits.com/portfolio?q={search_term_string}',
         },
         'query-input': 'required name=search_term_string',
       },
+    },
+    {
+      '@context': 'https://schema.org',
+      '@type': 'SiteNavigationElement',
+      name: 'Main Navigation',
+      hasPart: [
+        { '@type': 'SiteNavigationElement', name: 'Home', url: 'https://bremersuits.com/' },
+        { '@type': 'SiteNavigationElement', name: 'About', url: 'https://bremersuits.com/about' },
+        { '@type': 'SiteNavigationElement', name: 'Services', url: 'https://bremersuits.com/services' },
+        { '@type': 'SiteNavigationElement', name: 'Portfolio', url: 'https://bremersuits.com/portfolio' },
+        { '@type': 'SiteNavigationElement', name: 'Contact', url: 'https://bremersuits.com/contact' },
+        { '@type': 'SiteNavigationElement', name: 'FAQ', url: 'https://bremersuits.com/faq' },
+      ],
     },
   ]
 
