@@ -3,6 +3,7 @@ title: "The Art of the Perfect Fit: Why Bespoke Matters"
 date: "2026-03-10"
 summary: "Understanding the difference between off-the-rack, made-to-measure, and bespoke tailoring — and why fit is the foundation of great style."
 tags: ["Tailoring", "Bespoke", "Style Guide"]
+category: "Tailoring"
 author: "Bremer Suits"
 ---
 

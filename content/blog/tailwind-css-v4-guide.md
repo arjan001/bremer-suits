@@ -3,6 +3,7 @@ title: "The Psychology of Dressing Well: How Appearance Shapes Perception"
 date: "2026-01-15"
 summary: "Research-backed insights into how your clothing choices influence how others perceive you — and how you perceive yourself."
 tags: ["Image Consulting", "Psychology", "Personal Brand"]
+category: "Image Consulting"
 author: "Bremer Suits"
 ---
 
