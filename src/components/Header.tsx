@@ -1,5 +1,5 @@
 import { Link, useRouter, useNavigate } from '@tanstack/react-router'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { Menu, X, Search, Heart, ShoppingBag, Phone, Mail } from 'lucide-react'
 import { useCart } from '@/lib/cart-context'
 import { useWishlist } from '@/lib/wishlist-context'
@@ -24,6 +24,32 @@ export function Header() {
   const pathname = router.state.location.pathname
   const { totalItems, setCartOpen } = useCart()
   const { totalItems: wishlistCount } = useWishlist()
+  const mobileCloseTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  const closeMobileMenu = useCallback(() => setMobileOpen(false), [])
+
+  // Auto-close sidebar after 3 seconds of inactivity
+  useEffect(() => {
+    if (mobileOpen) {
+      mobileCloseTimer.current = setTimeout(closeMobileMenu, 3000)
+      return () => {
+        if (mobileCloseTimer.current) clearTimeout(mobileCloseTimer.current)
+      }
+    }
+  }, [mobileOpen, closeMobileMenu])
+
+  // Close sidebar on scroll
+  useEffect(() => {
+    if (!mobileOpen) return
+    const onScroll = () => closeMobileMenu()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [mobileOpen, closeMobileMenu])
+
+  // Close sidebar on route change
+  useEffect(() => {
+    closeMobileMenu()
+  }, [pathname, closeMobileMenu])
 
   useEffect(() => {
     async function loadNavbarOffers() {
@@ -194,37 +220,55 @@ export function Header() {
           </div>
         )}
 
-        {/* Mobile Nav */}
+        {/* Mobile Nav Overlay + Drawer */}
         {mobileOpen && (
-          <div className="lg:hidden bg-white border-t border-gray-100 shadow-lg">
-            <nav className="flex flex-col px-6 py-6 gap-1">
-              {navLinks.map((link) => {
-                const isActive = pathname === link.to
-                const isPortfolio = link.to === '/portfolio'
-                return (
-                  <Link
-                    key={link.to}
-                    to={link.to}
-                    onClick={() => setMobileOpen(false)}
-                    className={`relative text-sm tracking-wide uppercase font-medium transition-colors duration-200 py-3 border-b border-gray-50 ${
-                      isActive
-                        ? 'text-black'
-                        : 'text-gray-500 hover:text-black'
-                    } ${isPortfolio && !isActive ? 'nav-shimmer' : ''}`}
-                  >
-                    {link.label}
-                  </Link>
-                )
-              })}
-              <Link
-                to="/contact"
-                onClick={() => setMobileOpen(false)}
-                className="mt-4 inline-flex items-center justify-center px-5 py-3.5 text-xs tracking-widest uppercase bg-black text-white hover:bg-gray-800 transition-colors duration-300 font-medium"
-              >
-                Book a Consultation
-              </Link>
-            </nav>
-          </div>
+          <>
+            <div
+              className="fixed inset-0 z-40 bg-black/30 backdrop-blur-[2px] lg:hidden animate-in"
+              onClick={closeMobileMenu}
+            />
+            <div className="fixed top-0 left-0 z-50 h-full w-72 max-w-[80vw] bg-white shadow-2xl lg:hidden slide-in-from-left">
+              <div className="flex items-center justify-between px-6 py-5 border-b border-gray-100">
+                <span className="text-lg font-bold tracking-wider" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
+                  Menu
+                </span>
+                <button
+                  onClick={closeMobileMenu}
+                  className="p-1.5 text-gray-500 hover:text-black transition-colors"
+                  aria-label="Close menu"
+                >
+                  <X size={20} />
+                </button>
+              </div>
+              <nav className="flex flex-col px-6 py-6 gap-1">
+                {navLinks.map((link) => {
+                  const isActive = pathname === link.to
+                  const isPortfolio = link.to === '/portfolio'
+                  return (
+                    <Link
+                      key={link.to}
+                      to={link.to}
+                      onClick={closeMobileMenu}
+                      className={`relative text-sm tracking-wide uppercase font-medium transition-colors duration-200 py-3 border-b border-gray-50 ${
+                        isActive
+                          ? 'text-black'
+                          : 'text-gray-500 hover:text-black'
+                      } ${isPortfolio && !isActive ? 'nav-shimmer' : ''}`}
+                    >
+                      {link.label}
+                    </Link>
+                  )
+                })}
+                <Link
+                  to="/contact"
+                  onClick={closeMobileMenu}
+                  className="mt-4 inline-flex items-center justify-center px-5 py-3.5 text-xs tracking-widest uppercase bg-black text-white hover:bg-gray-800 transition-colors duration-300 font-medium"
+                >
+                  Book a Consultation
+                </Link>
+              </nav>
+            </div>
+          </>
         )}
       </header>
     </>
