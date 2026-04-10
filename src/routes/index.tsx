@@ -154,68 +154,68 @@ const serviceCards = [
 
 const bestPickProducts = [
   {
-    src: '/images/portfolio/bespoke-burgundy-mannequin.jpg',
-    name: 'The Burgundy Classic',
-    priceKES: 25000,
-    priceUSD: 195,
-    colors: ['#722F37', '#1a1a2e', '#2c2c2c'],
-    colorNames: ['Burgundy', 'Navy', 'Charcoal'],
-  },
-  {
-    src: '/images/portfolio/bespoke-navy-gold-buttons.jpg',
-    name: 'Navy Gold-Button Blazer',
-    priceKES: 22000,
-    priceUSD: 170,
+    src: '/images/portfolio/bespoke-navy-pinstripe-3piece.jpg',
+    name: 'Navy Pinstripe 3-Piece',
+    priceKES: 15000,
+    priceUSD: 115,
     colors: ['#1a1a4e', '#2c2c2c', '#3b2f2f'],
-    colorNames: ['Navy', 'Black', 'Dark Brown'],
+    colorNames: ['Navy', 'Charcoal', 'Dark Brown'],
   },
   {
-    src: '/images/portfolio/bespoke-cream-double-breasted.jpg',
+    src: '/images/portfolio/bespoke-burnt-orange-double-breasted.jpg',
+    name: 'Burnt Orange Double-Breasted',
+    priceKES: 17000,
+    priceUSD: 131,
+    colors: ['#cc5500', '#722F37', '#2c2c2c'],
+    colorNames: ['Burnt Orange', 'Burgundy', 'Charcoal'],
+  },
+  {
+    src: '/images/portfolio/bespoke-cream-brown-mannequin-double.jpg',
     name: 'Ivory Double-Breasted Set',
-    priceKES: 30000,
-    priceUSD: 230,
+    priceKES: 19000,
+    priceUSD: 146,
     colors: ['#f5f0e1', '#d4c5a9', '#1a1a2e'],
     colorNames: ['Ivory', 'Champagne', 'Navy'],
   },
   {
-    src: '/images/portfolio/bespoke-camel-double-breasted-bowtie.jpg',
+    src: '/images/portfolio/bespoke-tan-double-breasted-studio.jpg',
     name: 'Camel Tuxedo with Bowtie',
-    priceKES: 35000,
-    priceUSD: 270,
+    priceKES: 21000,
+    priceUSD: 162,
     colors: ['#c19a6b', '#f5f0e1', '#2c2c2c'],
     colorNames: ['Camel', 'Ivory', 'Charcoal'],
   },
   {
-    src: '/images/portfolio/bespoke-houndstooth-vest.jpg',
+    src: '/images/portfolio/bespoke-houndstooth-brown-vest-3piece.jpg',
     name: 'Houndstooth 3-Piece Vest Set',
-    priceKES: 28000,
-    priceUSD: 215,
+    priceKES: 23000,
+    priceUSD: 177,
     colors: ['#8B8589', '#3b2f2f', '#1a1a2e'],
     colorNames: ['Houndstooth Grey', 'Brown', 'Navy'],
   },
   {
-    src: '/images/portfolio/senator-navy-gold-embroidered-cane.jpg',
-    name: 'Senator Navy Gold Embroidered',
-    priceKES: 20000,
-    priceUSD: 155,
-    colors: ['#1a1a4e', '#2c2c2c', '#f5f0e1'],
-    colorNames: ['Navy', 'Black', 'White'],
+    src: '/images/portfolio/senator-burgundy-embroidered-cap.jpg',
+    name: 'Senator Burgundy Embroidered',
+    priceKES: 25000,
+    priceUSD: 192,
+    colors: ['#722F37', '#2c2c2c', '#f5f0e1'],
+    colorNames: ['Burgundy', 'Black', 'White'],
   },
   {
-    src: '/images/portfolio/kaunda-brown-pinstripe-gold-buttons.jpg',
-    name: 'Kaunda Brown Pinstripe Safari',
-    priceKES: 18000,
-    priceUSD: 140,
-    colors: ['#6b4423', '#3b3b3b', '#556b2f'],
-    colorNames: ['Brown', 'Charcoal', 'Olive'],
+    src: '/images/portfolio/kaunda-teal-blue-safari.jpg',
+    name: 'Kaunda Teal Blue Safari',
+    priceKES: 27000,
+    priceUSD: 208,
+    colors: ['#008080', '#3b3b3b', '#1a1a2e'],
+    colorNames: ['Teal', 'Charcoal', 'Navy'],
   },
   {
-    src: '/images/portfolio/bespoke-gold-striped-double.jpg',
-    name: 'Gold Striped Double-Breasted',
-    priceKES: 32000,
-    priceUSD: 245,
-    colors: ['#c9a96e', '#722F37', '#1a1a4e'],
-    colorNames: ['Gold', 'Burgundy', 'Navy'],
+    src: '/images/portfolio/bespoke-white-textured-3piece.jpg',
+    name: 'White Textured 3-Piece',
+    priceKES: 30000,
+    priceUSD: 231,
+    colors: ['#f5f5f5', '#c9a96e', '#1a1a4e'],
+    colorNames: ['White', 'Gold', 'Navy'],
   },
 ]
 
@@ -585,12 +585,12 @@ function HomePage() {
                       ))}
                     </div>
 
-                    {/* Buy Now → Contact */}
+                    {/* Order Yours → Contact */}
                     <Link
                       to="/contact"
                       className="block w-full text-center py-2 text-[10px] lg:text-xs tracking-[0.15em] uppercase bg-black text-white hover:bg-[#c8502a] transition-colors duration-300 font-semibold"
                     >
-                      Buy Now
+                      Order Yours
                     </Link>
                   </div>
                 </div>

@@ -103,7 +103,7 @@ const faqCategories: FAQCategory[] = [
       {
         question: 'What is the price range for a bespoke suit?',
         answer:
-          'Our bespoke suits start from KES 25,000 and vary depending on the fabric, design complexity, lining, and finishing details. Premium imported fabrics and intricate construction details will be at the higher end. We offer transparent pricing during your consultation and provide options for various budgets without compromising on quality or craftsmanship.',
+          'Our bespoke suits range from KES 15,000 to KES 30,000 depending on the fabric, design complexity, lining, and finishing details. Premium imported fabrics and intricate construction details will be at the higher end. We offer transparent pricing during your consultation and provide options for various budgets without compromising on quality or craftsmanship.',
       },
       {
         question: 'Do you offer payment plans?',
