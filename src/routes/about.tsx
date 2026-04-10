@@ -219,28 +219,27 @@ function About() {
               </h2>
               <div className="border-t-2 border-dashed border-amber-700/40 w-48 mb-10" />
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+              <div className="grid grid-cols-2 gap-x-5 gap-y-8 sm:gap-8">
                 {whyChooseUs.map((item) => (
                   <div key={item.title}>
-                    <div className="w-16 h-16 mb-4 flex items-center justify-center">
+                    <div className="w-12 h-12 sm:w-16 sm:h-16 mb-3 sm:mb-4 flex items-center justify-center">
                       {item.icon ? (
                         <img
                           src={item.icon}
                           alt={item.title}
-                          className="w-14 h-14 object-contain"
+                          className="w-10 h-10 sm:w-14 sm:h-14 object-contain"
                         />
                       ) : item.iconComponent ? (
                         <item.iconComponent
-                          size={40}
-                          className="text-black"
+                          className="text-black w-8 h-8 sm:w-10 sm:h-10"
                           strokeWidth={1.2}
                         />
                       ) : null}
                     </div>
-                    <h3 className="text-base font-bold text-black mb-2">
+                    <h3 className="text-sm sm:text-base font-bold text-black mb-1 sm:mb-2">
                       {item.title}
                     </h3>
-                    <p className="text-sm text-gray-500 leading-relaxed">
+                    <p className="text-xs sm:text-sm text-gray-500 leading-relaxed">
                       {item.description}
                     </p>
                   </div>
