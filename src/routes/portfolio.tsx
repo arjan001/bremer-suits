@@ -220,6 +220,29 @@ const staticPortfolioItems: PortfolioItem[] = [
   { src: '/images/portfolio/couples-maternity-portrait.jpg', category: 'couples', title: 'Maternity Couple Portrait Styling by Bremer Suits Nairobi' },
   { src: '/images/portfolio/couples-cream-suit-red-gown.jpg', category: 'couples', title: 'Cream Suit and Red Gown Romantic Setting by Bremer Suits Nairobi' },
   { src: '/images/portfolio/couples-red-matching-set.jpg', category: 'couples', title: 'Red Matching Couples Outfit by Bremer Suits Nairobi' },
+  // Senator suits
+  { src: '/images/portfolio/senator-green-embroidered-hat.jpg', category: 'senator-suit', title: 'Green Senator Suit with Embroidered Band and Fedora Hat by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/senator-navy-embroidered-cap.jpg', category: 'senator-suit', title: 'Navy Blue Senator Suit with Embroidered Band and Kufi Cap by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/senator-burgundy-embroidered-cap.jpg', category: 'senator-suit', title: 'Burgundy Senator Suit with Embroidered Band and Kufi Cap by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/senator-black-white-stripe-design.jpg', category: 'senator-suit', title: 'Black Senator Suit with White Stripe Graphic Design by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/senator-white-black-chevron.jpg', category: 'senator-suit', title: 'White Senator Suit with Black Chevron V-Design by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/senator-black-white-vertical.jpg', category: 'senator-suit', title: 'Black Senator Suit with White Vertical Stripe Detail by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/senator-navy-gold-embroidered-cane.jpg', category: 'senator-suit', title: 'Navy Senator Suit with Gold Embroidered Sash and Walking Cane by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/senator-black-gold-embroidery-formal.jpg', category: 'senator-suit', title: 'Black Senator Suit with Gold Embroidery Formal Red Carpet Style by Bremer Suits Nairobi' },
+  // Kaunda suits
+  { src: '/images/portfolio/kaunda-grey-black-pocket-cap.jpg', category: 'kaunda-suit', title: 'Grey Kaunda Suit with Black Pocket Detail and African Cap by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/kaunda-brown-black-pocket-cap.jpg', category: 'kaunda-suit', title: 'Brown Kaunda Suit with Black Pocket Detail and African Cap by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/kaunda-khaki-shortsleeve-safari.jpg', category: 'kaunda-suit', title: 'Khaki Short-Sleeve Kaunda Safari Suit with Pocket Accents by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/kaunda-khaki-longsleeve-safari.jpg', category: 'kaunda-suit', title: 'Khaki Long-Sleeve Kaunda Safari Suit Clean Minimal Style by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/kaunda-brown-pinstripe-gold-buttons.jpg', category: 'kaunda-suit', title: 'Brown Pinstripe Kaunda Suit with Gold Buttons and Embroidered Pockets by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/kaunda-teal-burgundy-twotone.jpg', category: 'kaunda-suit', title: 'Teal and Burgundy Two-Tone Kaunda Suit with Mandarin Collar by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/kaunda-burgundy-shortsleeve-hat.jpg', category: 'kaunda-suit', title: 'Burgundy Short-Sleeve Kaunda Suit with Hat by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/kaunda-teal-blue-safari.jpg', category: 'kaunda-suit', title: 'Teal Blue Kaunda Safari Suit with Pocket Detail by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/kaunda-plum-safari-store.jpg', category: 'kaunda-suit', title: 'Plum Kaunda Safari Suit In-Store Display by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/kaunda-mint-green-mandarin.jpg', category: 'kaunda-suit', title: 'Mint Green Kaunda Suit with Mandarin Collar and Pocket Square by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/kaunda-brown-mandarin-pocketsquare.jpg', category: 'kaunda-suit', title: 'Brown Kaunda Suit with Mandarin Collar and Pocket Square by Bremer Suits Nairobi' },
+  // Couples
+  { src: '/images/portfolio/couples-burgundy-navy-double-breasted.jpg', category: 'couples', title: 'Burgundy and Navy Double-Breasted Couple Suits by Bremer Suits Nairobi' },
 ]
 
 function mapCategoryFromTag(tag: string, title: string): string {
