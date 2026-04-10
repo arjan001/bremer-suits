@@ -1,0 +1,13 @@
+# Allow all pages to be indexed by default
+/*
+  X-Robots-Tag: index, follow
+
+# Disallow admin pages from indexing
+/admin/*
+  X-Robots-Tag: noindex, nofollow
+
+# Disallow checkout and wishlist
+/checkout
+  X-Robots-Tag: noindex, nofollow
+/wishlist
+  X-Robots-Tag: noindex, nofollow

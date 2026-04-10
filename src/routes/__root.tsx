@@ -84,10 +84,6 @@ export const Route = createRootRoute({
         content: 'https://bremersuits.com/images/og-logo-gold-black.jpg',
       },
       {
-        property: 'og:url',
-        content: 'https://bremersuits.com',
-      },
-      {
         name: 'theme-color',
         content: '#000000',
       },
@@ -123,9 +119,83 @@ export const Route = createRootRoute({
         rel: 'manifest',
         href: '/manifest.json',
       },
+    ],
+    scripts: [
       {
-        rel: 'canonical',
-        href: 'https://bremersuits.com',
+        type: 'application/ld+json',
+        children: JSON.stringify({
+          '@context': 'https://schema.org',
+          '@type': 'Organization',
+          name: 'Bremer Suits',
+          alternateName: ['BREMER SUITS', 'BremerSuits', 'Bremer', 'bremer suits'],
+          url: 'https://bremersuits.com',
+          logo: 'https://bremersuits.com/images/og-logo-gold-black.jpg',
+          description: "Nairobi's leading specialists in high-end, custom-made suits for weddings, corporate leadership, and special occasions.",
+          sameAs: [
+            'https://www.facebook.com/BREMERSUITS/',
+            'https://www.instagram.com/bremer_suits/',
+            'https://www.tiktok.com/@bremersuits',
+          ],
+        }),
+      },
+      {
+        type: 'application/ld+json',
+        children: JSON.stringify({
+          '@context': 'https://schema.org',
+          '@type': 'LocalBusiness',
+          '@id': 'https://bremersuits.com/#localbusiness',
+          name: 'Bremer Suits',
+          description: 'Premier bespoke tailoring and custom-made suits in Nairobi. Specializing in wedding suits, corporate attire, Ruracio styling, and expert alterations.',
+          url: 'https://bremersuits.com',
+          image: 'https://bremersuits.com/images/og-logo-gold-black.jpg',
+          telephone: '+254700000000',
+          address: {
+            '@type': 'PostalAddress',
+            streetAddress: 'Nairobi',
+            addressLocality: 'Nairobi',
+            addressRegion: 'Nairobi',
+            addressCountry: 'KE',
+          },
+          geo: {
+            '@type': 'GeoCoordinates',
+            latitude: -1.2921,
+            longitude: 36.8219,
+          },
+          priceRange: '$$$$',
+          openingHoursSpecification: [
+            {
+              '@type': 'OpeningHoursSpecification',
+              dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
+              opens: '09:00',
+              closes: '18:00',
+            },
+            {
+              '@type': 'OpeningHoursSpecification',
+              dayOfWeek: 'Saturday',
+              opens: '09:00',
+              closes: '16:00',
+            },
+          ],
+        }),
+      },
+      {
+        type: 'application/ld+json',
+        children: JSON.stringify({
+          '@context': 'https://schema.org',
+          '@type': 'WebSite',
+          name: 'Bremer Suits',
+          alternateName: ['BREMER SUITS', 'BremerSuits', 'Bremer'],
+          url: 'https://bremersuits.com',
+          description: "Experience the art of perfection with Bremer Suits. Nairobi's leading specialists in high-end, custom-made suits.",
+          potentialAction: {
+            '@type': 'SearchAction',
+            target: {
+              '@type': 'EntryPoint',
+              urlTemplate: 'https://bremersuits.com/collections?q={search_term_string}',
+            },
+            'query-input': 'required name=search_term_string',
+          },
+        }),
       },
     ],
   }),
