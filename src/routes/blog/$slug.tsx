@@ -44,18 +44,72 @@ function BlogPost() {
       if (!el) { el = document.createElement('meta'); el.setAttribute('property', property); document.head.appendChild(el) }
       el.content = content
     }
+    const setCanonical = (href: string) => {
+      let el = document.querySelector('link[rel="canonical"]') as HTMLLinkElement | null
+      if (!el) { el = document.createElement('link'); el.rel = 'canonical'; document.head.appendChild(el) }
+      el.href = href
+    }
+    // Core SEO
     if (post.summary) setMeta('description', post.summary)
-    if (post.tags) setMeta('keywords', post.tags.join(', '))
+    if (post.tags) setMeta('keywords', `Bremer Suits, ${post.tags.join(', ')}, men's fashion blog Nairobi, bespoke tailoring insights, suit styling Kenya`)
+    setMeta('robots', 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1')
+    setMeta('author', post.author || 'Bremer Suits')
+    setMeta('publisher', 'Bremer Suits')
+    setMeta('language', 'en')
+    setMeta('revisit-after', '7 days')
+    setMeta('rating', 'general')
+    setMeta('distribution', 'global')
+    setMeta('format-detection', 'telephone=no')
+    setMeta('theme-color', '#1a1a1a')
+    setMeta('apple-mobile-web-app-title', 'Bremer Suits')
+    setMeta('application-name', 'Bremer Suits')
+    setMeta('msapplication-TileColor', '#1a1a1a')
+    setMeta('mobile-web-app-capable', 'yes')
+    setMeta('apple-mobile-web-app-capable', 'yes')
+    // Open Graph
     setProperty('og:title', `${post.title} | Bremer Suits Journal`)
     if (post.summary) setProperty('og:description', post.summary)
     setProperty('og:type', 'article')
-    setProperty('og:image', 'https://bremersuits.com/images/og-logo-gold-black.jpg')
-    setProperty('og:image:alt', `${post.title} - Bremer Suits Journal`)
     setProperty('og:url', `https://bremersuits.com/blog/${slug}`)
+    setProperty('og:site_name', 'Bremer Suits')
+    setProperty('og:locale', 'en_KE')
+    setProperty('og:image', 'https://bremersuits.com/images/og-logo-gold-black.jpg')
+    setProperty('og:image:width', '1200')
+    setProperty('og:image:height', '630')
+    setProperty('og:image:alt', `${post.title} - Bremer Suits Journal`)
+    setProperty('og:image:type', 'image/jpeg')
+    setProperty('article:published_time', post.date)
+    setProperty('article:author', post.author || 'Bremer Suits')
+    setProperty('article:section', 'Fashion & Tailoring')
+    if (post.tags) post.tags.forEach(tag => setProperty('article:tag', tag))
+    // Twitter Card
     setMeta('twitter:card', 'summary_large_image')
+    setMeta('twitter:site', '@bremersuits')
+    setMeta('twitter:creator', '@bremersuits')
     setMeta('twitter:title', `${post.title} | Bremer Suits Journal`)
     if (post.summary) setMeta('twitter:description', post.summary)
     setMeta('twitter:image', 'https://bremersuits.com/images/og-logo-gold-black.jpg')
+    setMeta('twitter:image:alt', `${post.title} - Bremer Suits Journal`)
+    // Geo
+    setMeta('geo.region', 'KE-110')
+    setMeta('geo.placename', 'Nairobi')
+    setMeta('geo.position', '-1.2864;36.8172')
+    setMeta('ICBM', '-1.2864, 36.8172')
+    // Business
+    setProperty('business:contact_data:street_address', 'Kimathi St')
+    setProperty('business:contact_data:locality', 'Nairobi')
+    setProperty('business:contact_data:country_name', 'Kenya')
+    setProperty('business:contact_data:email', 'brendahwanja6722@gmail.com')
+    setProperty('business:contact_data:phone_number', '+254 793 880642')
+    // Additional
+    setMeta('subject', post.title)
+    setMeta('classification', 'Blog')
+    setMeta('category', 'Fashion & Tailoring')
+    setMeta('coverage', 'Kenya')
+    setMeta('HandheldFriendly', 'True')
+    setMeta('MobileOptimized', '320')
+    // Canonical
+    setCanonical(`https://bremersuits.com/blog/${slug}`)
   }, [post, slug])
 
   return (
