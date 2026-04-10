@@ -11,6 +11,10 @@ import {
   Sparkles,
   Gem,
   Watch,
+  MessageCircle,
+  Palette,
+  Hammer,
+  Star,
 } from 'lucide-react'
 
 export const Route = createFileRoute('/services')({
@@ -89,7 +93,8 @@ const mainServices = [
       'Hand-finished details and monogramming',
       'Ready-made premium suit collection',
     ],
-    image: '/images/sewing-machine.png',
+    image: '/images/about-burgundy-suit.jpg',
+    iconImage: '/images/sewing-machine-alt.png',
   },
   {
     icon: Heart,
@@ -104,7 +109,8 @@ const mainServices = [
       'Pre-wedding consultations and fittings',
       'Accessories coordination — ties, cufflinks, pocket squares',
     ],
-    image: '/images/suit-formal.webp',
+    image: '/images/gallery-3.jpg',
+    iconImage: null,
   },
   {
     icon: Crown,
@@ -119,7 +125,8 @@ const mainServices = [
       'Custom fashion design for unique pieces',
       'Outfit coordination for key events',
     ],
-    image: '/images/dressmaker.png',
+    image: '/images/crafted-model.jpg',
+    iconImage: '/images/fabric-pattern.png',
   },
   {
     icon: Eye,
@@ -134,7 +141,8 @@ const mainServices = [
       'Non-verbal communication alignment',
       'Ongoing image maintenance plan',
     ],
-    image: '/images/dressmaker-1.png',
+    image: '/images/about-bespoke-man.jpg',
+    iconImage: '/images/icon-measure.png',
   },
 ]
 
@@ -144,169 +152,257 @@ const additionalServices = [
     title: 'Male Accessories',
     description:
       'Complete your look with our curated collection of premium accessories — ties, cufflinks, pocket squares, belts, and watches sourced from the finest brands.',
+    image: '/images/gallery-30.jpg',
   },
   {
     icon: Heart,
     title: 'Ruracio Styling',
     description:
       'Look your best for traditional ceremonies. We specialize in culturally respectful yet fashion-forward styling for Ruracio and other traditional events.',
+    image: '/images/gallery-6.jpg',
   },
   {
     icon: Users,
     title: 'Corporate Programs',
     description:
       'Group styling workshops and executive image programs tailored for leadership teams and client-facing professionals.',
+    image: '/images/gallery-7.jpg',
   },
   {
     icon: Ruler,
     title: 'Alterations & Fitting',
     description:
       'Expert alterations service to ensure every garment fits perfectly. From minor adjustments to complete restructuring.',
+    image: '/images/about-cutting.jpg',
   },
   {
     icon: Sparkles,
     title: 'Special Occasions',
     description:
       'Gala outfits, anniversary styling, and milestone event preparation. We ensure you look impeccable for life\'s most important moments.',
+    image: '/images/gallery-1.jpg',
   },
   {
     icon: Gem,
     title: 'Fabric Sourcing',
     description:
       'Access to the world\'s finest fabric mills. We help you select the perfect material for your vision and lifestyle.',
+    image: '/images/collections-banner.jpg',
   },
 ]
 
 function Services() {
   return (
     <div className="min-h-screen bg-white">
-      {/* Hero */}
-      <section className="relative bg-black overflow-hidden">
+      {/* Hero - Full width with overlay */}
+      <section className="relative bg-black overflow-hidden min-h-[60vh] flex items-center">
         <div className="absolute inset-0">
           <img
-            src="/images/measure.png"
+            src="/images/gallery-5.jpg"
             alt="Bremer Suits Custom Tailoring Services Nairobi - Bespoke, Wedding, Corporate Styling"
-            className="w-full h-full object-cover opacity-40"
+            className="w-full h-full object-cover opacity-30"
           />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/20 to-black/70" />
         </div>
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 lg:py-20 text-center">
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-32 text-center w-full">
+          <p className="text-xs tracking-[0.3em] uppercase text-white/60 mb-4 font-medium">
+            Nairobi's Premier Suit House
+          </p>
           <h1
-            className="text-4xl lg:text-6xl text-white mb-2 italic"
+            className="text-4xl sm:text-5xl lg:text-7xl text-white mb-6 italic"
             style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
           >
-            Bremer Suits — What We Do
+            Our Services
           </h1>
-        </div>
-      </section>
-
-      {/* Main Services */}
-      <section className="py-16 lg:py-24">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-20">
-          {mainServices.map((service, index) => (
-            <div
-              key={service.title}
-              className={`grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center ${
-                index % 2 === 1 ? 'lg:[direction:rtl] lg:*:[direction:ltr]' : ''
-              }`}
-            >
-              {/* Image */}
-              <div className="aspect-[4/3] overflow-hidden bg-gray-50">
-                <img
-                  src={service.image}
-                  alt={service.title}
-                  className="w-full h-full object-cover"
-                />
-              </div>
-
-              {/* Content */}
-              <div>
-                <div className="flex items-center gap-3 mb-4">
-                  <service.icon size={20} className="text-black" strokeWidth={1.5} />
-                  <p className="text-xs tracking-[0.2em] uppercase text-gray-400 font-medium">
-                    {service.subtitle}
-                  </p>
-                </div>
-                <h2
-                  className="text-3xl lg:text-4xl font-bold text-black mb-4"
-                  style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
-                >
-                  {service.title}
-                </h2>
-                <p className="text-gray-500 leading-relaxed mb-8">
-                  {service.description}
-                </p>
-                <div className="bg-gray-50 p-6 mb-6">
-                  <h4 className="text-xs tracking-[0.2em] uppercase text-black mb-4 font-semibold">
-                    What's Included
-                  </h4>
-                  <ul className="space-y-3">
-                    {service.features.map((feature) => (
-                      <li key={feature} className="flex items-start gap-3">
-                        <CheckCircle
-                          size={16}
-                          className="text-black mt-0.5 shrink-0"
-                          strokeWidth={1.5}
-                        />
-                        <span className="text-sm text-gray-600">{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-                <Link
-                  to="/contact"
-                  className="inline-flex items-center gap-2 px-6 py-3 text-xs tracking-[0.2em] uppercase bg-black text-white hover:bg-gray-800 transition-colors duration-300 font-semibold"
-                >
-                  Inquire About This Service
-                  <ArrowRight size={14} />
-                </Link>
-              </div>
+          <p className="text-white/50 max-w-2xl mx-auto text-base lg:text-lg font-light leading-relaxed">
+            From bespoke tailoring to complete styling, we offer a full range of services
+            crafted to elevate every aspect of your wardrobe.
+          </p>
+          <div className="mt-10 flex items-center justify-center gap-8 flex-wrap">
+            <div className="flex items-center gap-2 text-white/50">
+              <img src="/images/sewing-machine-alt.png" alt="" className="w-6 h-6 invert opacity-60" />
+              <span className="text-xs tracking-wider uppercase">Bespoke Tailoring</span>
             </div>
-          ))}
+            <div className="flex items-center gap-2 text-white/50">
+              <img src="/images/icon-measure.png" alt="" className="w-6 h-6 invert opacity-60" />
+              <span className="text-xs tracking-wider uppercase">Perfect Fit</span>
+            </div>
+            <div className="flex items-center gap-2 text-white/50">
+              <img src="/images/icon-fabrics.png" alt="" className="w-6 h-6 invert opacity-60" />
+              <span className="text-xs tracking-wider uppercase">Premium Fabrics</span>
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* Additional Services Grid */}
-      <section className="py-16 lg:py-24 bg-gray-50">
+      {/* Services Overview Banner */}
+      <section className="bg-[#1a1a1a] py-6">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2
-              className="text-3xl lg:text-4xl font-bold text-black"
-              style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
-            >
-              Additional Services
-            </h2>
-            <p className="text-sm text-gray-500 mt-3 max-w-md mx-auto">
-              A full range of services to complement your style journey.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {additionalServices.map((service) => (
-              <div
-                key={service.title}
-                className="p-8 bg-white border border-gray-100 hover:border-gray-200 hover:shadow-md transition-all duration-300"
-              >
-                <service.icon
-                  size={24}
-                  className="text-black mb-5"
-                  strokeWidth={1.5}
-                />
-                <h3 className="text-sm font-semibold text-black mb-3 uppercase tracking-wide">
-                  {service.title}
-                </h3>
-                <p className="text-sm text-gray-500 leading-relaxed">
-                  {service.description}
-                </p>
+          <div className="flex items-center justify-center gap-6 sm:gap-12 flex-wrap">
+            {[
+              { label: 'Tailoring', icon: Scissors },
+              { label: 'Weddings', icon: Heart },
+              { label: 'Styling', icon: Crown },
+              { label: 'Consulting', icon: Eye },
+              { label: 'Accessories', icon: Watch },
+              { label: 'Alterations', icon: Ruler },
+            ].map((item) => (
+              <div key={item.label} className="flex items-center gap-2 text-white/40 hover:text-white/80 transition-colors">
+                <item.icon size={14} strokeWidth={1.5} />
+                <span className="text-[10px] tracking-[0.2em] uppercase font-medium">{item.label}</span>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Process */}
+      {/* Main Services - Alternating full-bleed sections */}
+      <section className="py-0">
+        {mainServices.map((service, index) => {
+          const isReversed = index % 2 === 1
+          return (
+            <div
+              key={service.title}
+              className={`grid grid-cols-1 lg:grid-cols-2 min-h-[600px] ${isReversed ? 'bg-[#fafaf8]' : 'bg-white'}`}
+            >
+              {/* Image - Full bleed */}
+              <div className={`relative overflow-hidden min-h-[400px] lg:min-h-0 ${isReversed ? 'lg:order-2' : ''}`}>
+                <img
+                  src={service.image}
+                  alt={service.title}
+                  className="absolute inset-0 w-full h-full object-cover"
+                />
+                {/* Overlay gradient toward content */}
+                <div className={`absolute inset-0 ${isReversed ? 'lg:bg-gradient-to-l' : 'lg:bg-gradient-to-r'} from-transparent to-transparent bg-gradient-to-b from-transparent via-transparent to-black/20 lg:to-transparent`} />
+                {/* Icon overlay */}
+                {service.iconImage && (
+                  <div className="absolute bottom-6 right-6 w-14 h-14 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg">
+                    <img src={service.iconImage} alt="" className="w-8 h-8" />
+                  </div>
+                )}
+              </div>
+
+              {/* Content */}
+              <div className={`flex items-center ${isReversed ? 'lg:order-1' : ''}`}>
+                <div className="px-6 sm:px-10 lg:px-16 xl:px-20 py-12 lg:py-16 max-w-xl">
+                  <div className="flex items-center gap-3 mb-5">
+                    <div className="w-10 h-10 bg-black rounded-full flex items-center justify-center">
+                      <service.icon size={18} className="text-white" strokeWidth={1.5} />
+                    </div>
+                    <p className="text-[10px] tracking-[0.25em] uppercase text-gray-400 font-semibold">
+                      {service.subtitle}
+                    </p>
+                  </div>
+                  <h2
+                    className="text-2xl sm:text-3xl lg:text-4xl font-bold text-black mb-5 leading-tight"
+                    style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
+                  >
+                    {service.title}
+                  </h2>
+                  <p className="text-gray-500 leading-relaxed mb-8 text-[15px]">
+                    {service.description}
+                  </p>
+
+                  {/* Features with refined styling */}
+                  <div className="border-l-2 border-black pl-6 mb-8">
+                    <h4 className="text-[10px] tracking-[0.25em] uppercase text-black mb-4 font-bold">
+                      What's Included
+                    </h4>
+                    <ul className="space-y-3">
+                      {service.features.map((feature) => (
+                        <li key={feature} className="flex items-start gap-3">
+                          <CheckCircle
+                            size={14}
+                            className="text-black mt-0.5 shrink-0"
+                            strokeWidth={2}
+                          />
+                          <span className="text-sm text-gray-600 leading-snug">{feature}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  <Link
+                    to="/contact"
+                    className="group inline-flex items-center gap-3 px-7 py-3.5 text-[10px] tracking-[0.25em] uppercase bg-black text-white hover:bg-gray-800 transition-all duration-300 font-bold"
+                  >
+                    Inquire About This Service
+                    <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+                  </Link>
+                </div>
+              </div>
+            </div>
+          )
+        })}
+      </section>
+
+      {/* Additional Services Grid - With images */}
+      <section className="py-16 lg:py-24 bg-[#111]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-14">
+            <p className="text-[10px] tracking-[0.3em] uppercase text-white/40 mb-3 font-semibold">
+              Complete Your Style Journey
+            </p>
+            <h2
+              className="text-3xl lg:text-4xl font-bold text-white"
+              style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
+            >
+              Additional Services
+            </h2>
+            <p className="text-sm text-white/40 mt-4 max-w-md mx-auto font-light">
+              A full range of services to complement your wardrobe and personal brand.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            {additionalServices.map((service) => (
+              <div
+                key={service.title}
+                className="group relative overflow-hidden bg-[#1a1a1a] hover:bg-[#222] transition-all duration-500"
+              >
+                {/* Card Image */}
+                <div className="relative h-48 overflow-hidden">
+                  <img
+                    src={service.image}
+                    alt={service.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#1a1a1a] via-[#1a1a1a]/40 to-transparent" />
+                  <div className="absolute bottom-4 left-5">
+                    <div className="w-10 h-10 bg-white/10 backdrop-blur-sm rounded-full flex items-center justify-center border border-white/20">
+                      <service.icon size={18} className="text-white" strokeWidth={1.5} />
+                    </div>
+                  </div>
+                </div>
+                {/* Card Content */}
+                <div className="p-6 pt-4">
+                  <h3 className="text-sm font-bold text-white mb-2 uppercase tracking-wider">
+                    {service.title}
+                  </h3>
+                  <p className="text-sm text-white/40 leading-relaxed">
+                    {service.description}
+                  </p>
+                  <Link
+                    to="/contact"
+                    className="mt-4 inline-flex items-center gap-2 text-[10px] tracking-[0.2em] uppercase text-white/50 hover:text-white transition-colors font-semibold"
+                  >
+                    Learn More
+                    <ArrowRight size={12} className="group-hover:translate-x-1 transition-transform" />
+                  </Link>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Process - Timeline style */}
       <section className="py-16 lg:py-24 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
+            <p className="text-[10px] tracking-[0.3em] uppercase text-gray-400 mb-3 font-semibold">
+              The Bremer Experience
+            </p>
             <h2
               className="text-3xl lg:text-4xl font-bold text-black"
               style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
@@ -316,44 +412,97 @@ function Services() {
             <p className="text-sm text-gray-500 mt-3">Your journey to impeccable style in four steps</p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-0">
             {[
-              { step: '01', title: 'Consult', desc: 'We meet to understand your goals, lifestyle, and vision.' },
-              { step: '02', title: 'Design', desc: 'We develop a personalized plan — fabrics, styles, and strategy.' },
-              { step: '03', title: 'Craft', desc: 'Your pieces are made with meticulous care and precision.' },
-              { step: '04', title: 'Refine', desc: 'Final fittings and adjustments to ensure perfection.' },
-            ].map((item) => (
-              <div key={item.step} className="text-center">
-                <div className="w-16 h-16 mx-auto mb-4 bg-black text-white flex items-center justify-center">
-                  <span className="text-lg font-bold">{item.step}</span>
+              { step: '01', title: 'Consult', desc: 'We meet to understand your goals, lifestyle, and vision.', icon: MessageCircle },
+              { step: '02', title: 'Design', desc: 'We develop a personalized plan — fabrics, styles, and strategy.', icon: Palette },
+              { step: '03', title: 'Craft', desc: 'Your pieces are made with meticulous care and precision.', icon: Hammer },
+              { step: '04', title: 'Refine', desc: 'Final fittings and adjustments to ensure perfection.', icon: Star },
+            ].map((item, index) => (
+              <div key={item.step} className="relative text-center px-6 py-8">
+                {/* Connecting line */}
+                {index < 3 && (
+                  <div className="hidden md:block absolute top-[52px] left-[calc(50%+32px)] right-0 h-px bg-gray-200" />
+                )}
+                <div className="relative">
+                  <div className="w-16 h-16 mx-auto mb-5 bg-black text-white rounded-full flex items-center justify-center relative z-10">
+                    <item.icon size={22} strokeWidth={1.5} />
+                  </div>
+                  <p className="text-[10px] tracking-[0.3em] uppercase text-gray-300 font-bold mb-1">Step {item.step}</p>
+                  <h3 className="text-base font-bold text-black mb-2 uppercase tracking-wide">{item.title}</h3>
+                  <p className="text-sm text-gray-500 leading-relaxed max-w-[200px] mx-auto">{item.desc}</p>
                 </div>
-                <h3 className="text-sm font-semibold text-black mb-2 uppercase tracking-wide">{item.title}</h3>
-                <p className="text-sm text-gray-500 leading-relaxed">{item.desc}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
+      {/* Gallery showcase strip */}
+      <section className="bg-[#fafaf8] py-12 overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center mb-8">
+          <p className="text-[10px] tracking-[0.3em] uppercase text-gray-400 font-semibold">
+            A Glimpse of Our Work
+          </p>
+        </div>
+        <div className="flex gap-3 overflow-hidden">
+          {[
+            '/images/gallery-20.jpg',
+            '/images/about-wedding-group.jpg',
+            '/images/gallery-40.jpg',
+            '/images/gallery-50.jpg',
+            '/images/about-style-portrait.jpg',
+            '/images/gallery-2.jpg',
+          ].map((src, i) => (
+            <div key={i} className="flex-shrink-0 w-48 sm:w-56 lg:w-64 h-72 sm:h-80 overflow-hidden">
+              <img
+                src={src}
+                alt="Bremer Suits portfolio"
+                className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
+              />
+            </div>
+          ))}
+        </div>
+      </section>
+
       {/* CTA */}
-      <section className="bg-black py-20 lg:py-28">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <section className="relative bg-black py-20 lg:py-28 overflow-hidden">
+        <div className="absolute inset-0">
+          <img
+            src="/images/about-bespoke-man.jpg"
+            alt=""
+            className="w-full h-full object-cover opacity-15"
+          />
+        </div>
+        <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <p className="text-[10px] tracking-[0.3em] uppercase text-white/40 mb-4 font-semibold">
+            Ready to Get Started?
+          </p>
           <h2
-            className="text-3xl lg:text-4xl font-bold text-white mb-6"
+            className="text-3xl lg:text-5xl font-bold text-white mb-6"
             style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
           >
             Let's Build Your Look
           </h2>
-          <p className="text-white/60 leading-relaxed mb-10 max-w-lg mx-auto font-light">
+          <p className="text-white/50 leading-relaxed mb-10 max-w-lg mx-auto font-light text-base">
             Every great wardrobe starts with a conversation. Tell us about your goals
             and we'll craft a plan tailored to you.
           </p>
-          <Link
-            to="/contact"
-            className="inline-flex items-center px-10 py-4 text-xs tracking-[0.2em] uppercase bg-white text-black hover:bg-gray-100 transition-colors duration-300 font-semibold"
-          >
-            Start Your Consultation
-          </Link>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <Link
+              to="/contact"
+              className="inline-flex items-center px-10 py-4 text-[10px] tracking-[0.25em] uppercase bg-white text-black hover:bg-gray-100 transition-colors duration-300 font-bold"
+            >
+              Start Your Consultation
+            </Link>
+            <Link
+              to="/portfolio"
+              className="inline-flex items-center gap-2 px-10 py-4 text-[10px] tracking-[0.25em] uppercase border border-white/20 text-white hover:bg-white/10 transition-colors duration-300 font-bold"
+            >
+              View Portfolio
+              <ArrowRight size={14} />
+            </Link>
+          </div>
         </div>
       </section>
     </div>
