@@ -74,6 +74,18 @@ export const Route = createFileRoute('/')({
     links: [
       { rel: 'canonical', href: 'https://bremersuits.com/' },
     ],
+    scripts: [
+      {
+        type: 'application/ld+json',
+        children: JSON.stringify({
+          '@context': 'https://schema.org',
+          '@type': 'BreadcrumbList',
+          itemListElement: [
+            { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://bremersuits.com/' },
+          ],
+        }),
+      },
+    ],
   }),
   component: HomePage,
 })

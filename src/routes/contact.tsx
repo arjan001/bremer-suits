@@ -60,6 +60,36 @@ export const Route = createFileRoute('/contact')({
     links: [
       { rel: 'canonical', href: 'https://bremersuits.com/contact' },
     ],
+    scripts: [
+      {
+        type: 'application/ld+json',
+        children: JSON.stringify({
+          '@context': 'https://schema.org',
+          '@type': 'BreadcrumbList',
+          itemListElement: [
+            { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://bremersuits.com/' },
+            { '@type': 'ListItem', position: 2, name: 'Contact', item: 'https://bremersuits.com/contact' },
+          ],
+        }),
+      },
+      {
+        type: 'application/ld+json',
+        children: JSON.stringify({
+          '@context': 'https://schema.org',
+          '@type': 'ContactPage',
+          name: 'Book a Fitting at Bremer Suits',
+          description: 'Schedule a private consultation at our Nairobi studio for expert measurements, fabric selection, and personalized styling.',
+          url: 'https://bremersuits.com/contact',
+          mainEntity: {
+            '@type': 'LocalBusiness',
+            name: 'Bremer Suits',
+            telephone: '+254793880642',
+            email: 'brendahwanja6722@gmail.com',
+            address: { '@type': 'PostalAddress', streetAddress: 'Kimathi St', addressLocality: 'Nairobi', addressCountry: 'KE' },
+          },
+        }),
+      },
+    ],
   }),
   component: Contact,
 })

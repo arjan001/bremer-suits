@@ -62,6 +62,30 @@ export const Route = createFileRoute('/portfolio')({
     links: [
       { rel: 'canonical', href: 'https://bremersuits.com/portfolio' },
     ],
+    scripts: [
+      {
+        type: 'application/ld+json',
+        children: JSON.stringify({
+          '@context': 'https://schema.org',
+          '@type': 'BreadcrumbList',
+          itemListElement: [
+            { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://bremersuits.com/' },
+            { '@type': 'ListItem', position: 2, name: 'Portfolio', item: 'https://bremersuits.com/portfolio' },
+          ],
+        }),
+      },
+      {
+        type: 'application/ld+json',
+        children: JSON.stringify({
+          '@context': 'https://schema.org',
+          '@type': 'ImageGallery',
+          name: 'Bremer Suits Bespoke Gallery',
+          description: "Browse our custom-made wedding tuxedos, ruracio attire, and sharp corporate wear designed for Nairobi's most influential men.",
+          url: 'https://bremersuits.com/portfolio',
+          publisher: { '@type': 'Organization', name: 'Bremer Suits' },
+        }),
+      },
+    ],
   }),
   component: PortfolioPage,
 })

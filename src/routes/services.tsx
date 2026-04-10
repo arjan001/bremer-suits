@@ -75,6 +75,56 @@ export const Route = createFileRoute('/services')({
     links: [
       { rel: 'canonical', href: 'https://bremersuits.com/services' },
     ],
+    scripts: [
+      {
+        type: 'application/ld+json',
+        children: JSON.stringify({
+          '@context': 'https://schema.org',
+          '@type': 'BreadcrumbList',
+          itemListElement: [
+            { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://bremersuits.com/' },
+            { '@type': 'ListItem', position: 2, name: 'Services', item: 'https://bremersuits.com/services' },
+          ],
+        }),
+      },
+      {
+        type: 'application/ld+json',
+        children: JSON.stringify([
+          {
+            '@context': 'https://schema.org',
+            '@type': 'Service',
+            serviceType: 'High-End Tailoring Services',
+            provider: { '@type': 'LocalBusiness', name: 'Bremer Suits' },
+            description: 'Custom suits, sport coats, trousers & overcoats with premium fabric library from Italian & British mills.',
+            areaServed: { '@type': 'City', name: 'Nairobi' },
+          },
+          {
+            '@context': 'https://schema.org',
+            '@type': 'Service',
+            serviceType: 'Wedding Styling',
+            provider: { '@type': 'LocalBusiness', name: 'Bremer Suits' },
+            description: 'Custom groom & groomsmen suit packages, Ruracio (traditional ceremony) styling, and pre-wedding consultations.',
+            areaServed: { '@type': 'City', name: 'Nairobi' },
+          },
+          {
+            '@context': 'https://schema.org',
+            '@type': 'Service',
+            serviceType: 'Corporate Image Consulting',
+            provider: { '@type': 'LocalBusiness', name: 'Bremer Suits' },
+            description: 'Executive wardrobe audits, corporate dress code workshops, and professional styling sessions.',
+            areaServed: { '@type': 'City', name: 'Nairobi' },
+          },
+          {
+            '@context': 'https://schema.org',
+            '@type': 'Service',
+            serviceType: 'Expert Alterations',
+            provider: { '@type': 'LocalBusiness', name: 'Bremer Suits' },
+            description: 'Precision suit alterations, resizing, and garment restoration by master tailors in Nairobi.',
+            areaServed: { '@type': 'City', name: 'Nairobi' },
+          },
+        ]),
+      },
+    ],
   }),
   component: Services,
 })

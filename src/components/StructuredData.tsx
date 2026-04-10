@@ -43,18 +43,19 @@ export function StructuredData() {
         'Premier bespoke tailoring and custom-made suits in Nairobi. Specializing in wedding suits, corporate attire, Ruracio styling, and expert alterations.',
       url: 'https://bremersuits.com',
       image: 'https://bremersuits.com/images/og-logo-gold-black.jpg',
-      telephone: '+254700000000',
+      telephone: '+254793880642',
+      email: 'brendahwanja6722@gmail.com',
       address: {
         '@type': 'PostalAddress',
-        streetAddress: 'Nairobi',
+        streetAddress: 'Kimathi St',
         addressLocality: 'Nairobi',
         addressRegion: 'Nairobi',
         addressCountry: 'KE',
       },
       geo: {
         '@type': 'GeoCoordinates',
-        latitude: -1.2921,
-        longitude: 36.8219,
+        latitude: -1.2864,
+        longitude: 36.8172,
       },
       priceRange: '$$$$',
       openingHoursSpecification: [

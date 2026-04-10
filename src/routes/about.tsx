@@ -59,6 +59,34 @@ export const Route = createFileRoute('/about')({
     links: [
       { rel: 'canonical', href: 'https://bremersuits.com/about' },
     ],
+    scripts: [
+      {
+        type: 'application/ld+json',
+        children: JSON.stringify({
+          '@context': 'https://schema.org',
+          '@type': 'BreadcrumbList',
+          itemListElement: [
+            { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://bremersuits.com/' },
+            { '@type': 'ListItem', position: 2, name: 'About', item: 'https://bremersuits.com/about' },
+          ],
+        }),
+      },
+      {
+        type: 'application/ld+json',
+        children: JSON.stringify({
+          '@context': 'https://schema.org',
+          '@type': 'AboutPage',
+          name: 'About Bremer Suits',
+          description: 'Discover the story of Bremer Suits. Traditional craftsmanship meets modern styling with the finest fabrics.',
+          url: 'https://bremersuits.com/about',
+          mainEntity: {
+            '@type': 'Organization',
+            name: 'Bremer Suits',
+            foundingLocation: { '@type': 'Place', name: 'Nairobi, Kenya' },
+          },
+        }),
+      },
+    ],
   }),
   component: About,
 })
