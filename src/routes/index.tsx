@@ -294,7 +294,7 @@ function HomePage() {
             Bremer Suits{' '}
             <span className="block text-3xl sm:text-4xl lg:text-5xl mt-2">Expert Tailoring for Every Gentleman</span>
           </h1>
-          <p className="text-sm sm:text-base text-white/90 leading-relaxed mb-8 max-w-md mx-auto font-light" style={{ textShadow: '0 1px 6px rgba(0,0,0,0.7)' }}>
+          <p className="text-base sm:text-lg lg:text-xl text-white/90 leading-relaxed mb-8 max-w-md mx-auto font-semibold">
             Custom-made suits crafted to fit your style, your story, and your budget.
           </p>
           <div className="flex justify-center">
