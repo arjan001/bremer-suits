@@ -1,6 +1,13 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/shipping-policy')({
+  head: () => ({
+    meta: [
+      { title: 'Shipping & Delivery Policy | Bremer Suits' },
+      { name: 'description', content: 'Learn about Bremer Suits shipping and delivery options for custom suits and menswear across Nairobi and Kenya.' },
+      { name: 'robots', content: 'noindex, follow' },
+    ],
+  }),
   component: ShippingPolicy,
 })
 

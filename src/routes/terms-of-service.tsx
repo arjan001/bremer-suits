@@ -1,6 +1,13 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/terms-of-service')({
+  head: () => ({
+    meta: [
+      { title: 'Terms of Service | Bremer Suits' },
+      { name: 'description', content: 'Review the Bremer Suits terms of service for custom tailoring orders, consultations, and online purchases.' },
+      { name: 'robots', content: 'noindex, follow' },
+    ],
+  }),
   component: TermsOfService,
 })
 

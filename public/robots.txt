@@ -1,0 +1,11 @@
+# Bremer Suits - robots.txt
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /admin/
+Disallow: /checkout
+Disallow: /wishlist
+Disallow: /.netlify/
+
+# Sitemap
+Sitemap: https://bremer-suits.netlify.app/sitemap.xml

@@ -6,6 +6,12 @@ import { useCart } from '@/lib/cart-context'
 import { getProducts, type Product } from '@/lib/products'
 
 export const Route = createFileRoute('/wishlist')({
+  head: () => ({
+    meta: [
+      { title: 'My Wishlist | Bremer Suits' },
+      { name: 'robots', content: 'noindex, nofollow' },
+    ],
+  }),
   component: WishlistPage,
 })
 

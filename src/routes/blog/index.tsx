@@ -3,6 +3,37 @@ import { allBlogs } from 'content-collections'
 import { ArrowRight } from 'lucide-react'
 
 export const Route = createFileRoute('/blog/')({
+  head: () => ({
+    meta: [
+      {
+        title: 'The Journal | Style Tips & Tailoring Insights | Bremer Suits',
+      },
+      {
+        name: 'description',
+        content: 'Read expert insights on bespoke tailoring, men\'s fashion trends in Nairobi, wedding suit styling tips, and the art of dressing well from Bremer Suits.',
+      },
+      {
+        name: 'keywords',
+        content: 'men\'s fashion blog Nairobi, suit styling tips Kenya, bespoke tailoring insights, wedding suit guide, Bremer Suits journal',
+      },
+      {
+        property: 'og:title',
+        content: 'The Journal | Style Tips & Tailoring Insights | Bremer Suits',
+      },
+      {
+        property: 'og:description',
+        content: 'Read expert insights on bespoke tailoring, men\'s fashion trends in Nairobi, wedding suit styling tips, and the art of dressing well from Bremer Suits.',
+      },
+      {
+        property: 'og:type',
+        content: 'blog',
+      },
+      {
+        name: 'twitter:card',
+        content: 'summary_large_image',
+      },
+    ],
+  }),
   component: BlogIndex,
 })
 

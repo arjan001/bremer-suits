@@ -14,6 +14,37 @@ import {
 } from 'lucide-react'
 
 export const Route = createFileRoute('/services')({
+  head: () => ({
+    meta: [
+      {
+        title: 'Custom Tailoring Services | Ruracio Styling, Corporate & Alterations',
+      },
+      {
+        name: 'description',
+        content: 'From culturally respectful Ruracio styling to executive corporate image programs, Bremer Suits offers comprehensive tailoring services including expert alterations and fabric sourcing.',
+      },
+      {
+        name: 'keywords',
+        content: 'Ruracio outfits for men, traditional ceremony styling Kenya, corporate styling workshops Nairobi, suit alterations Nairobi, executive image consulting, Ruracio suits for groom, modern African wedding suits',
+      },
+      {
+        property: 'og:title',
+        content: 'Custom Tailoring Services | Ruracio Styling, Corporate & Alterations',
+      },
+      {
+        property: 'og:description',
+        content: 'From culturally respectful Ruracio styling to executive corporate image programs, Bremer Suits offers comprehensive tailoring services including expert alterations and fabric sourcing.',
+      },
+      {
+        property: 'og:type',
+        content: 'website',
+      },
+      {
+        name: 'twitter:card',
+        content: 'summary_large_image',
+      },
+    ],
+  }),
   component: Services,
 })
 
@@ -127,7 +158,7 @@ function Services() {
         <div className="absolute inset-0">
           <img
             src="/images/measure.png"
-            alt="Services"
+            alt="Bremer Suits Custom Tailoring Services Nairobi - Bespoke, Wedding, Corporate Styling"
             className="w-full h-full object-cover opacity-40"
           />
         </div>

@@ -19,6 +19,37 @@ const collectionsSearchSchema = z.object({
 })
 
 export const Route = createFileRoute('/collections/')({
+  head: () => ({
+    meta: [
+      {
+        title: 'Collections | Premium Suits & Menswear | Bremer Suits Nairobi',
+      },
+      {
+        name: 'description',
+        content: 'Browse our collection of premium custom suits, ready-to-wear menswear, and luxury accessories. Handcrafted quality from Bremer Suits, Nairobi\'s finest tailors.',
+      },
+      {
+        name: 'keywords',
+        content: 'premium suits Nairobi, custom suits collection, men\'s wear Kenya, luxury suits online, Bremer Suits collection, ready-to-wear suits Nairobi',
+      },
+      {
+        property: 'og:title',
+        content: 'Collections | Premium Suits & Menswear | Bremer Suits Nairobi',
+      },
+      {
+        property: 'og:description',
+        content: 'Browse our collection of premium custom suits, ready-to-wear menswear, and luxury accessories from Bremer Suits.',
+      },
+      {
+        property: 'og:type',
+        content: 'website',
+      },
+      {
+        name: 'twitter:card',
+        content: 'summary_large_image',
+      },
+    ],
+  }),
   component: Collections,
   validateSearch: collectionsSearchSchema,
 })

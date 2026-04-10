@@ -2,6 +2,7 @@ import { HeadContent, Link, Outlet, Scripts, createRootRoute, useRouter } from '
 import { Header } from '@/components/Header'
 import { CartDrawer } from '@/components/CartDrawer'
 import { SeoHead } from '@/components/SeoHead'
+import { StructuredData } from '@/components/StructuredData'
 import { CartProvider } from '@/lib/cart-context'
 import { WishlistProvider } from '@/lib/wishlist-context'
 import { Phone, Mail, Instagram, Clock, Navigation, Globe, X, ChevronUp, Shield, FileText, Cookie, Truck, RotateCcw, ArrowRight, MapPin, SearchX } from 'lucide-react'
@@ -20,11 +21,47 @@ export const Route = createRootRoute({
         content: 'width=device-width, initial-scale=1',
       },
       {
-        title: 'Bremer Suits — Custom Suits & Image Consulting',
+        title: 'Bremer Suits | Premier Bespoke Tailoring & Custom Made Suits in Nairobi',
       },
       {
         name: 'description',
-        content: 'Premium custom suits, professional fashion styling, and image consulting. Elevate your personal brand with Bremer Suits.',
+        content: 'Experience the art of perfection with Bremer Suits. Nairobi\'s leading specialists in high-end, custom-made suits for weddings, corporate leadership, and special occasions. Expertly fitted, made-to-order elegance.',
+      },
+      {
+        name: 'keywords',
+        content: 'Bespoke suits Nairobi, custom made suits Kenya, premium men\'s tailoring, luxury wedding suits, Bremer Suits, made-to-order suits Nairobi, Ruracio suits, best suit tailors in Nairobi',
+      },
+      {
+        name: 'robots',
+        content: 'index, follow',
+      },
+      {
+        property: 'og:title',
+        content: 'Bremer Suits | Premier Bespoke Tailoring & Custom Made Suits in Nairobi',
+      },
+      {
+        property: 'og:description',
+        content: 'Experience the art of perfection with Bremer Suits. Nairobi\'s leading specialists in high-end, custom-made suits for weddings, corporate leadership, and special occasions.',
+      },
+      {
+        property: 'og:type',
+        content: 'website',
+      },
+      {
+        property: 'og:site_name',
+        content: 'Bremer Suits',
+      },
+      {
+        name: 'twitter:card',
+        content: 'summary_large_image',
+      },
+      {
+        name: 'twitter:title',
+        content: 'Bremer Suits | Premier Bespoke Tailoring & Custom Made Suits in Nairobi',
+      },
+      {
+        name: 'twitter:description',
+        content: 'Nairobi\'s leading specialists in high-end, custom-made suits for weddings, corporate leadership, and special occasions.',
       },
     ],
     links: [
@@ -153,15 +190,33 @@ function RootLayout() {
       <CartProvider>
         <WebsiteAnalyticsTracker />
         <SeoHead />
+        <StructuredData />
         <Header />
         <CartDrawer />
         <main>
           <Outlet />
         </main>
         <Footer />
+        <div className="h-16 lg:hidden" aria-hidden="true" />
         {!hideExtras && <SubscribeModal />}
+        {!hideExtras && <StickyMobileCTA />}
       </CartProvider>
     </WishlistProvider>
+  )
+}
+
+/* ── Sticky Mobile CTA – "Book Consultation" ── */
+function StickyMobileCTA() {
+  return (
+    <div className="fixed bottom-0 left-0 right-0 z-50 lg:hidden bg-black/95 backdrop-blur-sm border-t border-white/10 px-4 py-3 safe-area-bottom">
+      <Link
+        to="/contact"
+        className="flex items-center justify-center gap-2 w-full py-3 text-xs tracking-[0.2em] uppercase bg-white text-black font-semibold hover:bg-gray-100 transition-colors duration-300"
+      >
+        <Phone size={14} />
+        Book a Consultation
+      </Link>
+    </div>
   )
 }
 

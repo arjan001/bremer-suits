@@ -2,6 +2,37 @@ import { createFileRoute, Link } from '@tanstack/react-router'
 import { ArrowRight, Scissors, Heart, Shield } from 'lucide-react'
 
 export const Route = createFileRoute('/about')({
+  head: () => ({
+    meta: [
+      {
+        title: 'About Bremer Suits | Our Craft, Quality Fabrics & Tailoring Heritage',
+      },
+      {
+        name: 'description',
+        content: 'Discover the story of Bremer Suits. We combine traditional craftsmanship with modern styling, sourcing the world\'s finest fabrics to create impeccable garments for the discerning man.',
+      },
+      {
+        name: 'keywords',
+        content: 'Tailoring expertise Kenya, luxury fabric sourcing, Bremer Suits history, master tailors Nairobi, bespoke suit process, Bremer custom suits, Bremer luxury tailoring',
+      },
+      {
+        property: 'og:title',
+        content: 'About Bremer Suits | Our Craft, Quality Fabrics & Tailoring Heritage',
+      },
+      {
+        property: 'og:description',
+        content: 'Discover the story of Bremer Suits. We combine traditional craftsmanship with modern styling, sourcing the world\'s finest fabrics to create impeccable garments for the discerning man.',
+      },
+      {
+        property: 'og:type',
+        content: 'website',
+      },
+      {
+        name: 'twitter:card',
+        content: 'summary_large_image',
+      },
+    ],
+  }),
   component: About,
 })
 
@@ -64,7 +95,7 @@ function About() {
         <div className="absolute inset-0">
           <img
             src="/images/about-wedding-group.jpg"
-            alt="About Bremer Suits"
+            alt="About Bremer Suits - Premier Bespoke Tailoring Heritage in Nairobi Kenya"
             className="w-full h-full object-cover opacity-35"
           />
         </div>
@@ -126,7 +157,7 @@ function About() {
               <div className="aspect-[4/5] overflow-hidden">
                 <img
                   src="/images/about-bespoke-man.jpg"
-                  alt="Bespoke suit craftsmanship"
+                  alt="Bespoke suit craftsmanship by Bremer Suits master tailors Nairobi"
                   className="w-full h-full object-cover"
                 />
               </div>
@@ -148,22 +179,22 @@ function About() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
             <div className="aspect-square overflow-hidden">
-              <img src="/images/gallery-1.jpg" alt="Bremer collection" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+              <img src="/images/gallery-1.jpg" alt="Bremer Suits premium collection Nairobi" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
             </div>
             <div className="aspect-square overflow-hidden">
-              <img src="/images/portfolio/bespoke-green-pinstripe.jpg" alt="Green pinstripe suit" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+              <img src="/images/portfolio/bespoke-green-pinstripe.jpg" alt="Green pinstripe bespoke suit by Bremer Suits Nairobi" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
             </div>
             <div className="aspect-square overflow-hidden">
-              <img src="/images/gallery-19.jpg" alt="Bremer craftsmanship" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+              <img src="/images/gallery-19.jpg" alt="Bremer Suits handcrafted tailoring and fine craftsmanship Nairobi" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
             </div>
             <div className="aspect-square overflow-hidden">
-              <img src="/images/portfolio/bespoke-orange-mannequin.jpg" alt="Orange suit" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+              <img src="/images/portfolio/bespoke-orange-mannequin.jpg" alt="Orange bespoke suit on mannequin by Bremer Suits Nairobi" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
             </div>
             <div className="aspect-square overflow-hidden">
-              <img src="/images/gallery-20.jpg" alt="Bremer style" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+              <img src="/images/gallery-20.jpg" alt="Bremer Suits elegant styling and premium menswear Nairobi" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
             </div>
             <div className="aspect-square overflow-hidden">
-              <img src="/images/portfolio/wedding-cream-bridal-lineup.jpg" alt="Cream bridal lineup" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+              <img src="/images/portfolio/wedding-cream-bridal-lineup.jpg" alt="Cream bridal party wedding lineup styling by Bremer Suits Nairobi" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
             </div>
           </div>
         </div>
@@ -178,7 +209,7 @@ function About() {
               <div className="aspect-[3/4] overflow-hidden">
                 <img
                   src="/images/about-burgundy-suit.jpg"
-                  alt="Burgundy bespoke suit"
+                  alt="Burgundy bespoke 3-piece suit by Bremer Suits Nairobi"
                   className="w-full h-full object-cover"
                 />
               </div>
@@ -289,7 +320,7 @@ function About() {
             <div className="aspect-[3/4] overflow-hidden">
               <img
                 src="/images/about-style-portrait.jpg"
-                alt="Style portrait"
+                alt="Bremer Suits style portrait - premium custom menswear Nairobi"
                 className="w-full h-full object-cover"
               />
             </div>
@@ -302,22 +333,22 @@ function About() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-3 md:grid-cols-6 gap-2">
             <div className="aspect-square overflow-hidden">
-              <img src="/images/gallery-21.jpg" alt="Bremer craftsmanship" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+              <img src="/images/gallery-21.jpg" alt="Bremer Suits precision craftsmanship and attention to detail" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
             </div>
             <div className="aspect-square overflow-hidden">
-              <img src="/images/gallery-22.jpg" alt="Bremer style" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+              <img src="/images/gallery-22.jpg" alt="Bremer Suits luxury men's fashion and styling Nairobi" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
             </div>
             <div className="aspect-square overflow-hidden">
-              <img src="/images/gallery-40.jpg" alt="Bremer collection" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+              <img src="/images/gallery-40.jpg" alt="Bremer Suits exclusive menswear collection Kenya" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
             </div>
             <div className="aspect-square overflow-hidden">
-              <img src="/images/gallery-41.jpg" alt="Bremer tailoring" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+              <img src="/images/gallery-41.jpg" alt="Bremer Suits expert tailoring and fabric selection" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
             </div>
             <div className="aspect-square overflow-hidden">
-              <img src="/images/gallery-23.jpg" alt="Bremer suits" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+              <img src="/images/gallery-23.jpg" alt="Bremer Suits bespoke formal wear and accessories Nairobi" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
             </div>
             <div className="aspect-square overflow-hidden">
-              <img src="/images/gallery-24.jpg" alt="Bremer design" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+              <img src="/images/gallery-24.jpg" alt="Bremer Suits premium design and modern tailoring Kenya" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
             </div>
           </div>
         </div>
@@ -358,7 +389,7 @@ function About() {
             <div className="overflow-hidden order-1 lg:order-2 max-h-[400px] lg:max-h-[500px]">
               <img
                 src="/images/portfolio/wedding-brown-beige-group.jpg"
-                alt="Wedding group styling"
+                alt="Wedding group styling and coordination by Bremer Suits Nairobi"
                 className="w-full h-full object-cover"
               />
             </div>

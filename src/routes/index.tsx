@@ -16,6 +16,37 @@ import {
 } from 'lucide-react'
 
 export const Route = createFileRoute('/')({
+  head: () => ({
+    meta: [
+      {
+        title: 'Bremer Suits | Premier Bespoke Tailoring & Custom Made Suits in Nairobi',
+      },
+      {
+        name: 'description',
+        content: 'Experience the art of perfection with Bremer Suits. Nairobi\'s leading specialists in high-end, custom-made suits for weddings, corporate leadership, and special occasions. Expertly fitted, made-to-order elegance.',
+      },
+      {
+        name: 'keywords',
+        content: 'Bespoke suits Nairobi, custom made suits Kenya, premium men\'s tailoring, luxury wedding suits, Bremer Suits, made-to-order suits Nairobi, best suit tailors in Nairobi, custom made suits price in Kenya',
+      },
+      {
+        property: 'og:title',
+        content: 'Bremer Suits | Premier Bespoke Tailoring & Custom Made Suits in Nairobi',
+      },
+      {
+        property: 'og:description',
+        content: 'Experience the art of perfection with Bremer Suits. Nairobi\'s leading specialists in high-end, custom-made suits for weddings, corporate leadership, and special occasions.',
+      },
+      {
+        property: 'og:type',
+        content: 'website',
+      },
+      {
+        name: 'twitter:card',
+        content: 'summary_large_image',
+      },
+    ],
+  }),
   component: HomePage,
 })
 
@@ -168,7 +199,7 @@ function HomePage() {
           >
             <img
               src={src}
-              alt={`Bremer Suits collection ${idx + 1}`}
+              alt={`Bremer Suits bespoke tailoring collection Nairobi - Slide ${idx + 1}`}
               className="w-full h-full object-cover object-center"
             />
           </div>
@@ -230,7 +261,7 @@ function HomePage() {
             <div className="aspect-[4/5] overflow-hidden bg-gray-100">
               <img
                 src="/images/about-model-1.jpg"
-                alt="Tailor working on a garment"
+                alt="Master tailor handcrafting a bespoke suit at Bremer Suits Nairobi"
                 className="w-full h-full object-cover"
               />
             </div>
@@ -322,7 +353,7 @@ function HomePage() {
             <div className="aspect-[4/5] overflow-hidden bg-gray-100">
               <img
                 src="/images/portfolio/bespoke-navy-pinstripe-man.jpg"
-                alt="Bespoke tailoring experience"
+                alt="Bespoke custom tailoring consultation experience at Bremer Suits Nairobi"
                 className="w-full h-full object-cover"
               />
             </div>
@@ -358,7 +389,7 @@ function HomePage() {
                 <div className="relative overflow-hidden">
                   <img
                     src={item.src}
-                    alt={`Portfolio piece ${idx + 1}`}
+                    alt={`Custom made suit portfolio by Bremer Suits Nairobi - Piece ${idx + 1}`}
                     className="w-full h-auto object-cover group-hover:scale-105 transition-transform duration-700"
                   />
                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/15 transition-colors duration-300" />
@@ -386,7 +417,7 @@ function HomePage() {
             <div className="aspect-[4/5] overflow-hidden">
               <img
                 src="/images/gallery-15.jpg"
-                alt="Master tailor at work"
+                alt="Precision craftsmanship by Bremer Suits master tailors in Nairobi"
                 className="w-full h-full object-cover"
               />
             </div>
@@ -508,7 +539,7 @@ function HomePage() {
                   <div key={idx} className="min-w-[calc(50%-6px)] h-[300px] lg:h-[500px] overflow-hidden flex-shrink-0">
                     <img
                       src={src}
-                      alt={`Philosophy gallery ${idx + 1}`}
+                      alt={`Bremer Suits tailoring philosophy and craftsmanship - Image ${idx + 1}`}
                       className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
                     />
                   </div>
@@ -537,7 +568,7 @@ function HomePage() {
           <div className="relative h-[300px] lg:h-auto lg:max-h-[500px] overflow-hidden">
             <img
               src="/images/gallery-18.jpg"
-              alt="Bremer Suits craftsmanship"
+              alt="Bremer Suits premium craftsmanship and luxury fabric selection Nairobi"
               className="w-full h-full object-cover"
             />
             <div className="absolute inset-0 bg-gradient-to-r from-transparent to-black/30 lg:bg-gradient-to-r lg:from-transparent lg:to-black/50" />
@@ -597,7 +628,7 @@ function HomePage() {
           >
             <img
               src={lightboxImage}
-              alt="Featured work detail"
+              alt="Featured bespoke suit work by Bremer Suits Nairobi"
               className="w-full h-auto max-h-[85vh] object-contain rounded-lg"
             />
             <button

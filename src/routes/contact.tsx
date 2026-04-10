@@ -3,6 +3,37 @@ import { useState } from 'react'
 import { Mail, Send, Phone, MapPin, Clock, Instagram, MessageCircle } from 'lucide-react'
 
 export const Route = createFileRoute('/contact')({
+  head: () => ({
+    meta: [
+      {
+        title: 'Book a Fitting | Private Consultation at Bremer Suits Nairobi',
+      },
+      {
+        name: 'description',
+        content: 'Ready for your perfect fit? Schedule a private consultation at our Nairobi studio. Expert measurements, fabric selection, and personalized styling for your next big event.',
+      },
+      {
+        name: 'keywords',
+        content: 'Book tailor appointment Nairobi, suit fitting consultation, Bremer Suits location, custom suit price Kenya, bespoke tailor contact, suit alterations near me',
+      },
+      {
+        property: 'og:title',
+        content: 'Book a Fitting | Private Consultation at Bremer Suits Nairobi',
+      },
+      {
+        property: 'og:description',
+        content: 'Ready for your perfect fit? Schedule a private consultation at our Nairobi studio. Expert measurements, fabric selection, and personalized styling for your next big event.',
+      },
+      {
+        property: 'og:type',
+        content: 'website',
+      },
+      {
+        name: 'twitter:card',
+        content: 'summary_large_image',
+      },
+    ],
+  }),
   component: Contact,
 })
 
@@ -46,7 +77,7 @@ function Contact() {
         <div className="absolute inset-0">
           <img
             src="/images/contact-banner.webp"
-            alt="Contact"
+            alt="Book a private suit fitting consultation at Bremer Suits Nairobi studio"
             className="w-full h-full object-cover opacity-40"
           />
         </div>

@@ -2,6 +2,7 @@ import { createFileRoute, Link } from '@tanstack/react-router'
 import { allBlogs } from 'content-collections'
 import { marked } from 'marked'
 import { ArrowLeft } from 'lucide-react'
+import { useEffect } from 'react'
 
 export const Route = createFileRoute('/blog/$slug')({
   component: BlogPost,
@@ -30,6 +31,17 @@ function BlogPost() {
   }
 
   const html = marked(post.content)
+
+  useEffect(() => {
+    document.title = `${post.title} | Bremer Suits Journal`
+    const setMeta = (name: string, content: string) => {
+      let el = document.querySelector(`meta[name="${name}"]`) as HTMLMetaElement | null
+      if (!el) { el = document.createElement('meta'); el.name = name; document.head.appendChild(el) }
+      el.content = content
+    }
+    if (post.summary) setMeta('description', post.summary)
+    if (post.tags) setMeta('keywords', post.tags.join(', '))
+  }, [post])
 
   return (
     <div className="min-h-screen bg-white">

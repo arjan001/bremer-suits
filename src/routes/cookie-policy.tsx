@@ -1,6 +1,13 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/cookie-policy')({
+  head: () => ({
+    meta: [
+      { title: 'Cookie Policy | Bremer Suits' },
+      { name: 'description', content: 'Learn how Bremer Suits uses cookies on our website to improve your browsing experience.' },
+      { name: 'robots', content: 'noindex, follow' },
+    ],
+  }),
   component: CookiePolicy,
 })
 
