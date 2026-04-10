@@ -2,6 +2,7 @@ import { createFileRoute, Link } from '@tanstack/react-router'
 import { allBlogs } from 'content-collections'
 import { marked } from 'marked'
 import { ArrowLeft } from 'lucide-react'
+import { useEffect } from 'react'
 
 export const Route = createFileRoute('/blog/$slug')({
   component: BlogPost,
@@ -30,6 +31,32 @@ function BlogPost() {
   }
 
   const html = marked(post.content)
+
+  useEffect(() => {
+    document.title = `${post.title} | Bremer Suits Journal`
+    const setMeta = (name: string, content: string) => {
+      let el = document.querySelector(`meta[name="${name}"]`) as HTMLMetaElement | null
+      if (!el) { el = document.createElement('meta'); el.name = name; document.head.appendChild(el) }
+      el.content = content
+    }
+    const setProperty = (property: string, content: string) => {
+      let el = document.querySelector(`meta[property="${property}"]`) as HTMLMetaElement | null
+      if (!el) { el = document.createElement('meta'); el.setAttribute('property', property); document.head.appendChild(el) }
+      el.content = content
+    }
+    if (post.summary) setMeta('description', post.summary)
+    if (post.tags) setMeta('keywords', post.tags.join(', '))
+    setProperty('og:title', `${post.title} | Bremer Suits Journal`)
+    if (post.summary) setProperty('og:description', post.summary)
+    setProperty('og:type', 'article')
+    setProperty('og:image', 'https://bremersuits.com/images/og-logo-gold-black.jpg')
+    setProperty('og:image:alt', `${post.title} - Bremer Suits Journal`)
+    setProperty('og:url', `https://bremersuits.com/blog/${slug}`)
+    setMeta('twitter:card', 'summary_large_image')
+    setMeta('twitter:title', `${post.title} | Bremer Suits Journal`)
+    if (post.summary) setMeta('twitter:description', post.summary)
+    setMeta('twitter:image', 'https://bremersuits.com/images/og-logo-gold-black.jpg')
+  }, [post, slug])
 
   return (
     <div className="min-h-screen bg-white">

@@ -1,6 +1,13 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/privacy-policy')({
+  head: () => ({
+    meta: [
+      { title: 'Privacy Policy | Bremer Suits' },
+      { name: 'description', content: 'Read the Bremer Suits privacy policy. Learn how we collect, use, and protect your personal information.' },
+      { name: 'robots', content: 'noindex, follow' },
+    ],
+  }),
   component: PrivacyPolicy,
 })
 

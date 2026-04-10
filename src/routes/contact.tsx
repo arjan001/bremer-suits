@@ -3,6 +3,61 @@ import { useState } from 'react'
 import { Mail, Send, Phone, MapPin, Clock, Instagram, MessageCircle } from 'lucide-react'
 
 export const Route = createFileRoute('/contact')({
+  head: () => ({
+    meta: [
+      {
+        title: 'Book a Fitting | Private Consultation at Bremer Suits Nairobi',
+      },
+      {
+        name: 'description',
+        content: 'Ready for your perfect fit? Schedule a private consultation at our Nairobi studio. Expert measurements, fabric selection, and personalized styling for your next big event.',
+      },
+      {
+        name: 'keywords',
+        content: 'Book tailor appointment Nairobi, suit fitting consultation, Bremer Suits location, custom suit price Kenya, bespoke tailor contact, suit alterations near me',
+      },
+      {
+        property: 'og:title',
+        content: 'Book a Fitting | Private Consultation at Bremer Suits Nairobi',
+      },
+      {
+        property: 'og:description',
+        content: 'Ready for your perfect fit? Schedule a private consultation at our Nairobi studio. Expert measurements, fabric selection, and personalized styling for your next big event.',
+      },
+      {
+        property: 'og:type',
+        content: 'website',
+      },
+      {
+        name: 'twitter:card',
+        content: 'summary_large_image',
+      },
+      {
+        property: 'og:image',
+        content: 'https://bremersuits.com/images/og-logo-gold-black.jpg',
+      },
+      {
+        property: 'og:image:width',
+        content: '1200',
+      },
+      {
+        property: 'og:image:height',
+        content: '630',
+      },
+      {
+        property: 'og:image:alt',
+        content: 'Book a Fitting at Bremer Suits Nairobi',
+      },
+      {
+        name: 'twitter:image',
+        content: 'https://bremersuits.com/images/og-logo-gold-black.jpg',
+      },
+      {
+        property: 'og:url',
+        content: 'https://bremersuits.com/contact',
+      },
+    ],
+  }),
   component: Contact,
 })
 
@@ -45,8 +100,8 @@ function Contact() {
       <section className="relative bg-black overflow-hidden">
         <div className="absolute inset-0">
           <img
-            src="/images/contact-banner.webp"
-            alt="Contact"
+            src="/images/contact-banner-new.jpg"
+            alt="Book a private suit fitting consultation at Bremer Suits Nairobi studio"
             className="w-full h-full object-cover opacity-40"
           />
         </div>
@@ -119,15 +174,18 @@ function Contact() {
               </div>
             </div>
 
-            {/* Social / WhatsApp */}
+            {/* Social Links */}
             <div className="border-t border-gray-100 pt-8">
               <h3 className="text-sm font-semibold text-black mb-4 uppercase tracking-wide">Connect with Us</h3>
               <div className="flex gap-3">
-                <a href="#" className="w-10 h-10 bg-black text-white flex items-center justify-center hover:bg-gray-800 transition-colors" aria-label="Instagram">
+                <a href="https://www.facebook.com/BREMERSUITS/" target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-[#1877F2] text-white flex items-center justify-center hover:opacity-90 transition-opacity" aria-label="Facebook">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                </a>
+                <a href="https://www.instagram.com/bremer_suits/" target="_blank" rel="noopener noreferrer" className="w-10 h-10 text-white flex items-center justify-center hover:opacity-90 transition-opacity" style={{ background: 'linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888)' }} aria-label="Instagram">
                   <Instagram size={18} />
                 </a>
-                <a href="#" className="w-10 h-10 bg-green-600 text-white flex items-center justify-center hover:bg-green-700 transition-colors" aria-label="WhatsApp">
-                  <MessageCircle size={18} />
+                <a href="https://www.tiktok.com/@bremersuits" target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-black text-white flex items-center justify-center hover:bg-gray-800 transition-colors" aria-label="TikTok">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1v-3.5a6.37 6.37 0 00-.79-.05A6.34 6.34 0 003.15 15.2a6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.34-6.34V8.73a8.19 8.19 0 004.76 1.52V6.8a4.84 4.84 0 01-1-.11z"/></svg>
                 </a>
               </div>
             </div>

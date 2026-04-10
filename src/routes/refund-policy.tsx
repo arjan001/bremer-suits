@@ -1,6 +1,13 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/refund-policy')({
+  head: () => ({
+    meta: [
+      { title: 'Refund Policy | Bremer Suits' },
+      { name: 'description', content: 'Understand the Bremer Suits refund and return policy for custom orders and ready-to-wear purchases.' },
+      { name: 'robots', content: 'noindex, follow' },
+    ],
+  }),
   component: RefundPolicy,
 })
 

@@ -3,6 +3,61 @@ import { allBlogs } from 'content-collections'
 import { ArrowRight } from 'lucide-react'
 
 export const Route = createFileRoute('/blog/')({
+  head: () => ({
+    meta: [
+      {
+        title: 'The Journal | Style Tips & Tailoring Insights | Bremer Suits',
+      },
+      {
+        name: 'description',
+        content: 'Read expert insights on bespoke tailoring, men\'s fashion trends in Nairobi, wedding suit styling tips, and the art of dressing well from Bremer Suits.',
+      },
+      {
+        name: 'keywords',
+        content: 'men\'s fashion blog Nairobi, suit styling tips Kenya, bespoke tailoring insights, wedding suit guide, Bremer Suits journal',
+      },
+      {
+        property: 'og:title',
+        content: 'The Journal | Style Tips & Tailoring Insights | Bremer Suits',
+      },
+      {
+        property: 'og:description',
+        content: 'Read expert insights on bespoke tailoring, men\'s fashion trends in Nairobi, wedding suit styling tips, and the art of dressing well from Bremer Suits.',
+      },
+      {
+        property: 'og:type',
+        content: 'blog',
+      },
+      {
+        name: 'twitter:card',
+        content: 'summary_large_image',
+      },
+      {
+        property: 'og:image',
+        content: 'https://bremersuits.com/images/og-logo-gold-black.jpg',
+      },
+      {
+        property: 'og:image:width',
+        content: '1200',
+      },
+      {
+        property: 'og:image:height',
+        content: '630',
+      },
+      {
+        property: 'og:image:alt',
+        content: 'The Journal - Style Tips & Tailoring Insights from Bremer Suits',
+      },
+      {
+        name: 'twitter:image',
+        content: 'https://bremersuits.com/images/og-logo-gold-black.jpg',
+      },
+      {
+        property: 'og:url',
+        content: 'https://bremersuits.com/blog',
+      },
+    ],
+  }),
   component: BlogIndex,
 })
 

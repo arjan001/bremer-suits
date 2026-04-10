@@ -5,6 +5,61 @@ import { ArrowRight, Sparkles, X, ChevronLeft, ChevronRight } from 'lucide-react
 const ITEMS_PER_PAGE = 12
 
 export const Route = createFileRoute('/portfolio')({
+  head: () => ({
+    meta: [
+      {
+        title: 'Bespoke Gallery | Wedding Tuxedos & High-End Suit Portfolio',
+      },
+      {
+        name: 'description',
+        content: 'Browse the Bremer Suits gallery. View our custom-made wedding tuxedos, ruracio attire, and sharp corporate wear designed for Nairobi\'s most influential men.',
+      },
+      {
+        name: 'keywords',
+        content: 'Wedding suit ideas Kenya, bespoke suit gallery, men\'s fashion portfolio Nairobi, custom tuxedo designs, Bremer Suits lookbook, bespoke tuxedos Nairobi',
+      },
+      {
+        property: 'og:title',
+        content: 'Bespoke Gallery | Wedding Tuxedos & High-End Suit Portfolio',
+      },
+      {
+        property: 'og:description',
+        content: 'Browse the Bremer Suits gallery. View our custom-made wedding tuxedos, ruracio attire, and sharp corporate wear designed for Nairobi\'s most influential men.',
+      },
+      {
+        property: 'og:type',
+        content: 'website',
+      },
+      {
+        name: 'twitter:card',
+        content: 'summary_large_image',
+      },
+      {
+        property: 'og:image',
+        content: 'https://bremersuits.com/images/og-groomsmen-black-tux.jpg',
+      },
+      {
+        property: 'og:image:width',
+        content: '1200',
+      },
+      {
+        property: 'og:image:height',
+        content: '630',
+      },
+      {
+        property: 'og:image:alt',
+        content: 'Bremer Suits Portfolio - Black Tuxedo Groomsmen Collection',
+      },
+      {
+        name: 'twitter:image',
+        content: 'https://bremersuits.com/images/og-groomsmen-black-tux.jpg',
+      },
+      {
+        property: 'og:url',
+        content: 'https://bremersuits.com/portfolio',
+      },
+    ],
+  }),
   component: PortfolioPage,
 })
 
@@ -13,6 +68,8 @@ const categories = [
   { id: 'wedding', label: 'Wedding & Events' },
   { id: 'bespoke', label: 'Bespoke Suits' },
   { id: 'made-to-measure', label: 'Made-to-Measure' },
+  { id: 'senator-suit', label: 'Senator Suit' },
+  { id: 'kaunda-suit', label: 'Kaunda Suit' },
 ]
 
 interface PortfolioItem {
@@ -22,37 +79,54 @@ interface PortfolioItem {
 }
 
 const staticPortfolioItems: PortfolioItem[] = [
-  { src: '/images/portfolio/wedding-pink-green-stairs.jpg', category: 'wedding' },
-  { src: '/images/portfolio/wedding-brown-beige-group.jpg', category: 'wedding' },
-  { src: '/images/portfolio/wedding-white-suit-bride.jpg', category: 'wedding' },
-  { src: '/images/portfolio/wedding-teal-groomsmen.jpg', category: 'wedding' },
-  { src: '/images/portfolio/wedding-camo-black-group.jpg', category: 'wedding' },
-  { src: '/images/portfolio/wedding-beige-reception.jpg', category: 'wedding' },
-  { src: '/images/portfolio/wedding-black-suits-outdoor.jpg', category: 'wedding' },
-  { src: '/images/portfolio/wedding-green-white-groom.jpg', category: 'wedding' },
-  { src: '/images/portfolio/wedding-red-suits-group.jpg', category: 'wedding' },
-  { src: '/images/portfolio/wedding-pink-blazers-wall.jpg', category: 'wedding' },
-  { src: '/images/portfolio/wedding-party-green-dresses.jpg', category: 'wedding' },
-  { src: '/images/portfolio/wedding-cream-bridal-lineup.jpg', category: 'wedding' },
-  { src: '/images/portfolio/wedding-beach-beige.jpg', category: 'wedding' },
-  { src: '/images/portfolio/wedding-grey-suits.jpg', category: 'wedding' },
-  { src: '/images/portfolio/bespoke-navy-pinstripe-man.jpg', category: 'bespoke' },
-  { src: '/images/portfolio/bespoke-grey-tweed.jpg', category: 'bespoke' },
-  { src: '/images/portfolio/bespoke-white-black-blazer.jpg', category: 'bespoke' },
-  { src: '/images/portfolio/bespoke-burgundy-mannequin.jpg', category: 'bespoke' },
-  { src: '/images/portfolio/bespoke-maroon-mannequin.jpg', category: 'bespoke' },
-  { src: '/images/portfolio/bespoke-brown-pinstripe.jpg', category: 'bespoke' },
-  { src: '/images/portfolio/bespoke-cream-double-breasted.jpg', category: 'made-to-measure' },
-  { src: '/images/portfolio/bespoke-orange-mannequin.jpg', category: 'made-to-measure' },
-  { src: '/images/portfolio/bespoke-brown-duo-mannequin.jpg', category: 'made-to-measure' },
-  { src: '/images/portfolio/bespoke-green-pinstripe.jpg', category: 'made-to-measure' },
-  { src: '/images/portfolio/wedding-beige-groomsmen.jpg', category: 'wedding' },
-  { src: '/images/portfolio/wedding-black-suits.jpg', category: 'wedding' },
-  { src: '/images/portfolio/wedding-pink-blazers.jpg', category: 'wedding' },
-  { src: '/images/portfolio/bespoke-pinstripe.jpg', category: 'bespoke' },
-  { src: '/images/portfolio/bespoke-cream-double.jpg', category: 'made-to-measure' },
-  { src: '/images/portfolio/bespoke-orange-suit.jpg', category: 'made-to-measure' },
-  { src: '/images/portfolio/bespoke-brown-duo.jpg', category: 'bespoke' },
+  { src: '/images/portfolio/wedding-pink-green-stairs.jpg', category: 'wedding', title: 'Pink and Green Wedding Suits on Grand Staircase by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/wedding-brown-beige-group.jpg', category: 'wedding', title: 'Brown and Beige Wedding Groomsmen Suits by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/wedding-white-suit-bride.jpg', category: 'wedding', title: 'Custom White Wedding Suit with Bride by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/wedding-teal-groomsmen.jpg', category: 'wedding', title: 'Teal Bespoke Groomsmen Suits by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/wedding-camo-black-group.jpg', category: 'wedding', title: 'Camouflage Accent Black Wedding Suits by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/wedding-beige-reception.jpg', category: 'wedding', title: 'Beige Wedding Reception Suits by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/wedding-black-suits-outdoor.jpg', category: 'wedding', title: 'Classic Black Outdoor Wedding Suits by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/wedding-green-white-groom.jpg', category: 'wedding', title: 'Green and White Bespoke Groom Suit by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/wedding-red-suits-group.jpg', category: 'wedding', title: 'Red Custom Wedding Suits for Groomsmen by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/wedding-pink-blazers-wall.jpg', category: 'wedding', title: 'Pink Wedding Blazers for Groomsmen by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/wedding-party-green-dresses.jpg', category: 'wedding', title: 'Wedding Party Styling with Green Accents by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/wedding-cream-bridal-lineup.jpg', category: 'wedding', title: 'Cream Bridal Party Lineup Styling by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/wedding-beach-beige.jpg', category: 'wedding', title: 'Beach Wedding Beige Linen Suits by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/wedding-grey-suits.jpg', category: 'wedding', title: 'Grey Bespoke Wedding Suits by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/bespoke-navy-pinstripe-man.jpg', category: 'bespoke', title: 'Navy Blue Pinstripe Bespoke Suit by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/bespoke-grey-tweed.jpg', category: 'bespoke', title: 'Grey Tweed Bespoke Sport Coat by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/bespoke-white-black-blazer.jpg', category: 'bespoke', title: 'White and Black Bespoke Blazer by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/bespoke-burgundy-mannequin.jpg', category: 'bespoke', title: 'Burgundy Bespoke 3-Piece Suit by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/bespoke-maroon-mannequin.jpg', category: 'bespoke', title: 'Maroon Custom Tailored Suit by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/bespoke-brown-pinstripe.jpg', category: 'bespoke', title: 'Brown Pinstripe Bespoke Suit by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/bespoke-cream-double-breasted.jpg', category: 'made-to-measure', title: 'Cream Double-Breasted Made-to-Measure Suit by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/bespoke-orange-mannequin.jpg', category: 'made-to-measure', title: 'Orange Made-to-Measure Suit by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/bespoke-brown-duo-mannequin.jpg', category: 'made-to-measure', title: 'Brown Duo Made-to-Measure Suits by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/bespoke-green-pinstripe.jpg', category: 'made-to-measure', title: 'Green Pinstripe Made-to-Measure Suit by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/wedding-beige-groomsmen.jpg', category: 'wedding', title: 'Beige Groomsmen Wedding Suits by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/wedding-black-suits.jpg', category: 'wedding', title: 'Classic Black Wedding Suits by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/wedding-pink-blazers.jpg', category: 'wedding', title: 'Pink Wedding Blazers by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/bespoke-pinstripe.jpg', category: 'bespoke', title: 'Classic Pinstripe Bespoke Suit by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/bespoke-cream-double.jpg', category: 'made-to-measure', title: 'Cream Double-Breasted Made-to-Measure Suit by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/bespoke-orange-suit.jpg', category: 'made-to-measure', title: 'Orange Custom Made-to-Measure Suit by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/bespoke-brown-duo.jpg', category: 'bespoke', title: 'Brown Duo Bespoke Suits by Bremer Suits Nairobi' },
+  // New additions
+  { src: '/images/portfolio/wedding-grey-groomsmen-tux.jpg', category: 'wedding', title: 'Grey Groomsmen with Black Tuxedo Groom by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/wedding-camo-white-groomsmen.jpg', category: 'wedding', title: 'Camo Accent White Jacket Groomsmen by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/wedding-beige-celebration.jpg', category: 'wedding', title: 'Beige Groomsmen Celebration Suits by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/wedding-black-tuxedo-walk.jpg', category: 'wedding', title: 'Black Tuxedo Groomsmen Walk by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/wedding-green-white-formation.jpg', category: 'wedding', title: 'Green and White Groomsmen Formation by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/bespoke-mint-green-duo.jpg', category: 'bespoke', title: 'Mint Green Double-Breasted Blazers by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/bespoke-cream-brown-mannequin.jpg', category: 'made-to-measure', title: 'Cream and Brown Made-to-Measure Ensemble by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/bespoke-grey-blazer-portrait.jpg', category: 'bespoke', title: 'Grey Blazer Fashion Portrait by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/bespoke-navy-gold-buttons.jpg', category: 'bespoke', title: 'Navy Double-Breasted Blazer with Gold Buttons by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/bespoke-orange-store-display.jpg', category: 'made-to-measure', title: 'Orange Double-Breasted Suit Store Display by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/bespoke-white-textured-3piece.jpg', category: 'bespoke', title: 'White Textured Three-Piece Suit by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/bespoke-striped-double-breasted.jpg', category: 'made-to-measure', title: 'Striped Double-Breasted Suit by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/bespoke-houndstooth-vest.jpg', category: 'bespoke', title: 'Houndstooth Suit with Brown Vest by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/bespoke-houndstooth-blazer.jpg', category: 'made-to-measure', title: 'Houndstooth Double-Breasted Blazer by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/bespoke-cream-red-casual.jpg', category: 'bespoke', title: 'Cream Blazer with Red Trousers Casual Style by Bremer Suits Nairobi' },
+  { src: '/images/portfolio/bespoke-navy-store-mannequin.jpg', category: 'bespoke', title: 'Navy Blazer Store Mannequin Display by Bremer Suits Nairobi' },
 ]
 
 function mapCategoryFromTag(tag: string, title: string): string {
@@ -60,6 +134,8 @@ function mapCategoryFromTag(tag: string, title: string): string {
   const tl = (title || '').toLowerCase()
   if (tl.includes('wedding') || t === 'wedding') return 'wedding'
   if (tl.includes('made-to-measure') || t === 'made-to-measure') return 'made-to-measure'
+  if (tl.includes('senator') || t === 'senator-suit') return 'senator-suit'
+  if (tl.includes('kaunda') || t === 'kaunda-suit') return 'kaunda-suit'
   return 'bespoke'
 }
 
@@ -120,7 +196,7 @@ function PortfolioPage() {
         <div className="absolute inset-0">
           <img
             src="/images/portfolio/wedding-camo-black-group.jpg"
-            alt="Portfolio hero"
+            alt="Bremer Suits Bespoke Gallery - Custom Wedding and Formal Suits Nairobi"
             className="w-full h-full object-cover opacity-30"
           />
           <div className="absolute inset-0 bg-gradient-to-r from-black via-black/80 to-transparent" />
@@ -175,6 +251,7 @@ function PortfolioPage() {
           </div>
 
           {/* Masonry Grid */}
+          {paginatedItems.length > 0 ? (
           <div className="columns-2 md:columns-3 lg:columns-4 gap-3 lg:gap-4 space-y-3 lg:space-y-4">
             {paginatedItems.map((item, idx) => (
               <div
@@ -193,6 +270,31 @@ function PortfolioPage() {
               </div>
             ))}
           </div>
+          ) : (
+          <div className="text-center py-20 border border-dashed border-gray-300 bg-gray-50">
+            <Sparkles size={40} className="mx-auto mb-4 text-[#c8502a]/40" />
+            <h3
+              className="text-2xl font-bold text-black mb-3"
+              style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
+            >
+              Coming Soon
+            </h3>
+            <p className="text-gray-500 max-w-md mx-auto mb-6">
+              {activeCategory === 'senator-suit'
+                ? 'Our Senator Suit collection is being curated. Elegant, collarless designs that command presence and respect — stay tuned.'
+                : activeCategory === 'kaunda-suit'
+                ? 'Our Kaunda Suit collection is on the way. Timeless African heritage meets modern tailoring — coming soon.'
+                : 'New pieces are being added to this collection. Check back soon.'}
+            </p>
+            <Link
+              to="/contact"
+              className="inline-flex items-center gap-2 px-8 py-3.5 text-xs tracking-[0.2em] uppercase bg-black text-white hover:bg-gray-800 transition-colors duration-300 font-semibold"
+            >
+              Inquire About This Style
+              <ArrowRight size={14} />
+            </Link>
+          </div>
+          )}
 
           {/* Pagination Controls */}
           {totalPages > 1 && (
@@ -246,7 +348,7 @@ function PortfolioPage() {
       <section className="relative overflow-hidden py-24 lg:py-32">
         <div className="absolute inset-0 bg-black" />
         <div className="absolute inset-0">
-          <img src="/images/portfolio/bespoke-burgundy-mannequin.jpg" alt="" className="w-full h-full object-cover opacity-20" />
+          <img src="/images/portfolio/bespoke-burgundy-mannequin.jpg" alt="Burgundy Bespoke Suit by Bremer Suits Nairobi" className="w-full h-full object-cover opacity-20" />
         </div>
         <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <p className="text-xs tracking-[0.4em] uppercase text-[#c9a96e] mb-4 font-semibold">
@@ -283,7 +385,7 @@ function PortfolioPage() {
           >
             <img
               src={selectedImage}
-              alt="Portfolio detail"
+              alt={selectedImage ? `Bremer Suits Portfolio - Bespoke Suit Detail View` : 'Bremer Suits Portfolio Detail'}
               className="w-full h-auto max-h-[85vh] object-contain rounded-lg"
             />
             <button

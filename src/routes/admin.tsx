@@ -23,6 +23,12 @@ import { useState } from 'react'
 import { AdminProvider, useAdmin } from '@/lib/admin-store'
 
 export const Route = createFileRoute('/admin')({
+  head: () => ({
+    meta: [
+      { title: 'Admin Dashboard | Bremer Suits' },
+      { name: 'robots', content: 'noindex, nofollow' },
+    ],
+  }),
   component: AdminLayout,
 })
 

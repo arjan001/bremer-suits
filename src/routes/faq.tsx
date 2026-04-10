@@ -3,6 +3,57 @@ import { useState } from 'react'
 import { ChevronDown } from 'lucide-react'
 
 export const Route = createFileRoute('/faq')({
+  head: () => ({
+    meta: [
+      {
+        title: 'Frequently Asked Questions | Bremer Suits Nairobi',
+      },
+      {
+        name: 'description',
+        content: 'Find answers to common questions about Bremer Suits custom tailoring services, pricing, fittings, delivery, and bespoke suit care in Nairobi.',
+      },
+      {
+        name: 'keywords',
+        content: 'custom suit FAQ, bespoke tailoring questions, suit fitting process, Bremer Suits pricing, tailoring turnaround time Nairobi',
+      },
+      {
+        property: 'og:title',
+        content: 'Frequently Asked Questions | Bremer Suits Nairobi',
+      },
+      {
+        property: 'og:description',
+        content: 'Find answers to common questions about Bremer Suits custom tailoring services, pricing, fittings, and delivery.',
+      },
+      {
+        name: 'twitter:card',
+        content: 'summary_large_image',
+      },
+      {
+        property: 'og:image',
+        content: 'https://bremersuits.com/images/og-logo-gold-black.jpg',
+      },
+      {
+        property: 'og:image:width',
+        content: '1200',
+      },
+      {
+        property: 'og:image:height',
+        content: '630',
+      },
+      {
+        property: 'og:image:alt',
+        content: 'Frequently Asked Questions - Bremer Suits Nairobi',
+      },
+      {
+        name: 'twitter:image',
+        content: 'https://bremersuits.com/images/og-logo-gold-black.jpg',
+      },
+      {
+        property: 'og:url',
+        content: 'https://bremersuits.com/faq',
+      },
+    ],
+  }),
   component: FAQPage,
 })
 

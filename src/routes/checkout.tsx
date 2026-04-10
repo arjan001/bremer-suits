@@ -8,6 +8,12 @@ import { ordersApi } from '@/lib/admin-api'
 import { VisaLogo, MastercardLogo, MpesaLogo, VisaBadge, MastercardBadge, MpesaBadge } from '@/components/PaymentLogos'
 
 export const Route = createFileRoute('/checkout')({
+  head: () => ({
+    meta: [
+      { title: 'Checkout | Bremer Suits' },
+      { name: 'robots', content: 'noindex, nofollow' },
+    ],
+  }),
   component: Checkout,
 })
 

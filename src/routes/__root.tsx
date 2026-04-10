@@ -2,6 +2,7 @@ import { HeadContent, Link, Outlet, Scripts, createRootRoute, useRouter } from '
 import { Header } from '@/components/Header'
 import { CartDrawer } from '@/components/CartDrawer'
 import { SeoHead } from '@/components/SeoHead'
+import { StructuredData } from '@/components/StructuredData'
 import { CartProvider } from '@/lib/cart-context'
 import { WishlistProvider } from '@/lib/wishlist-context'
 import { Phone, Mail, Instagram, Clock, Navigation, Globe, X, ChevronUp, Shield, FileText, Cookie, Truck, RotateCcw, ArrowRight, MapPin, SearchX } from 'lucide-react'
@@ -20,18 +21,90 @@ export const Route = createRootRoute({
         content: 'width=device-width, initial-scale=1',
       },
       {
-        title: 'Bremer Suits — Custom Suits & Image Consulting',
+        title: 'Bremer Suits | Premier Bespoke Tailoring & Custom Made Suits in Nairobi',
       },
       {
         name: 'description',
-        content: 'Premium custom suits, professional fashion styling, and image consulting. Elevate your personal brand with Bremer Suits.',
+        content: 'Experience the art of perfection with Bremer Suits. Nairobi\'s leading specialists in high-end, custom-made suits for weddings, corporate leadership, and special occasions. Expertly fitted, made-to-order elegance.',
+      },
+      {
+        name: 'keywords',
+        content: 'Bespoke suits Nairobi, custom made suits Kenya, premium men\'s tailoring, luxury wedding suits, Bremer Suits, made-to-order suits Nairobi, Ruracio suits, best suit tailors in Nairobi',
+      },
+      {
+        name: 'robots',
+        content: 'index, follow',
+      },
+      {
+        property: 'og:title',
+        content: 'Bremer Suits | Premier Bespoke Tailoring & Custom Made Suits in Nairobi',
+      },
+      {
+        property: 'og:description',
+        content: 'Experience the art of perfection with Bremer Suits. Nairobi\'s leading specialists in high-end, custom-made suits for weddings, corporate leadership, and special occasions.',
+      },
+      {
+        property: 'og:type',
+        content: 'website',
+      },
+      {
+        property: 'og:site_name',
+        content: 'Bremer Suits',
+      },
+      {
+        name: 'twitter:card',
+        content: 'summary_large_image',
+      },
+      {
+        name: 'twitter:title',
+        content: 'Bremer Suits | Premier Bespoke Tailoring & Custom Made Suits in Nairobi',
+      },
+      {
+        name: 'twitter:description',
+        content: 'Nairobi\'s leading specialists in high-end, custom-made suits for weddings, corporate leadership, and special occasions.',
+      },
+      {
+        property: 'og:image',
+        content: 'https://bremersuits.com/images/og-logo-gold-black.jpg',
+      },
+      {
+        property: 'og:image:width',
+        content: '1200',
+      },
+      {
+        property: 'og:image:height',
+        content: '630',
+      },
+      {
+        property: 'og:image:alt',
+        content: 'Bremer Suits - Premier Bespoke Tailoring in Nairobi',
+      },
+      {
+        name: 'twitter:image',
+        content: 'https://bremersuits.com/images/og-logo-gold-black.jpg',
+      },
+      {
+        property: 'og:url',
+        content: 'https://bremersuits.com',
+      },
+      {
+        name: 'theme-color',
+        content: '#000000',
+      },
+      {
+        name: 'msapplication-TileColor',
+        content: '#000000',
       },
     ],
     links: [
       {
         rel: 'icon',
-        type: 'image/png',
-        href: '/images/stemtrix-logo.png',
+        type: 'image/jpeg',
+        href: '/images/og-logo-gold-black.jpg',
+      },
+      {
+        rel: 'apple-touch-icon',
+        href: '/images/og-logo-gold-black.jpg',
       },
     ],
   }),
@@ -153,15 +226,42 @@ function RootLayout() {
       <CartProvider>
         <WebsiteAnalyticsTracker />
         <SeoHead />
+        <StructuredData />
         <Header />
         <CartDrawer />
         <main>
           <Outlet />
         </main>
         <Footer />
+        <div className="h-16 lg:hidden" aria-hidden="true" />
         {!hideExtras && <SubscribeModal />}
+        {!hideExtras && <StickyMobileCTA />}
       </CartProvider>
     </WishlistProvider>
+  )
+}
+
+/* ── Sticky Mobile CTA – "Book Consultation" ── */
+function StickyMobileCTA() {
+  return (
+    <div className="fixed bottom-0 left-0 right-0 z-50 lg:hidden bg-black/95 backdrop-blur-sm border-t border-white/10 px-4 py-3 safe-area-bottom">
+      <Link
+        to="/contact"
+        className="flex items-center justify-center gap-2 w-full py-3 text-xs tracking-[0.2em] uppercase bg-white text-black font-semibold hover:bg-gray-100 transition-colors duration-300"
+      >
+        <Phone size={14} />
+        Book a Consultation
+      </Link>
+    </div>
+  )
+}
+
+/* ── Facebook icon ── */
+function FacebookIcon({ size = 16 }: { size?: number }) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="currentColor" className="text-white">
+      <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+    </svg>
   )
 }
 
@@ -782,9 +882,9 @@ function Footer() {
   // Social links - use admin settings if available, otherwise show defaults
   const adminSocials = (settings?.socialLinks || []).filter((s) => s.isActive)
   const defaultSocials = [
-    { id: 'def-ig', platform: 'instagram', url: '#', label: 'Instagram', isActive: true, sortOrder: 1 },
-    { id: 'def-tt', platform: 'tiktok', url: '#', label: 'TikTok', isActive: true, sortOrder: 2 },
-    { id: 'def-wa', platform: 'whatsapp', url: '#', label: 'WhatsApp', isActive: true, sortOrder: 3 },
+    { id: 'def-fb', platform: 'facebook', url: 'https://www.facebook.com/BREMERSUITS/', label: 'Facebook', isActive: true, sortOrder: 1 },
+    { id: 'def-ig', platform: 'instagram', url: 'https://www.instagram.com/bremer_suits/', label: 'Instagram', isActive: true, sortOrder: 2 },
+    { id: 'def-tt', platform: 'tiktok', url: 'https://www.tiktok.com/@bremersuits', label: 'TikTok', isActive: true, sortOrder: 3 },
   ]
   const displaySocials = adminSocials.length > 0 ? adminSocials : defaultSocials
 
@@ -821,6 +921,7 @@ function Footer() {
       case 'instagram': return <Instagram size={18} className="text-white" />
       case 'tiktok': return <TikTokIcon size={18} />
       case 'whatsapp': return <WhatsAppIcon size={18} />
+      case 'facebook': return <FacebookIcon size={18} />
       default: return <Globe size={16} className="text-white" />
     }
   }
