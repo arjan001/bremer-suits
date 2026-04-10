@@ -258,7 +258,7 @@ function HomePage() {
             />
           </div>
         ))}
-        <div className="absolute inset-0 bg-black/55" />
+        <div className="absolute inset-0 bg-black/20" />
 
         <button
           onClick={prevSlide}
@@ -289,12 +289,12 @@ function HomePage() {
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full text-center">
           <h1
             className="text-4xl sm:text-5xl lg:text-6xl leading-[1.15] mb-6 text-white"
-            style={{ fontFamily: "'Playfair Display', Georgia, serif", fontStyle: 'italic', fontWeight: 400 }}
+            style={{ fontFamily: "'Playfair Display', Georgia, serif", fontStyle: 'italic', fontWeight: 400, textShadow: '0 2px 8px rgba(0,0,0,0.7)' }}
           >
             Bremer Suits{' '}
             <span className="block text-3xl sm:text-4xl lg:text-5xl mt-2">Expert Tailoring for Every Gentleman</span>
           </h1>
-          <p className="text-sm sm:text-base text-white/70 leading-relaxed mb-8 max-w-md mx-auto font-light">
+          <p className="text-sm sm:text-base text-white/90 leading-relaxed mb-8 max-w-md mx-auto font-light" style={{ textShadow: '0 1px 6px rgba(0,0,0,0.7)' }}>
             Custom-made suits crafted to fit your style, your story, and your budget.
           </p>
           <div className="flex justify-center">
