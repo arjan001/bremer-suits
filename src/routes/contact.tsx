@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useState } from 'react'
-import { Mail, Send, Phone, MapPin, Clock, Instagram, MessageCircle } from 'lucide-react'
+import { Mail, Send, Phone, MapPin, Clock, Instagram, MessageCircle, CheckCircle2, Calendar } from 'lucide-react'
 
 export const Route = createFileRoute('/contact')({
   head: () => ({
@@ -14,7 +14,7 @@ export const Route = createFileRoute('/contact')({
       },
       {
         name: 'keywords',
-        content: 'Book tailor appointment Nairobi, suit fitting consultation, Bremer Suits location, custom suit price Kenya, bespoke tailor contact, suit alterations near me',
+        content: 'Bremer Suits, Bremer, BremerSuits, BREMER SUITS, book tailor appointment Nairobi, suit fitting consultation, Bremer Suits location, custom suit price Kenya, bespoke tailor contact, suit alterations near me, bremer suits contact',
       },
       {
         property: 'og:title',
@@ -68,24 +68,25 @@ function Contact() {
 
   if (submitted) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-white">
+      <div className="min-h-screen flex items-center justify-center bg-black">
         <div className="text-center max-w-md mx-auto px-4">
-          <div className="w-20 h-20 bg-gray-50 flex items-center justify-center mx-auto mb-6">
-            <Mail className="w-8 h-8 text-black" />
+          <div className="w-20 h-20 bg-gold/10 flex items-center justify-center mx-auto mb-6 rounded-full">
+            <CheckCircle2 className="w-10 h-10 text-gold" />
           </div>
           <h2
-            className="text-3xl font-bold text-black mb-3"
+            className="text-3xl font-bold text-white mb-3"
             style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
           >
             Request Received
           </h2>
-          <p className="text-gray-500 mb-8 leading-relaxed">
+          <div className="w-12 h-0.5 bg-gold mx-auto mb-4" />
+          <p className="text-gray-400 mb-8 leading-relaxed">
             Thank you for reaching out. We will review your inquiry and get back
             to you within 24 hours to schedule your consultation.
           </p>
           <button
             onClick={() => setSubmitted(false)}
-            className="px-8 py-3.5 text-xs tracking-[0.2em] uppercase bg-black text-white hover:bg-gray-800 transition-colors duration-300 font-semibold"
+            className="px-8 py-3.5 text-xs tracking-[0.2em] uppercase bg-gold text-black hover:bg-gold-light transition-colors duration-300 font-semibold"
           >
             Send Another Message
           </button>
@@ -102,19 +103,20 @@ function Contact() {
           <img
             src="/images/contact-banner-new.jpg"
             alt="Book a private suit fitting consultation at Bremer Suits Nairobi studio"
-            className="w-full h-full object-cover opacity-40"
+            className="w-full h-full object-cover opacity-30"
           />
         </div>
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-28 text-center">
-          <p className="text-xs tracking-[0.4em] uppercase text-white/60 mb-3 font-medium">
+          <p className="text-xs tracking-[0.4em] uppercase text-gold mb-3 font-medium">
             Get in Touch
           </p>
           <h1
             className="text-4xl lg:text-6xl font-bold text-white mb-4"
             style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
           >
-            Book a Consultation
+            Book a Consultation with Bremer Suits
           </h1>
+          <div className="w-16 h-0.5 bg-gold mx-auto mb-4" />
           <p className="text-white/60 max-w-lg mx-auto font-light">
             Begin your journey to a refined personal image. Schedule a private
             consultation with our team.
@@ -133,10 +135,11 @@ function Contact() {
               >
                 Visit Us
               </h2>
+              <div className="w-10 h-0.5 bg-gold mb-6" />
               <div className="space-y-5">
                 <div className="flex items-start gap-4">
-                  <div className="w-10 h-10 bg-gray-50 flex items-center justify-center shrink-0">
-                    <MapPin size={18} className="text-black" strokeWidth={1.5} />
+                  <div className="w-10 h-10 bg-black flex items-center justify-center shrink-0">
+                    <MapPin size={18} className="text-gold" strokeWidth={1.5} />
                   </div>
                   <div>
                     <p className="text-sm font-semibold text-black">Studio Location</p>
@@ -144,26 +147,26 @@ function Contact() {
                   </div>
                 </div>
                 <div className="flex items-start gap-4">
-                  <div className="w-10 h-10 bg-gray-50 flex items-center justify-center shrink-0">
-                    <Mail size={18} className="text-black" strokeWidth={1.5} />
+                  <div className="w-10 h-10 bg-black flex items-center justify-center shrink-0">
+                    <Mail size={18} className="text-gold" strokeWidth={1.5} />
                   </div>
                   <div>
                     <p className="text-sm font-semibold text-black">Email</p>
-                    <p className="text-sm text-gray-500">brendahwanja6722@gmail.com</p>
+                    <a href="mailto:brendahwanja6722@gmail.com" className="text-sm text-gray-500 hover:text-black transition-colors">brendahwanja6722@gmail.com</a>
                   </div>
                 </div>
                 <div className="flex items-start gap-4">
-                  <div className="w-10 h-10 bg-gray-50 flex items-center justify-center shrink-0">
-                    <Phone size={18} className="text-black" strokeWidth={1.5} />
+                  <div className="w-10 h-10 bg-black flex items-center justify-center shrink-0">
+                    <Phone size={18} className="text-gold" strokeWidth={1.5} />
                   </div>
                   <div>
                     <p className="text-sm font-semibold text-black">Phone</p>
-                    <p className="text-sm text-gray-500">+254 793 880642</p>
+                    <a href="tel:+254793880642" className="text-sm text-gray-500 hover:text-black transition-colors">+254 793 880642</a>
                   </div>
                 </div>
                 <div className="flex items-start gap-4">
-                  <div className="w-10 h-10 bg-gray-50 flex items-center justify-center shrink-0">
-                    <Clock size={18} className="text-black" strokeWidth={1.5} />
+                  <div className="w-10 h-10 bg-black flex items-center justify-center shrink-0">
+                    <Clock size={18} className="text-gold" strokeWidth={1.5} />
                   </div>
                   <div>
                     <p className="text-sm font-semibold text-black">Hours</p>
@@ -187,16 +190,40 @@ function Contact() {
                 <a href="https://www.tiktok.com/@bremersuits" target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-black text-white flex items-center justify-center hover:bg-gray-800 transition-colors" aria-label="TikTok">
                   <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1v-3.5a6.37 6.37 0 00-.79-.05A6.34 6.34 0 003.15 15.2a6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.34-6.34V8.73a8.19 8.19 0 004.76 1.52V6.8a4.84 4.84 0 01-1-.11z"/></svg>
                 </a>
+                <a href="https://wa.me/254793880642" target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-[#25D366] text-white flex items-center justify-center hover:opacity-90 transition-opacity" aria-label="WhatsApp">
+                  <MessageCircle size={18} />
+                </a>
               </div>
             </div>
 
             <div className="border-t border-gray-100 pt-8">
               <h3 className="text-sm font-semibold text-black mb-2 uppercase tracking-wide">What to Expect</h3>
-              <p className="text-sm text-gray-500 leading-relaxed">
-                Your initial consultation is complimentary and typically lasts 45–60 minutes.
-                We'll discuss your style goals, take measurements if appropriate, and
-                outline a personalized plan for your wardrobe or image transformation.
-              </p>
+              <div className="space-y-3 mt-4">
+                <div className="flex items-start gap-3">
+                  <div className="w-6 h-6 bg-gold/10 rounded-full flex items-center justify-center shrink-0 mt-0.5">
+                    <span className="text-gold text-xs font-bold">1</span>
+                  </div>
+                  <p className="text-sm text-gray-500">Complimentary 45–60 minute private consultation</p>
+                </div>
+                <div className="flex items-start gap-3">
+                  <div className="w-6 h-6 bg-gold/10 rounded-full flex items-center justify-center shrink-0 mt-0.5">
+                    <span className="text-gold text-xs font-bold">2</span>
+                  </div>
+                  <p className="text-sm text-gray-500">Discuss your style goals and event requirements</p>
+                </div>
+                <div className="flex items-start gap-3">
+                  <div className="w-6 h-6 bg-gold/10 rounded-full flex items-center justify-center shrink-0 mt-0.5">
+                    <span className="text-gold text-xs font-bold">3</span>
+                  </div>
+                  <p className="text-sm text-gray-500">Expert measurements and fabric selection</p>
+                </div>
+                <div className="flex items-start gap-3">
+                  <div className="w-6 h-6 bg-gold/10 rounded-full flex items-center justify-center shrink-0 mt-0.5">
+                    <span className="text-gold text-xs font-bold">4</span>
+                  </div>
+                  <p className="text-sm text-gray-500">Personalized plan for your wardrobe transformation</p>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -204,11 +231,12 @@ function Contact() {
           <div className="lg:col-span-3">
             <div className="bg-gray-50 p-8 lg:p-10">
               <h3
-                className="text-xl font-bold text-black mb-6"
+                className="text-xl font-bold text-black mb-1"
                 style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
               >
                 Send Us a Message
               </h3>
+              <div className="w-10 h-0.5 bg-gold mb-6" />
               <form
                 onSubmit={async (e) => {
                   e.preventDefault()
@@ -250,7 +278,7 @@ function Contact() {
                       htmlFor="name"
                       className="block text-xs tracking-wide uppercase text-gray-500 mb-2 font-medium"
                     >
-                      Full Name
+                      Full Name <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="text"
@@ -267,7 +295,7 @@ function Contact() {
                       htmlFor="email"
                       className="block text-xs tracking-wide uppercase text-gray-500 mb-2 font-medium"
                     >
-                      Email
+                      Email <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="email"
@@ -280,44 +308,47 @@ function Contact() {
                   </div>
                 </div>
 
-                <div>
-                  <label
-                    htmlFor="phone"
-                    className="block text-xs tracking-wide uppercase text-gray-500 mb-2 font-medium"
-                  >
-                    Phone Number
-                  </label>
-                  <input
-                    type="tel"
-                    id="phone"
-                    name="phone"
-                    required
-                    className="w-full px-4 py-3 bg-white border border-gray-200 focus:border-black focus:ring-1 focus:ring-black outline-none transition-colors text-sm"
-                    placeholder="+254 700 000000"
-                  />
-                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                  <div>
+                    <label
+                      htmlFor="phone"
+                      className="block text-xs tracking-wide uppercase text-gray-500 mb-2 font-medium"
+                    >
+                      Phone Number <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="tel"
+                      id="phone"
+                      name="phone"
+                      required
+                      className="w-full px-4 py-3 bg-white border border-gray-200 focus:border-black focus:ring-1 focus:ring-black outline-none transition-colors text-sm"
+                      placeholder="+254 700 000000"
+                    />
+                  </div>
 
-                <div>
-                  <label
-                    htmlFor="service"
-                    className="block text-xs tracking-wide uppercase text-gray-500 mb-2 font-medium"
-                  >
-                    Service of Interest
-                  </label>
-                  <select
-                    id="service"
-                    name="service"
-                    className="w-full px-4 py-3 bg-white border border-gray-200 focus:border-black focus:ring-1 focus:ring-black outline-none transition-colors text-sm text-gray-600"
-                  >
-                    <option value="">Select a service</option>
-                    <option value="custom-suiting">Custom Suiting</option>
-                    <option value="fashion-styling">Fashion Styling</option>
-                    <option value="image-consulting">Image Consulting</option>
-                    <option value="wardrobe-audit">Wardrobe Audit</option>
-                    <option value="alterations">Alterations & Fitting</option>
-                    <option value="corporate">Corporate Programs</option>
-                    <option value="other">Other</option>
-                  </select>
+                  <div>
+                    <label
+                      htmlFor="service"
+                      className="block text-xs tracking-wide uppercase text-gray-500 mb-2 font-medium"
+                    >
+                      Service of Interest
+                    </label>
+                    <select
+                      id="service"
+                      name="service"
+                      className="w-full px-4 py-3 bg-white border border-gray-200 focus:border-black focus:ring-1 focus:ring-black outline-none transition-colors text-sm text-gray-600"
+                    >
+                      <option value="">Select a service</option>
+                      <option value="custom-suiting">Custom Suiting</option>
+                      <option value="wedding-suits">Wedding Suits</option>
+                      <option value="fashion-styling">Fashion Styling</option>
+                      <option value="image-consulting">Image Consulting</option>
+                      <option value="wardrobe-audit">Wardrobe Audit</option>
+                      <option value="alterations">Alterations & Fitting</option>
+                      <option value="corporate">Corporate Programs</option>
+                      <option value="other">Other</option>
+                    </select>
+                  </div>
                 </div>
 
                 <div>
@@ -325,7 +356,7 @@ function Contact() {
                     htmlFor="message"
                     className="block text-xs tracking-wide uppercase text-gray-500 mb-2 font-medium"
                   >
-                    Message
+                    Message <span className="text-red-500">*</span>
                   </label>
                   <textarea
                     id="message"
@@ -333,24 +364,81 @@ function Contact() {
                     required
                     rows={5}
                     className="w-full px-4 py-3 bg-white border border-gray-200 focus:border-black focus:ring-1 focus:ring-black outline-none transition-colors resize-none text-sm"
-                    placeholder="Tell us about your style goals or any upcoming events..."
+                    placeholder="Tell us about your style goals, upcoming events, or any specific requirements..."
                   />
                 </div>
 
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="inline-flex items-center gap-2 px-8 py-3.5 text-xs tracking-[0.2em] uppercase bg-black text-white hover:bg-gray-800 transition-colors duration-300 font-semibold w-full sm:w-auto justify-center"
+                  className="inline-flex items-center gap-2 px-8 py-3.5 text-xs tracking-[0.2em] uppercase bg-black text-white hover:bg-gold hover:text-black transition-colors duration-300 font-semibold w-full sm:w-auto justify-center disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <Send size={14} />
                   {submitting ? 'Sending...' : 'Send Request'}
                 </button>
-                {submitError && <p className="text-sm text-red-600">{submitError}</p>}
+                {submitError && (
+                  <div className="p-3 bg-red-50 border border-red-200 text-sm text-red-700">
+                    {submitError}
+                  </div>
+                )}
               </form>
+            </div>
+
+            {/* Quick Contact Bar */}
+            <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <a
+                href="https://wa.me/254793880642?text=Hello%2C%20I%27d%20like%20to%20book%20a%20consultation"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-3 p-4 bg-[#25D366]/5 border border-[#25D366]/20 hover:bg-[#25D366]/10 transition-colors"
+              >
+                <MessageCircle size={20} className="text-[#25D366] shrink-0" />
+                <div>
+                  <p className="text-sm font-semibold text-black">WhatsApp Us</p>
+                  <p className="text-xs text-gray-500">Chat directly for faster response</p>
+                </div>
+              </a>
+              <a
+                href="tel:+254793880642"
+                className="flex items-center gap-3 p-4 bg-black/5 border border-black/10 hover:bg-black/10 transition-colors"
+              >
+                <Phone size={20} className="text-black shrink-0" />
+                <div>
+                  <p className="text-sm font-semibold text-black">Call Us</p>
+                  <p className="text-xs text-gray-500">+254 793 880642</p>
+                </div>
+              </a>
             </div>
           </div>
         </div>
       </div>
+
+      {/* Map Section */}
+      <section className="bg-gray-50 border-t border-gray-100">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <div className="text-center mb-8">
+            <p className="text-xs tracking-[0.3em] uppercase text-gold mb-2 font-medium">Find Us</p>
+            <h2
+              className="text-2xl font-bold text-black"
+              style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
+            >
+              Our Studio Location
+            </h2>
+          </div>
+          <div className="aspect-[16/6] bg-gray-200 overflow-hidden">
+            <iframe
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3988.8193!2d36.82!3d-1.285!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2sKimathi+Street%2C+Nairobi!5e0!3m2!1sen!2ske!4v1700000000000!5m2!1sen!2ske"
+              width="100%"
+              height="100%"
+              style={{ border: 0 }}
+              allowFullScreen
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              title="Bremer Suits Nairobi Location"
+            />
+          </div>
+        </div>
+      </section>
     </div>
   )
 }

@@ -47,6 +47,27 @@ export default async function handler(req: Request, _context: Context) {
       return jsonResponse({ url: imageUrl, key })
     }
 
+    /* ── PUT: replace an image by key ── */
+    if (req.method === 'PUT') {
+      const key = url.searchParams.get('key')
+      if (!key) return errorResponse('Missing key parameter')
+
+      const existing = await store.getWithMetadata(key, { type: 'arrayBuffer' })
+      if (!existing) return errorResponse('Not found', 404)
+
+      const formData = await req.formData()
+      const file = formData.get('file') as File | null
+      if (!file) return errorResponse('No file provided')
+
+      const buffer = await file.arrayBuffer()
+      await store.set(key, buffer, {
+        metadata: { contentType: file.type, originalName: file.name },
+      })
+
+      const imageUrl = `/.netlify/functions/admin-images?key=${encodeURIComponent(key)}`
+      return jsonResponse({ url: imageUrl, key })
+    }
+
     /* ── DELETE: remove an image by key ── */
     if (req.method === 'DELETE') {
       const key = url.searchParams.get('key')

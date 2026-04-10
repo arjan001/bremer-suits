@@ -88,7 +88,12 @@ export function Header() {
             </button>
 
             {/* Logo */}
-            <Link to="/" className="flex items-center gap-2 group">
+            <Link to="/" className="flex items-center gap-3 group">
+              <img
+                src="/images/bremer-logo.jpeg"
+                alt="Bremer Suits Logo"
+                className="h-10 lg:h-12 w-auto object-contain"
+              />
               <div className="flex flex-col items-center leading-none">
                 <span className="text-2xl lg:text-3xl font-bold tracking-wider text-black" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
                   BREMER
@@ -107,7 +112,7 @@ export function Header() {
                   to={link.to}
                   className={`relative text-[13px] tracking-wide uppercase font-medium transition-colors duration-200 hover:text-black pb-1 ${
                     pathname === link.to || (link.to !== '/' && pathname.startsWith(link.to))
-                      ? 'text-black after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[2px] after:bg-black'
+                      ? 'text-black after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[2px] after:bg-gold'
                       : 'text-gray-500'
                   }`}
                 >

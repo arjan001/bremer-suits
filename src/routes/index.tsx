@@ -27,7 +27,7 @@ export const Route = createFileRoute('/')({
       },
       {
         name: 'keywords',
-        content: 'Bespoke suits Nairobi, custom made suits Kenya, premium men\'s tailoring, luxury wedding suits, Bremer Suits, made-to-order suits Nairobi, best suit tailors in Nairobi, custom made suits price in Kenya',
+        content: 'Bremer Suits, Bremer, BremerSuits, BREMER SUITS, bremer suits Nairobi, bremer suits Kenya, bespoke suits Nairobi, custom made suits Kenya, premium men\'s tailoring, luxury wedding suits, made-to-order suits Nairobi, best suit tailors in Nairobi, custom made suits price in Kenya, bremer bespoke tailoring',
       },
       {
         property: 'og:title',
@@ -291,8 +291,8 @@ function HomePage() {
             className="text-4xl sm:text-5xl lg:text-6xl leading-[1.15] mb-6 text-white"
             style={{ fontFamily: "'Playfair Display', Georgia, serif", fontStyle: 'italic', fontWeight: 400 }}
           >
-            Expert Tailoring{' '}
-            <span className="block">for Every Gentleman</span>
+            Bremer Suits{' '}
+            <span className="block text-3xl sm:text-4xl lg:text-5xl mt-2">Expert Tailoring for Every Gentleman</span>
           </h1>
           <p className="text-sm sm:text-base text-white/70 leading-relaxed mb-8 max-w-md mx-auto font-light">
             Custom-made suits crafted to fit your style, your story, and your budget.

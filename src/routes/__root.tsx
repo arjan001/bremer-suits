@@ -29,7 +29,7 @@ export const Route = createRootRoute({
       },
       {
         name: 'keywords',
-        content: 'Bespoke suits Nairobi, custom made suits Kenya, premium men\'s tailoring, luxury wedding suits, Bremer Suits, made-to-order suits Nairobi, Ruracio suits, best suit tailors in Nairobi',
+        content: 'Bremer Suits, Bremer, BremerSuits, BREMER SUITS, bremer suits Nairobi, bremer suits Kenya, bespoke suits Nairobi, custom made suits Kenya, premium men\'s tailoring, luxury wedding suits, made-to-order suits Nairobi, Ruracio suits, best suit tailors in Nairobi, bremer bespoke tailoring',
       },
       {
         name: 'robots',
@@ -99,12 +99,31 @@ export const Route = createRootRoute({
     links: [
       {
         rel: 'icon',
+        type: 'image/x-icon',
+        href: '/favicon.ico',
+      },
+      {
+        rel: 'icon',
         type: 'image/jpeg',
+        sizes: '192x192',
         href: '/images/og-logo-gold-black.jpg',
       },
       {
         rel: 'apple-touch-icon',
+        sizes: '180x180',
         href: '/images/og-logo-gold-black.jpg',
+      },
+      {
+        rel: 'shortcut icon',
+        href: '/favicon.ico',
+      },
+      {
+        rel: 'manifest',
+        href: '/manifest.json',
+      },
+      {
+        rel: 'canonical',
+        href: 'https://bremersuits.com',
       },
     ],
   }),
@@ -192,10 +211,87 @@ function NotFoundPage() {
 }
 
 function RootDocument({ children }: { children: React.ReactNode }) {
+  const coreStructuredData = [
+    {
+      '@context': 'https://schema.org',
+      '@type': 'Organization',
+      name: 'Bremer Suits',
+      alternateName: ['BREMER SUITS', 'BremerSuits', 'Bremer', 'bremer suits', 'Bremer Suits & Style'],
+      url: 'https://bremersuits.com',
+      logo: 'https://bremersuits.com/images/og-logo-gold-black.jpg',
+      description: "Nairobi's leading specialists in high-end, custom-made suits for weddings, corporate leadership, and special occasions.",
+      sameAs: [
+        'https://www.facebook.com/BREMERSUITS/',
+        'https://www.instagram.com/bremer_suits/',
+        'https://www.tiktok.com/@bremersuits',
+      ],
+    },
+    {
+      '@context': 'https://schema.org',
+      '@type': 'LocalBusiness',
+      '@id': 'https://bremersuits.com/#localbusiness',
+      name: 'Bremer Suits',
+      alternateName: ['BREMER SUITS', 'BremerSuits', 'Bremer', 'bremer suits', 'Bremer Suits & Style'],
+      description: 'Premier bespoke tailoring and custom-made suits in Nairobi. Specializing in wedding suits, corporate attire, Ruracio styling, and expert alterations.',
+      url: 'https://bremersuits.com',
+      image: 'https://bremersuits.com/images/og-logo-gold-black.jpg',
+      address: {
+        '@type': 'PostalAddress',
+        streetAddress: 'Nairobi',
+        addressLocality: 'Nairobi',
+        addressRegion: 'Nairobi',
+        addressCountry: 'KE',
+      },
+      geo: {
+        '@type': 'GeoCoordinates',
+        latitude: -1.2921,
+        longitude: 36.8219,
+      },
+      priceRange: '$$$$',
+      openingHoursSpecification: [
+        {
+          '@type': 'OpeningHoursSpecification',
+          dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
+          opens: '09:00',
+          closes: '18:00',
+        },
+        {
+          '@type': 'OpeningHoursSpecification',
+          dayOfWeek: 'Saturday',
+          opens: '09:00',
+          closes: '16:00',
+        },
+      ],
+    },
+    {
+      '@context': 'https://schema.org',
+      '@type': 'WebSite',
+      name: 'Bremer Suits',
+      alternateName: ['BREMER SUITS', 'BremerSuits', 'Bremer'],
+      url: 'https://bremersuits.com',
+      description: "Experience the art of perfection with Bremer Suits. Nairobi's leading specialists in high-end, custom-made suits.",
+      potentialAction: {
+        '@type': 'SearchAction',
+        target: {
+          '@type': 'EntryPoint',
+          urlTemplate: 'https://bremersuits.com/collections?q={search_term_string}',
+        },
+        'query-input': 'required name=search_term_string',
+      },
+    },
+  ]
+
   return (
     <html lang="en">
       <head>
         <HeadContent />
+        {coreStructuredData.map((schema, i) => (
+          <script
+            key={`ssr-schema-${i}`}
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+          />
+        ))}
       </head>
       <body>
         {children}
@@ -948,21 +1044,21 @@ function Footer() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-4">
               <div className="flex items-center justify-center gap-3">
-                <Truck size={22} className="text-gray-400 shrink-0" />
+                <Truck size={22} className="text-gold shrink-0" />
                 <div>
                   <p className="text-sm font-semibold text-white">Nationwide Delivery</p>
                   <p className="text-xs text-gray-500">Dispatch every Tue &amp; Fri</p>
                 </div>
               </div>
               <div className="flex items-center justify-center gap-3">
-                <Shield size={22} className="text-gray-400 shrink-0" />
+                <Shield size={22} className="text-gold shrink-0" />
                 <div>
                   <p className="text-sm font-semibold text-white">Quality Guaranteed</p>
                   <p className="text-xs text-gray-500">Curated denim picks</p>
                 </div>
               </div>
               <div className="flex items-center justify-center gap-3">
-                <RotateCcw size={22} className="text-gray-400 shrink-0" />
+                <RotateCcw size={22} className="text-gold shrink-0" />
                 <div>
                   <p className="text-sm font-semibold text-white">Easy Returns</p>
                   <p className="text-xs text-gray-500">Hassle-free refund policy</p>
@@ -979,12 +1075,18 @@ function Footer() {
             {/* Column 1: Brand + Description + Social Icons */}
             <div>
               <div className="mb-5">
+                <img
+                  src="/images/bremer-logo.jpeg"
+                  alt="Bremer Suits Logo"
+                  className="h-12 w-auto object-contain mb-3"
+                />
                 <h3
                   className="text-2xl font-bold tracking-wider"
                   style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
                 >
                   {storeName}
                 </h3>
+                <div className="w-12 h-0.5 bg-gold mt-2" />
               </div>
               <p className="text-sm text-gray-400 leading-relaxed mb-6 max-w-xs">
                 {footerText}
