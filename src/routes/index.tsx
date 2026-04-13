@@ -14,6 +14,7 @@ import {
   Sparkles,
   X,
 } from 'lucide-react'
+import { getProducts, type Product } from '@/lib/products'
 
 export const Route = createFileRoute('/')({
   head: () => ({
@@ -152,72 +153,7 @@ const serviceCards = [
   },
 ]
 
-const bestPickProducts = [
-  {
-    src: '/images/portfolio/bespoke-navy-pinstripe-3piece.jpg',
-    name: 'Navy Pinstripe 3-Piece',
-    priceKES: 15000,
-    priceUSD: 115,
-    colors: ['#1a1a4e', '#2c2c2c', '#3b2f2f'],
-    colorNames: ['Navy', 'Charcoal', 'Dark Brown'],
-  },
-  {
-    src: '/images/portfolio/bespoke-burnt-orange-double-breasted.jpg',
-    name: 'Burnt Orange Double-Breasted',
-    priceKES: 17000,
-    priceUSD: 131,
-    colors: ['#cc5500', '#722F37', '#2c2c2c'],
-    colorNames: ['Burnt Orange', 'Burgundy', 'Charcoal'],
-  },
-  {
-    src: '/images/portfolio/bespoke-cream-brown-mannequin-double.jpg',
-    name: 'Ivory Double-Breasted Set',
-    priceKES: 19000,
-    priceUSD: 146,
-    colors: ['#f5f0e1', '#d4c5a9', '#1a1a2e'],
-    colorNames: ['Ivory', 'Champagne', 'Navy'],
-  },
-  {
-    src: '/images/portfolio/bespoke-tan-double-breasted-studio.jpg',
-    name: 'Camel Tuxedo with Bowtie',
-    priceKES: 21000,
-    priceUSD: 162,
-    colors: ['#c19a6b', '#f5f0e1', '#2c2c2c'],
-    colorNames: ['Camel', 'Ivory', 'Charcoal'],
-  },
-  {
-    src: '/images/portfolio/bespoke-houndstooth-brown-vest-3piece.jpg',
-    name: 'Houndstooth 3-Piece Vest Set',
-    priceKES: 23000,
-    priceUSD: 177,
-    colors: ['#8B8589', '#3b2f2f', '#1a1a2e'],
-    colorNames: ['Houndstooth Grey', 'Brown', 'Navy'],
-  },
-  {
-    src: '/images/portfolio/senator-burgundy-embroidered-cap.jpg',
-    name: 'Senator Burgundy Embroidered',
-    priceKES: 25000,
-    priceUSD: 192,
-    colors: ['#722F37', '#2c2c2c', '#f5f0e1'],
-    colorNames: ['Burgundy', 'Black', 'White'],
-  },
-  {
-    src: '/images/portfolio/kaunda-teal-blue-safari.jpg',
-    name: 'Kaunda Teal Blue Safari',
-    priceKES: 27000,
-    priceUSD: 208,
-    colors: ['#008080', '#3b3b3b', '#1a1a2e'],
-    colorNames: ['Teal', 'Charcoal', 'Navy'],
-  },
-  {
-    src: '/images/portfolio/bespoke-white-textured-3piece.jpg',
-    name: 'White Textured 3-Piece',
-    priceKES: 30000,
-    priceUSD: 231,
-    colors: ['#f5f5f5', '#c9a96e', '#1a1a4e'],
-    colorNames: ['White', 'Gold', 'Navy'],
-  },
-]
+const KES_TO_USD = 130 // approximate conversion rate
 
 const commitmentPoints = [
   {
@@ -270,6 +206,8 @@ function HomePage() {
   const [cubeFace, setCubeFace] = useState(0)
   const cubeContainerRef = useRef<HTMLDivElement>(null)
   const [cubeDepth, setCubeDepth] = useState(0)
+  const [products, setProducts] = useState<Product[]>([])
+  const [productsLoading, setProductsLoading] = useState(true)
 
   const nextSlide = useCallback(() => {
     setCurrentSlide((prev) => (prev + 1) % carouselImages.length)
@@ -302,6 +240,13 @@ function HomePage() {
       setCubeFace((prev) => (prev + 1) % 4)
     }, 4000)
     return () => clearInterval(timer)
+  }, [])
+
+  // Fetch products from database
+  useEffect(() => {
+    getProducts()
+      .then((data) => setProducts(data))
+      .finally(() => setProductsLoading(false))
   }, [])
 
   // Philosophy carousel auto-scroll
@@ -540,50 +485,78 @@ function HomePage() {
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 lg:gap-6">
-            {bestPickProducts.map((product, idx) => {
+            {productsLoading ? (
+              Array.from({ length: 8 }).map((_, idx) => (
+                <div key={idx} className="border border-gray-100 bg-white animate-pulse">
+                  <div className="aspect-[3/4] bg-gray-200" />
+                  <div className="p-3 lg:p-4 space-y-2">
+                    <div className="h-4 bg-gray-200 rounded w-3/4" />
+                    <div className="h-4 bg-gray-200 rounded w-1/2" />
+                    <div className="flex gap-1.5">
+                      <div className="w-5 h-5 rounded-full bg-gray-200" />
+                      <div className="w-5 h-5 rounded-full bg-gray-200" />
+                      <div className="w-5 h-5 rounded-full bg-gray-200" />
+                    </div>
+                    <div className="h-8 bg-gray-200 rounded" />
+                  </div>
+                </div>
+              ))
+            ) : products.length === 0 ? (
+              <p className="col-span-full text-center text-gray-500">No products available at the moment.</p>
+            ) : (
+            products.map((product, idx) => {
               const activeColor = selectedColors[idx] ?? 0
+              const priceKES = product.numericPrice
+              const priceUSD = Math.round(priceKES / KES_TO_USD)
               return (
                 <div
-                  key={idx}
+                  key={product.id}
                   className="group border border-gray-100 bg-white hover:shadow-xl transition-shadow duration-300"
                 >
                   {/* Product Image */}
                   <div
                     className="relative aspect-[3/4] overflow-hidden cursor-pointer"
-                    onClick={() => setLightboxImage(product.src)}
+                    onClick={() => setLightboxImage(product.image)}
                   >
                     <img
-                      src={product.src}
-                      alt={product.name}
+                      src={product.image}
+                      alt={product.title}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                     />
                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
+                    {product.tag && (
+                      <span className="absolute top-2 left-2 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider bg-[#c8502a] text-white">
+                        {product.tag}
+                      </span>
+                    )}
                   </div>
 
                   {/* Product Info */}
                   <div className="p-3 lg:p-4">
                     <h3 className="text-xs lg:text-sm font-bold text-black mb-1 leading-tight">
-                      {product.name}
+                      {product.title}
                     </h3>
                     <p className="text-sm lg:text-base font-semibold text-[#c8502a] mb-3">
                       {currency === 'KES'
-                        ? `KES ${product.priceKES.toLocaleString()}`
-                        : `$${product.priceUSD.toLocaleString()}`}
+                        ? `KES ${priceKES.toLocaleString()}`
+                        : `$${priceUSD.toLocaleString()}`}
                     </p>
 
                     {/* Color Variants */}
+                    {product.colors.length > 0 && (
                     <div className="flex items-center gap-1.5 mb-3">
                       {product.colors.map((color, cIdx) => (
                         <button
                           key={cIdx}
                           onClick={() => setSelectedColors((prev) => ({ ...prev, [idx]: cIdx }))}
                           className={`w-5 h-5 rounded-full border-2 transition-all duration-200 ${activeColor === cIdx ? 'border-[#c8502a] scale-110' : 'border-gray-200 hover:border-gray-400'}`}
-                          style={{ backgroundColor: color }}
-                          title={product.colorNames[cIdx]}
-                          aria-label={`Color: ${product.colorNames[cIdx]}`}
+                          style={{ backgroundColor: color.value }}
+                          title={color.name}
+                          aria-label={`Color: ${color.name}`}
                         />
                       ))}
                     </div>
+                    )}
 
                     {/* Order Yours → Contact */}
                     <Link
@@ -595,7 +568,8 @@ function HomePage() {
                   </div>
                 </div>
               )
-            })}
+            })
+            )}
           </div>
 
           <div className="text-center mt-12">
