@@ -49,6 +49,24 @@ export default async function handler(req: Request, _context: Context) {
       { path: '/cookie-policy', priority: '0.3', changefreq: 'yearly' },
     ].filter((p) => !noIndexPaths.has(p.path))
 
+    // Blog posts
+    const blogPosts = [
+      '/blog/suit-fabrics-guide',
+      '/blog/suit-care-101',
+      '/blog/groomsmen-coordination',
+      '/blog/getting-started-with-tanstack',
+      '/blog/corporate-dressing-nairobi',
+      '/blog/react-19-features',
+      '/blog/wedding-suit-guide',
+      '/blog/tailwind-css-v4-guide',
+    ]
+      .filter((path) => !noIndexPaths.has(path))
+      .map((path) => ({
+        path,
+        priority: '0.6',
+        changefreq: 'monthly',
+      }))
+
     // Fetch products for dynamic product pages
     let productUrls: Array<{ path: string; lastmod: string; priority: string; changefreq: string }> = []
     try {
@@ -91,6 +109,13 @@ export default async function handler(req: Request, _context: Context) {
       <changefreq>${p.changefreq}</changefreq>
       <priority>${p.priority}</priority>
     </url>`),
+      ...blogPosts.map((p) => `
+    <url>
+      <loc>${baseUrl}${p.path}</loc>
+      <lastmod>${today}</lastmod>
+      <changefreq>${p.changefreq}</changefreq>
+      <priority>${p.priority}</priority>
+    </url>`),
       ...productUrls
         .filter((p) => !noIndexPaths.has(p.path))
         .map((p) => `
@@ -125,12 +150,44 @@ ${urls.join('')}
       },
     })
   } catch (err) {
-    return new Response(
-      `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"></urlset>`,
-      {
-        status: 200,
-        headers: { 'Content-Type': 'application/xml', ...corsHeaders() },
-      }
-    )
+    // Fallback: return a complete static sitemap if Supabase is unavailable
+    const baseUrl = 'https://bremersuits.com'
+    const today = new Date().toISOString().split('T')[0]
+    const fallbackPages = [
+      { path: '/', priority: '1.0', changefreq: 'daily' },
+      { path: '/portfolio', priority: '0.9', changefreq: 'weekly' },
+      { path: '/collections', priority: '0.9', changefreq: 'daily' },
+      { path: '/services', priority: '0.8', changefreq: 'weekly' },
+      { path: '/about', priority: '0.7', changefreq: 'monthly' },
+      { path: '/contact', priority: '0.7', changefreq: 'monthly' },
+      { path: '/blog', priority: '0.8', changefreq: 'daily' },
+      { path: '/faq', priority: '0.6', changefreq: 'monthly' },
+      { path: '/blog/suit-fabrics-guide', priority: '0.6', changefreq: 'monthly' },
+      { path: '/blog/suit-care-101', priority: '0.6', changefreq: 'monthly' },
+      { path: '/blog/groomsmen-coordination', priority: '0.6', changefreq: 'monthly' },
+      { path: '/blog/getting-started-with-tanstack', priority: '0.6', changefreq: 'monthly' },
+      { path: '/blog/corporate-dressing-nairobi', priority: '0.6', changefreq: 'monthly' },
+      { path: '/blog/react-19-features', priority: '0.6', changefreq: 'monthly' },
+      { path: '/blog/wedding-suit-guide', priority: '0.6', changefreq: 'monthly' },
+      { path: '/blog/tailwind-css-v4-guide', priority: '0.6', changefreq: 'monthly' },
+      { path: '/privacy-policy', priority: '0.3', changefreq: 'yearly' },
+      { path: '/terms-of-service', priority: '0.3', changefreq: 'yearly' },
+      { path: '/refund-policy', priority: '0.3', changefreq: 'yearly' },
+      { path: '/shipping-policy', priority: '0.3', changefreq: 'yearly' },
+      { path: '/cookie-policy', priority: '0.3', changefreq: 'yearly' },
+    ]
+    const fallbackXml = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${fallbackPages.map((p) => `  <url>
+    <loc>${baseUrl}${p.path}</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>${p.changefreq}</changefreq>
+    <priority>${p.priority}</priority>
+  </url>`).join('\n')}
+</urlset>`
+    return new Response(fallbackXml, {
+      status: 200,
+      headers: { 'Content-Type': 'application/xml', ...corsHeaders() },
+    })
   }
 }
