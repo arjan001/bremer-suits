@@ -1,0 +1,12 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /admin/
+Disallow: /checkout
+Disallow: /wishlist
+Disallow: /.netlify/
+
+User-agent: Googlebot
+Allow: /
+
+Sitemap: https://bremersuits.com/sitemap.xml

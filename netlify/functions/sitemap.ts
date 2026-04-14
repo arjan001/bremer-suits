@@ -36,7 +36,6 @@ export default async function handler(req: Request, _context: Context) {
     const staticPages = [
       { path: '/', priority: '1.0', changefreq: 'daily' },
       { path: '/portfolio', priority: '0.9', changefreq: 'weekly' },
-      { path: '/collections', priority: '0.9', changefreq: 'daily' },
       { path: '/services', priority: '0.8', changefreq: 'weekly' },
       { path: '/about', priority: '0.7', changefreq: 'monthly' },
       { path: '/contact', priority: '0.7', changefreq: 'monthly' },
@@ -156,7 +155,6 @@ ${urls.join('')}
     const fallbackPages = [
       { path: '/', priority: '1.0', changefreq: 'daily' },
       { path: '/portfolio', priority: '0.9', changefreq: 'weekly' },
-      { path: '/collections', priority: '0.9', changefreq: 'daily' },
       { path: '/services', priority: '0.8', changefreq: 'weekly' },
       { path: '/about', priority: '0.7', changefreq: 'monthly' },
       { path: '/contact', priority: '0.7', changefreq: 'monthly' },
