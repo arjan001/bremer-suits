@@ -489,7 +489,7 @@ function HomePage() {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 lg:gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 lg:gap-5 xl:gap-6">
             {productsLoading ? (
               Array.from({ length: 8 }).map((_, idx) => (
                 <div key={idx} className="border border-gray-100 bg-white animate-pulse">
@@ -788,12 +788,21 @@ function HomePage() {
                 style={{ transform: `translateX(-${philosophyOffset * (50 + 0.75)}%)` }}
               >
                 {philosophyImages.map((src, idx) => (
-                  <div key={idx} className="min-w-[calc(50%-6px)] h-[300px] lg:h-[500px] overflow-hidden flex-shrink-0">
+                  <div key={idx} className="min-w-[calc(50%-6px)] h-[300px] lg:h-[500px] overflow-hidden flex-shrink-0 relative group">
                     <img
                       src={src}
                       alt={`Bremer Suits tailoring philosophy and craftsmanship - Image ${idx + 1}`}
                       className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
                     />
+                    <a
+                      href={`https://wa.me/254793880642?text=${encodeURIComponent(`Hello Bremer Suits, I am interested in ordering a similar design from your collection. Could you share more details?\n\nProduct image: ${getFullImageUrl(src)}`)}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-1.5 px-3 py-1.5 bg-black/80 text-white text-[10px] font-semibold uppercase tracking-wider shadow-lg opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300 hover:bg-black z-10 whitespace-nowrap backdrop-blur-sm"
+                    >
+                      Order Similar Design
+                      <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M7 17l9.2-9.2M17 17V7H7"/></svg>
+                    </a>
                   </div>
                 ))}
               </div>
@@ -815,9 +824,9 @@ function HomePage() {
 
       {/* ===== MODERN CTA BANNER ===== */}
       <section className="relative overflow-hidden">
-        <div className="grid grid-cols-1 lg:grid-cols-2 min-h-[500px]">
+        <div className="grid grid-cols-1 lg:grid-cols-2 min-h-[400px] lg:min-h-[500px]">
           {/* Left: Image */}
-          <div className="relative h-[300px] lg:h-auto lg:max-h-[500px] overflow-hidden">
+          <div className="relative h-[300px] lg:h-auto overflow-hidden">
             <img
               src="/images/gallery-18.jpg"
               alt="Bremer Suits premium craftsmanship and luxury fabric selection Nairobi"
