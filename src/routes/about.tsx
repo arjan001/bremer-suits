@@ -159,12 +159,11 @@ function AboutCarousel() {
   const [offset, setOffset] = useState(0)
   const carouselRef = useRef<HTMLDivElement>(null)
 
-  // Auto-scroll like the home page "Dress with Intention" carousel
+  // Auto-scroll carousel
   useEffect(() => {
     const timer = setInterval(() => {
       setOffset((prev) => {
-        const maxOffset = Math.max(0, aboutCarouselImages.length - 2)
-        return prev >= maxOffset ? 0 : prev + 1
+        return prev >= aboutCarouselImages.length - 1 ? 0 : prev + 1
       })
     }, 3000)
     return () => clearInterval(timer)
@@ -174,11 +173,11 @@ function AboutCarousel() {
     <div className="relative">
       <div className="overflow-hidden" ref={carouselRef}>
         <div
-          className="flex gap-3 transition-transform duration-700 ease-in-out"
-          style={{ transform: `translateX(-${offset * (50 + 0.75)}%)` }}
+          className="flex transition-transform duration-700 ease-in-out"
+          style={{ transform: `translateX(-${offset * 100}%)` }}
         >
           {aboutCarouselImages.map((src, idx) => (
-            <div key={idx} className="min-w-[calc(50%-6px)] h-[300px] lg:h-[500px] overflow-hidden flex-shrink-0 relative group">
+            <div key={idx} className="min-w-full h-[300px] lg:h-[500px] overflow-hidden flex-shrink-0 relative group">
               <img
                 src={src}
                 alt={`Bremer Suits bespoke craftsmanship - Image ${idx + 1}`}
@@ -198,7 +197,7 @@ function AboutCarousel() {
         </div>
         {/* Carousel indicators */}
         <div className="flex justify-center gap-1.5 mt-4">
-          {Array.from({ length: Math.max(1, aboutCarouselImages.length - 1) }).map((_, idx) => (
+          {aboutCarouselImages.map((_, idx) => (
             <button
               key={idx}
               onClick={() => setOffset(idx)}
