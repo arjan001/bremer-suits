@@ -1,5 +1,12 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { ArrowRight, Scissors, Heart, Shield } from 'lucide-react'
+import { useState, useEffect, useCallback } from 'react'
+import { ArrowRight, Scissors, Heart, Shield, ChevronLeft, ChevronRight } from 'lucide-react'
+
+const aboutCarouselImages = [
+  '/images/about-carousel-1.jpg',
+  '/images/about-carousel-2.jpg',
+  '/images/about-carousel-3.jpg',
+]
 
 export const Route = createFileRoute('/about')({
   head: () => ({
@@ -148,6 +155,77 @@ function getFullImageUrl(imagePath: string) {
   return `${SITE_URL}${imagePath.startsWith('/') ? '' : '/'}${imagePath}`
 }
 
+function AboutCarousel() {
+  const [currentSlide, setCurrentSlide] = useState(0)
+
+  const nextSlide = useCallback(() => {
+    setCurrentSlide((prev) => (prev + 1) % aboutCarouselImages.length)
+  }, [])
+
+  const prevSlide = useCallback(() => {
+    setCurrentSlide((prev) => (prev - 1 + aboutCarouselImages.length) % aboutCarouselImages.length)
+  }, [])
+
+  useEffect(() => {
+    const timer = setInterval(nextSlide, 5000)
+    return () => clearInterval(timer)
+  }, [nextSlide])
+
+  return (
+    <div className="relative">
+      <div className="aspect-[4/5] overflow-hidden relative">
+        {aboutCarouselImages.map((src, idx) => (
+          <div
+            key={src}
+            className="absolute inset-0 transition-opacity duration-1000 ease-in-out"
+            style={{ opacity: idx === currentSlide ? 1 : 0 }}
+          >
+            <img
+              src={src}
+              alt={`Bremer Suits bespoke craftsmanship - Slide ${idx + 1}`}
+              className="w-full h-full object-cover"
+            />
+          </div>
+        ))}
+
+        <button
+          onClick={prevSlide}
+          className="absolute left-3 top-1/2 -translate-y-1/2 z-10 w-9 h-9 flex items-center justify-center bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-full transition-colors"
+          aria-label="Previous slide"
+        >
+          <ChevronLeft size={18} className="text-white" />
+        </button>
+        <button
+          onClick={nextSlide}
+          className="absolute right-3 top-1/2 -translate-y-1/2 z-10 w-9 h-9 flex items-center justify-center bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-full transition-colors"
+          aria-label="Next slide"
+        >
+          <ChevronRight size={18} className="text-white" />
+        </button>
+
+        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10 flex gap-2">
+          {aboutCarouselImages.map((_, idx) => (
+            <button
+              key={idx}
+              onClick={() => setCurrentSlide(idx)}
+              className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${idx === currentSlide ? 'bg-white w-8' : 'bg-white/40'}`}
+              aria-label={`Go to slide ${idx + 1}`}
+            />
+          ))}
+        </div>
+      </div>
+      <div className="absolute -bottom-6 -left-6 bg-black text-white p-6 hidden lg:block z-10">
+        <p className="text-3xl font-bold" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
+          Since
+        </p>
+        <p className="text-4xl font-bold" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
+          2024
+        </p>
+      </div>
+    </div>
+  )
+}
+
 function About() {
   return (
     <div className="min-h-screen bg-white">
@@ -215,23 +293,7 @@ function About() {
                 </p>
               </div>
             </div>
-            <div className="relative">
-              <div className="aspect-[4/5] overflow-hidden">
-                <img
-                  src="/images/about-white-suit-man.jpg"
-                  alt="Man in white suit - Bremer Suits bespoke craftsmanship Nairobi"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <div className="absolute -bottom-6 -left-6 bg-black text-white p-6 hidden lg:block">
-                <p className="text-3xl font-bold" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
-                  Since
-                </p>
-                <p className="text-4xl font-bold" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
-                  2024
-                </p>
-              </div>
-            </div>
+            <AboutCarousel />
           </div>
         </div>
       </section>
