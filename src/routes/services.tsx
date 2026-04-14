@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
+import { useState, useEffect, useCallback } from 'react'
 import {
   Scissors,
   Crown,
@@ -15,6 +16,8 @@ import {
   Palette,
   Hammer,
   Star,
+  ChevronLeft,
+  ChevronRight,
 } from 'lucide-react'
 
 export const Route = createFileRoute('/services')({
@@ -129,6 +132,26 @@ export const Route = createFileRoute('/services')({
   component: Services,
 })
 
+const heroCarouselImages = [
+  '/images/couple-roses.jpg',
+  '/images/couple-elegant-pink.jpg',
+  '/images/couple-burgundy-black.jpg',
+]
+
+const glimpseImages = [
+  '/images/kaunda-white-vstrike.jpg',
+  '/images/kaunda-grey-cap.jpg',
+  '/images/kaunda-burgundy.jpg',
+  '/images/kaunda-burgundy-hat.jpg',
+  '/images/kaunda-mint-green.jpg',
+  '/images/gallery-20.jpg',
+  '/images/about-wedding-group.jpg',
+  '/images/gallery-40.jpg',
+  '/images/gallery-50.jpg',
+  '/images/about-style-portrait.jpg',
+  '/images/gallery-2.jpg',
+]
+
 const mainServices = [
   {
     icon: Scissors,
@@ -242,18 +265,81 @@ const additionalServices = [
 ]
 
 function Services() {
+  const [heroSlide, setHeroSlide] = useState(0)
+  const [glimpseOffset, setGlimpseOffset] = useState(0)
+
+  const nextHeroSlide = useCallback(() => {
+    setHeroSlide((prev) => (prev + 1) % heroCarouselImages.length)
+  }, [])
+
+  const prevHeroSlide = useCallback(() => {
+    setHeroSlide((prev) => (prev - 1 + heroCarouselImages.length) % heroCarouselImages.length)
+  }, [])
+
+  // Auto-rotate hero carousel every 5 seconds
+  useEffect(() => {
+    const timer = setInterval(nextHeroSlide, 5000)
+    return () => clearInterval(timer)
+  }, [nextHeroSlide])
+
+  // Auto-scroll glimpse carousel
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setGlimpseOffset((prev) => {
+        const maxOffset = glimpseImages.length - 1
+        return prev >= maxOffset ? 0 : prev + 1
+      })
+    }, 3000)
+    return () => clearInterval(timer)
+  }, [])
+
   return (
     <div className="min-h-screen bg-white">
-      {/* Hero - Full width with overlay */}
+      {/* Hero - Full width with carousel overlay */}
       <section className="relative bg-black overflow-hidden min-h-[60vh] flex items-center">
         <div className="absolute inset-0">
-          <img
-            src="/images/gallery-5.jpg"
-            alt="Bremer Suits Custom Tailoring Services Nairobi - Bespoke, Wedding, Corporate Styling"
-            className="w-full h-full object-cover opacity-30"
-          />
+          {heroCarouselImages.map((src, idx) => (
+            <div
+              key={src}
+              className="absolute inset-0 transition-opacity duration-1000 ease-in-out"
+              style={{ opacity: idx === heroSlide ? 1 : 0 }}
+            >
+              <img
+                src={src}
+                alt={`Bremer Suits Services - Slide ${idx + 1}`}
+                className="w-full h-full object-cover opacity-30"
+              />
+            </div>
+          ))}
           <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/20 to-black/70" />
         </div>
+
+        <button
+          onClick={prevHeroSlide}
+          className="absolute left-4 top-1/2 -translate-y-1/2 z-10 w-10 h-10 flex items-center justify-center bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-full transition-colors"
+          aria-label="Previous slide"
+        >
+          <ChevronLeft size={20} className="text-white" />
+        </button>
+        <button
+          onClick={nextHeroSlide}
+          className="absolute right-4 top-1/2 -translate-y-1/2 z-10 w-10 h-10 flex items-center justify-center bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-full transition-colors"
+          aria-label="Next slide"
+        >
+          <ChevronRight size={20} className="text-white" />
+        </button>
+
+        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10 flex gap-2">
+          {heroCarouselImages.map((_, idx) => (
+            <button
+              key={idx}
+              onClick={() => setHeroSlide(idx)}
+              className={`w-2 h-2 rounded-full transition-all duration-300 ${idx === heroSlide ? 'bg-white w-6' : 'bg-white/40'}`}
+              aria-label={`Go to slide ${idx + 1}`}
+            />
+          ))}
+        </div>
+
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-32 text-center w-full">
           <p className="text-xs tracking-[0.3em] uppercase text-white/60 mb-4 font-medium">
             Nairobi's Premier Suit House
@@ -488,30 +574,41 @@ function Services() {
         </div>
       </section>
 
-      {/* Gallery showcase strip */}
+      {/* Gallery showcase carousel */}
       <section className="bg-[#fafaf8] py-12 overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center mb-8">
           <p className="text-[10px] tracking-[0.3em] uppercase text-gray-400 font-semibold">
             A Glimpse of Our Work
           </p>
         </div>
-        <div className="flex gap-3 overflow-hidden">
-          {[
-            '/images/gallery-20.jpg',
-            '/images/about-wedding-group.jpg',
-            '/images/gallery-40.jpg',
-            '/images/gallery-50.jpg',
-            '/images/about-style-portrait.jpg',
-            '/images/gallery-2.jpg',
-          ].map((src, i) => (
-            <div key={i} className="flex-shrink-0 w-48 sm:w-56 lg:w-64 h-72 sm:h-80 overflow-hidden">
-              <img
-                src={src}
-                alt="Bremer Suits portfolio"
-                className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
+        <div className="relative overflow-hidden">
+          <div
+            className="flex gap-3 transition-transform duration-700 ease-in-out"
+            style={{
+              transform: `translateX(calc(-${glimpseOffset} * (16rem + 0.75rem)))`,
+            }}
+          >
+            {glimpseImages.map((src, i) => (
+              <div key={i} className="flex-shrink-0 w-48 sm:w-56 lg:w-64 h-72 sm:h-80 overflow-hidden">
+                <img
+                  src={src}
+                  alt="Bremer Suits portfolio"
+                  className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
+                />
+              </div>
+            ))}
+          </div>
+          {/* Navigation dots */}
+          <div className="flex justify-center gap-1.5 mt-6">
+            {glimpseImages.map((_, idx) => (
+              <button
+                key={idx}
+                onClick={() => setGlimpseOffset(idx)}
+                className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${idx === glimpseOffset ? 'bg-black w-5' : 'bg-gray-300'}`}
+                aria-label={`Go to image ${idx + 1}`}
               />
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </section>
 

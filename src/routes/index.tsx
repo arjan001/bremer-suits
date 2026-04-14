@@ -95,8 +95,8 @@ const carouselImages = [
   '/images/carousel-new-1.jpg',
   '/images/carousel-new-2.jpg',
   '/images/carousel-new-3.jpg',
-  '/images/carousel-new-4.jpg',
-  '/images/carousel-new-5.jpg',
+  '/images/couple-roses.jpg',
+  '/images/couple-burgundy-black.jpg',
 ]
 
 const pillars = [
