@@ -264,6 +264,12 @@ const additionalServices = [
   },
 ]
 
+const SITE_URL = 'https://bremersuits.com'
+function getFullImageUrl(imagePath: string) {
+  if (imagePath.startsWith('http')) return imagePath
+  return `${SITE_URL}${imagePath.startsWith('/') ? '' : '/'}${imagePath}`
+}
+
 function Services() {
   const [heroSlide, setHeroSlide] = useState(0)
   const [glimpseOffset, setGlimpseOffset] = useState(0)
@@ -296,7 +302,7 @@ function Services() {
   return (
     <div className="min-h-screen bg-white">
       {/* Hero - Full width with carousel overlay */}
-      <section className="relative bg-black overflow-hidden min-h-[60vh] flex items-center">
+      <section className="relative bg-black overflow-hidden min-h-[45vh] lg:min-h-[50vh] max-h-[60vh] flex items-center">
         <div className="absolute inset-0">
           {heroCarouselImages.map((src, idx) => (
             <div
@@ -402,7 +408,7 @@ function Services() {
               className={`grid grid-cols-1 lg:grid-cols-2 min-h-[600px] ${isReversed ? 'bg-[#fafaf8]' : 'bg-white'}`}
             >
               {/* Image - Full bleed */}
-              <div className={`relative overflow-hidden min-h-[400px] lg:min-h-0 ${isReversed ? 'lg:order-2' : ''}`}>
+              <div className={`relative overflow-hidden min-h-[400px] lg:min-h-0 group ${isReversed ? 'lg:order-2' : ''}`}>
                 <img
                   src={service.image}
                   alt={service.title}
@@ -416,6 +422,16 @@ function Services() {
                     <img src={service.iconImage} alt="" className="w-8 h-8" />
                   </div>
                 )}
+                {/* Order Similar Design Tooltip */}
+                <a
+                  href={`https://wa.me/254793880642?text=${encodeURIComponent(`Hello Bremer Suits, I am interested in ordering a similar design from your collection. Could you share more details?\n\nProduct image: ${getFullImageUrl(service.image)}`)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-1.5 px-4 py-2 bg-black/80 text-white text-[10px] font-semibold uppercase tracking-wider shadow-lg opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300 hover:bg-black z-10 whitespace-nowrap backdrop-blur-sm"
+                >
+                  Order Similar Design
+                  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M7 17l9.2-9.2M17 17V7H7"/></svg>
+                </a>
               </div>
 
               {/* Content */}
@@ -509,6 +525,16 @@ function Services() {
                       <service.icon size={18} className="text-white" strokeWidth={1.5} />
                     </div>
                   </div>
+                  {/* Order Similar Design Tooltip */}
+                  <a
+                    href={`https://wa.me/254793880642?text=${encodeURIComponent(`Hello Bremer Suits, I am interested in ordering a similar design from your collection. Could you share more details?\n\nProduct image: ${getFullImageUrl(service.image)}`)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="absolute bottom-4 right-4 flex items-center gap-1.5 px-3 py-1.5 bg-black/80 text-white text-[10px] font-semibold uppercase tracking-wider shadow-lg opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300 hover:bg-black z-10 whitespace-nowrap backdrop-blur-sm"
+                  >
+                    Order Similar Design
+                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M7 17l9.2-9.2M17 17V7H7"/></svg>
+                  </a>
                 </div>
                 {/* Card Content */}
                 <div className="p-6 pt-4">
@@ -589,12 +615,21 @@ function Services() {
             }}
           >
             {glimpseImages.map((src, i) => (
-              <div key={i} className="flex-shrink-0 w-48 sm:w-56 lg:w-64 h-72 sm:h-80 overflow-hidden">
+              <div key={i} className="flex-shrink-0 w-48 sm:w-56 lg:w-64 h-72 sm:h-80 overflow-hidden relative group">
                 <img
                   src={src}
                   alt="Bremer Suits portfolio"
                   className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
                 />
+                <a
+                  href={`https://wa.me/254793880642?text=${encodeURIComponent(`Hello Bremer Suits, I am interested in ordering a similar design from your collection. Could you share more details?\n\nProduct image: ${getFullImageUrl(src)}`)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-1.5 px-3 py-1.5 bg-black/80 text-white text-[10px] font-semibold uppercase tracking-wider shadow-lg opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300 hover:bg-black z-10 whitespace-nowrap backdrop-blur-sm"
+                >
+                  Order Similar Design
+                  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M7 17l9.2-9.2M17 17V7H7"/></svg>
+                </a>
               </div>
             ))}
           </div>
