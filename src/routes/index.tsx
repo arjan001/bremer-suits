@@ -663,8 +663,8 @@ function HomePage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
             <div className="aspect-[4/5] overflow-hidden">
               <img
-                src="/images/gallery-15.jpg"
-                alt="Precision craftsmanship by Bremer Suits master tailors in Nairobi"
+                src="/images/commitment-section.jpg"
+                alt="Bremer Suits style commitment - bespoke tailoring in Nairobi"
                 className="w-full h-full object-cover"
               />
             </div>
