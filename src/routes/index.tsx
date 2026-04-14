@@ -196,6 +196,12 @@ const cubeImages = [
   { src: '/images/about-model-1.jpg', alt: 'Master tailor handcrafting a bespoke suit - Left' },
 ]
 
+const SITE_URL = 'https://bremersuits.com'
+function getFullImageUrl(imagePath: string) {
+  if (imagePath.startsWith('http')) return imagePath
+  return `${SITE_URL}${imagePath.startsWith('/') ? '' : '/'}${imagePath}`
+}
+
 function HomePage() {
   const [currentSlide, setCurrentSlide] = useState(0)
   const [philosophyOffset, setPhilosophyOffset] = useState(0)
@@ -516,19 +522,30 @@ function HomePage() {
                   {/* Product Image */}
                   <div
                     className="relative aspect-[3/4] overflow-hidden cursor-pointer"
-                    onClick={() => setLightboxImage(product.image)}
                   >
                     <img
                       src={product.image}
                       alt={product.title}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                      onClick={() => setLightboxImage(product.image)}
                     />
-                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
+                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300 pointer-events-none" />
                     {product.tag && (
-                      <span className="absolute top-2 left-2 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider bg-[#c8502a] text-white">
+                      <span className="absolute top-2 left-2 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider bg-[#c8502a] text-white pointer-events-none">
                         {product.tag}
                       </span>
                     )}
+                    {/* Order Similar Design Tooltip */}
+                    <a
+                      href={`https://wa.me/254793880642?text=${encodeURIComponent(`Hello Bremer Suits, I am interested in ordering a similar design to: ${product.title}. Could you share more details?\n\nProduct image: ${getFullImageUrl(product.image)}`)}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-1.5 px-4 py-2 bg-black/80 text-white text-[10px] font-semibold uppercase tracking-wider shadow-lg opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300 hover:bg-black z-10 whitespace-nowrap backdrop-blur-sm"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      Order Similar Design
+                      <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M7 17l9.2-9.2M17 17V7H7"/></svg>
+                    </a>
                   </div>
 
                   {/* Product Info */}
@@ -558,13 +575,16 @@ function HomePage() {
                     </div>
                     )}
 
-                    {/* Order Yours → Contact */}
-                    <Link
-                      to="/contact"
-                      className="block w-full text-center py-2 text-[10px] lg:text-xs tracking-[0.15em] uppercase bg-black text-white hover:bg-[#c8502a] transition-colors duration-300 font-semibold"
+                    {/* Order Yours → WhatsApp */}
+                    <a
+                      href={`https://wa.me/254793880642?text=${encodeURIComponent(`Hello Bremer Suits, I am interested in this suit: ${product.title} (${currency === 'KES' ? `KES ${priceKES.toLocaleString()}` : `$${priceUSD.toLocaleString()}`}). Could you share more details?\n\nProduct image: ${getFullImageUrl(product.image)}`)}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center justify-center gap-2 w-full py-2 text-[10px] lg:text-xs tracking-[0.15em] uppercase bg-[#25D366] text-white hover:bg-[#20BD5A] transition-colors duration-300 font-semibold"
                     >
+                      <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
                       Order Yours
-                    </Link>
+                    </a>
                   </div>
                 </div>
               )
@@ -590,35 +610,35 @@ function HomePage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
             <div className="flex flex-col justify-center">
               <p className="text-sm tracking-wide text-[#c8502a] mb-3 font-medium">
-                Our process is designed to make you feel understood and involved.
+                Crafted for two. Designed to turn heads together.
               </p>
               <h2
                 className="text-3xl lg:text-5xl font-bold text-black leading-tight mb-6"
                 style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
               >
-                A Tailoring Experience{' '}
-                <span className="block">Built Around You</span>
+                Better Together,{' '}
+                <span className="block">Styled Together</span>
               </h2>
               <p className="text-base text-gray-600 leading-relaxed mb-6">
-                From your first consultation to the final fitting, every step is guided by your vision. We listen, measure, craft, and refine &mdash; ensuring a garment that fits you perfectly in every way.
+                At Bremer Suits, we believe the best moments are shared &mdash; and the best couples deserve wardrobes that speak as one. From coordinated wedding ensembles to date-night looks that complement each other perfectly, we design couples&rsquo; wear that celebrates your bond with elegance, harmony, and intention.
               </p>
 
               <div className="grid grid-cols-2 gap-4 mb-8">
                 <div className="border-l-2 border-[#c8502a] pl-4">
-                  <h4 className="text-sm font-bold text-black mb-1">Consultation</h4>
-                  <p className="text-xs text-gray-500">Understanding your style and needs.</p>
+                  <h4 className="text-sm font-bold text-black mb-1">His &amp; Hers</h4>
+                  <p className="text-xs text-gray-500">Coordinated outfits that complement each other.</p>
                 </div>
                 <div className="border-l-2 border-[#c8502a] pl-4">
-                  <h4 className="text-sm font-bold text-black mb-1">Measurements</h4>
-                  <p className="text-xs text-gray-500">Precision patterns crafted for you.</p>
+                  <h4 className="text-sm font-bold text-black mb-1">Wedding Sets</h4>
+                  <p className="text-xs text-gray-500">Matching ensembles for your big day.</p>
                 </div>
                 <div className="border-l-2 border-[#c8502a] pl-4">
-                  <h4 className="text-sm font-bold text-black mb-1">Fittings</h4>
-                  <p className="text-xs text-gray-500">Fine-tuning shape, drape, and balance.</p>
+                  <h4 className="text-sm font-bold text-black mb-1">Custom Fabrics</h4>
+                  <p className="text-xs text-gray-500">Shared palettes, unique silhouettes.</p>
                 </div>
                 <div className="border-l-2 border-[#c8502a] pl-4">
-                  <h4 className="text-sm font-bold text-black mb-1">Delivery</h4>
-                  <p className="text-xs text-gray-500">Ready to wear, ready to impress.</p>
+                  <h4 className="text-sm font-bold text-black mb-1">Styled as One</h4>
+                  <p className="text-xs text-gray-500">Two looks, one unforgettable statement.</p>
                 </div>
               </div>
 
@@ -634,8 +654,8 @@ function HomePage() {
 
             <div className="aspect-[4/5] overflow-hidden bg-gray-100">
               <img
-                src="/images/portfolio/bespoke-navy-pinstripe-man.jpg"
-                alt="Bespoke custom tailoring consultation experience at Bremer Suits Nairobi"
+                src="/images/couples-hero-process.jpg"
+                alt="Couples styling and coordinated outfits by Bremer Suits Nairobi"
                 className="w-full h-full object-cover"
               />
             </div>
@@ -649,8 +669,8 @@ function HomePage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
             <div className="aspect-[4/5] overflow-hidden">
               <img
-                src="/images/gallery-15.jpg"
-                alt="Precision craftsmanship by Bremer Suits master tailors in Nairobi"
+                src="/images/commitment-section-new.jpg"
+                alt="Bremer Suits style commitment - bespoke tailoring in Nairobi"
                 className="w-full h-full object-cover"
               />
             </div>
@@ -870,6 +890,16 @@ function HomePage() {
             >
               <X size={18} />
             </button>
+            {/* WhatsApp Enquire Button in Lightbox */}
+            <a
+              href={`https://wa.me/254793880642?text=${encodeURIComponent(`Hello Bremer Suits, I am interested in this suit. Could you share more details?\n\nProduct image: ${getFullImageUrl(lightboxImage || '')}`)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 px-6 py-3 bg-[#25D366] text-white text-sm font-bold uppercase tracking-wider rounded-full shadow-xl hover:bg-[#20BD5A] transition-colors"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+              Enquire on WhatsApp
+            </a>
           </div>
         </div>
       )}
