@@ -45,7 +45,7 @@ export function EnquireModal({ product, open, onClose }: EnquireModalProps) {
   const whatsAppMessage = encodeURIComponent(
     `Hi, I'm interested in the "${product.title}" (${product.price}). Could you share more details?`
   )
-  const whatsAppUrl = `https://wa.me/?text=${whatsAppMessage}`
+  const whatsAppUrl = `https://wa.me/254793880642?text=${whatsAppMessage}`
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">

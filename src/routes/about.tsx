@@ -149,7 +149,7 @@ function About() {
       <section className="relative bg-black overflow-hidden">
         <div className="absolute inset-0">
           <img
-            src="/images/about-wedding-group.jpg"
+            src="/images/philosophy-banner.jpg"
             alt="About Bremer Suits - Premier Bespoke Tailoring Heritage in Nairobi Kenya"
             className="w-full h-full object-cover opacity-35"
           />
@@ -211,8 +211,8 @@ function About() {
             <div className="relative">
               <div className="aspect-[4/5] overflow-hidden">
                 <img
-                  src="/images/about-bespoke-man.jpg"
-                  alt="Bespoke suit craftsmanship by Bremer Suits master tailors Nairobi"
+                  src="/images/about-white-suit-man.jpg"
+                  alt="Man in white suit - Bremer Suits bespoke craftsmanship Nairobi"
                   className="w-full h-full object-cover"
                 />
               </div>
@@ -233,23 +233,29 @@ function About() {
       <section className="py-4 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
-            <div className="aspect-square overflow-hidden">
-              <img src="/images/gallery-1.jpg" alt="Bremer Suits premium collection Nairobi" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+            <div className="aspect-square overflow-hidden relative group">
+              <img src="/images/gallery-3.jpg" alt="Bremer Suits premium collection Nairobi" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+              <a href={`https://wa.me/254793880642?text=${encodeURIComponent('Hello Bremer Suits, I am interested in ordering a similar design from your collection. Could you share more details?')}`} target="_blank" rel="noopener noreferrer" className="absolute bottom-2 left-1/2 -translate-x-1/2 flex items-center gap-1.5 px-3 py-1.5 bg-black/80 text-white text-[10px] font-semibold uppercase tracking-wider shadow-lg opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300 hover:bg-black z-10 whitespace-nowrap backdrop-blur-sm">Order Similar Design<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M7 17l9.2-9.2M17 17V7H7"/></svg></a>
             </div>
-            <div className="aspect-square overflow-hidden">
-              <img src="/images/portfolio/bespoke-green-pinstripe.jpg" alt="Green pinstripe bespoke suit by Bremer Suits Nairobi" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+            <div className="aspect-square overflow-hidden relative group">
+              <img src="/images/portfolio/bespoke-cream-double-breasted.jpg" alt="Cream double breasted bespoke suit by Bremer Suits Nairobi" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+              <a href={`https://wa.me/254793880642?text=${encodeURIComponent('Hello Bremer Suits, I am interested in ordering a similar design from your collection. Could you share more details?')}`} target="_blank" rel="noopener noreferrer" className="absolute bottom-2 left-1/2 -translate-x-1/2 flex items-center gap-1.5 px-3 py-1.5 bg-black/80 text-white text-[10px] font-semibold uppercase tracking-wider shadow-lg opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300 hover:bg-black z-10 whitespace-nowrap backdrop-blur-sm">Order Similar Design<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M7 17l9.2-9.2M17 17V7H7"/></svg></a>
             </div>
-            <div className="aspect-square overflow-hidden">
-              <img src="/images/gallery-19.jpg" alt="Bremer Suits handcrafted tailoring and fine craftsmanship Nairobi" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+            <div className="aspect-square overflow-hidden relative group">
+              <img src="/images/gallery-7.jpg" alt="Bremer Suits handcrafted tailoring and fine craftsmanship Nairobi" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+              <a href={`https://wa.me/254793880642?text=${encodeURIComponent('Hello Bremer Suits, I am interested in ordering a similar design from your collection. Could you share more details?')}`} target="_blank" rel="noopener noreferrer" className="absolute bottom-2 left-1/2 -translate-x-1/2 flex items-center gap-1.5 px-3 py-1.5 bg-black/80 text-white text-[10px] font-semibold uppercase tracking-wider shadow-lg opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300 hover:bg-black z-10 whitespace-nowrap backdrop-blur-sm">Order Similar Design<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M7 17l9.2-9.2M17 17V7H7"/></svg></a>
             </div>
-            <div className="aspect-square overflow-hidden">
-              <img src="/images/portfolio/bespoke-orange-mannequin.jpg" alt="Orange bespoke suit on mannequin by Bremer Suits Nairobi" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+            <div className="aspect-square overflow-hidden relative group">
+              <img src="/images/portfolio/bespoke-houndstooth-gold-buttons.jpg" alt="Houndstooth bespoke suit with gold buttons by Bremer Suits Nairobi" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+              <a href={`https://wa.me/254793880642?text=${encodeURIComponent('Hello Bremer Suits, I am interested in ordering a similar design from your collection. Could you share more details?')}`} target="_blank" rel="noopener noreferrer" className="absolute bottom-2 left-1/2 -translate-x-1/2 flex items-center gap-1.5 px-3 py-1.5 bg-black/80 text-white text-[10px] font-semibold uppercase tracking-wider shadow-lg opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300 hover:bg-black z-10 whitespace-nowrap backdrop-blur-sm">Order Similar Design<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M7 17l9.2-9.2M17 17V7H7"/></svg></a>
             </div>
-            <div className="aspect-square overflow-hidden">
-              <img src="/images/gallery-20.jpg" alt="Bremer Suits elegant styling and premium menswear Nairobi" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+            <div className="aspect-square overflow-hidden relative group">
+              <img src="/images/gallery-10.jpg" alt="Bremer Suits elegant styling and premium menswear Nairobi" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+              <a href={`https://wa.me/254793880642?text=${encodeURIComponent('Hello Bremer Suits, I am interested in ordering a similar design from your collection. Could you share more details?')}`} target="_blank" rel="noopener noreferrer" className="absolute bottom-2 left-1/2 -translate-x-1/2 flex items-center gap-1.5 px-3 py-1.5 bg-black/80 text-white text-[10px] font-semibold uppercase tracking-wider shadow-lg opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300 hover:bg-black z-10 whitespace-nowrap backdrop-blur-sm">Order Similar Design<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M7 17l9.2-9.2M17 17V7H7"/></svg></a>
             </div>
-            <div className="aspect-square overflow-hidden">
-              <img src="/images/portfolio/wedding-cream-bridal-lineup.jpg" alt="Cream bridal party wedding lineup styling by Bremer Suits Nairobi" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+            <div className="aspect-square overflow-hidden relative group">
+              <img src="/images/portfolio/wedding-emerald-green-groomsmen-studio.jpg" alt="Emerald green groomsmen styling by Bremer Suits Nairobi" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+              <a href={`https://wa.me/254793880642?text=${encodeURIComponent('Hello Bremer Suits, I am interested in ordering a similar design from your collection. Could you share more details?')}`} target="_blank" rel="noopener noreferrer" className="absolute bottom-2 left-1/2 -translate-x-1/2 flex items-center gap-1.5 px-3 py-1.5 bg-black/80 text-white text-[10px] font-semibold uppercase tracking-wider shadow-lg opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300 hover:bg-black z-10 whitespace-nowrap backdrop-blur-sm">Order Similar Design<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M7 17l9.2-9.2M17 17V7H7"/></svg></a>
             </div>
           </div>
         </div>
@@ -388,22 +394,22 @@ function About() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-3 md:grid-cols-6 gap-2">
             <div className="aspect-square overflow-hidden">
-              <img src="/images/gallery-21.jpg" alt="Bremer Suits precision craftsmanship and attention to detail" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+              <img src="/images/gallery-25.jpg" alt="Bremer Suits precision craftsmanship and attention to detail" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
             </div>
             <div className="aspect-square overflow-hidden">
-              <img src="/images/gallery-22.jpg" alt="Bremer Suits luxury men's fashion and styling Nairobi" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+              <img src="/images/gallery-26.jpg" alt="Bremer Suits luxury men's fashion and styling Nairobi" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
             </div>
             <div className="aspect-square overflow-hidden">
-              <img src="/images/gallery-40.jpg" alt="Bremer Suits exclusive menswear collection Kenya" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+              <img src="/images/gallery-27.jpg" alt="Bremer Suits exclusive menswear collection Kenya" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
             </div>
             <div className="aspect-square overflow-hidden">
-              <img src="/images/gallery-41.jpg" alt="Bremer Suits expert tailoring and fabric selection" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+              <img src="/images/gallery-28.jpg" alt="Bremer Suits expert tailoring and fabric selection" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
             </div>
             <div className="aspect-square overflow-hidden">
-              <img src="/images/gallery-23.jpg" alt="Bremer Suits bespoke formal wear and accessories Nairobi" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+              <img src="/images/gallery-29.jpg" alt="Bremer Suits bespoke formal wear and accessories Nairobi" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
             </div>
             <div className="aspect-square overflow-hidden">
-              <img src="/images/gallery-24.jpg" alt="Bremer Suits premium design and modern tailoring Kenya" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+              <img src="/images/gallery-30.jpg" alt="Bremer Suits premium design and modern tailoring Kenya" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
             </div>
           </div>
         </div>
@@ -530,17 +536,21 @@ function About() {
             </p>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            <div className="aspect-[3/4] overflow-hidden">
+            <div className="aspect-[3/4] overflow-hidden relative group">
               <img src="/images/portfolio/couples-agbada-pink-gown.jpg" alt="Agbada and pink gown couples styling by Bremer Suits Nairobi" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+              <a href={`https://wa.me/254793880642?text=${encodeURIComponent('Hello Bremer Suits, I am interested in ordering a similar design from your collection. Could you share more details?')}`} target="_blank" rel="noopener noreferrer" className="absolute bottom-2 left-1/2 -translate-x-1/2 flex items-center gap-1.5 px-3 py-1.5 bg-black/80 text-white text-[10px] font-semibold uppercase tracking-wider shadow-lg opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300 hover:bg-black z-10 whitespace-nowrap backdrop-blur-sm">Order Similar Design<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M7 17l9.2-9.2M17 17V7H7"/></svg></a>
             </div>
-            <div className="aspect-[3/4] overflow-hidden">
+            <div className="aspect-[3/4] overflow-hidden relative group">
               <img src="/images/portfolio/couples-teal-matching-set.jpg" alt="Teal matching couples outfit by Bremer Suits Nairobi" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+              <a href={`https://wa.me/254793880642?text=${encodeURIComponent('Hello Bremer Suits, I am interested in ordering a similar design from your collection. Could you share more details?')}`} target="_blank" rel="noopener noreferrer" className="absolute bottom-2 left-1/2 -translate-x-1/2 flex items-center gap-1.5 px-3 py-1.5 bg-black/80 text-white text-[10px] font-semibold uppercase tracking-wider shadow-lg opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300 hover:bg-black z-10 whitespace-nowrap backdrop-blur-sm">Order Similar Design<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M7 17l9.2-9.2M17 17V7H7"/></svg></a>
             </div>
-            <div className="aspect-[3/4] overflow-hidden">
+            <div className="aspect-[3/4] overflow-hidden relative group">
               <img src="/images/portfolio/couples-black-tuxedo-evening.jpg" alt="Black tuxedo evening formal couple by Bremer Suits Nairobi" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+              <a href={`https://wa.me/254793880642?text=${encodeURIComponent('Hello Bremer Suits, I am interested in ordering a similar design from your collection. Could you share more details?')}`} target="_blank" rel="noopener noreferrer" className="absolute bottom-2 left-1/2 -translate-x-1/2 flex items-center gap-1.5 px-3 py-1.5 bg-black/80 text-white text-[10px] font-semibold uppercase tracking-wider shadow-lg opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300 hover:bg-black z-10 whitespace-nowrap backdrop-blur-sm">Order Similar Design<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M7 17l9.2-9.2M17 17V7H7"/></svg></a>
             </div>
-            <div className="aspect-[3/4] overflow-hidden">
+            <div className="aspect-[3/4] overflow-hidden relative group">
               <img src="/images/portfolio/couples-cream-suit-red-gown.jpg" alt="Cream suit and red gown romantic couple by Bremer Suits Nairobi" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+              <a href={`https://wa.me/254793880642?text=${encodeURIComponent('Hello Bremer Suits, I am interested in ordering a similar design from your collection. Could you share more details?')}`} target="_blank" rel="noopener noreferrer" className="absolute bottom-2 left-1/2 -translate-x-1/2 flex items-center gap-1.5 px-3 py-1.5 bg-black/80 text-white text-[10px] font-semibold uppercase tracking-wider shadow-lg opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300 hover:bg-black z-10 whitespace-nowrap backdrop-blur-sm">Order Similar Design<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M7 17l9.2-9.2M17 17V7H7"/></svg></a>
             </div>
           </div>
         </div>
