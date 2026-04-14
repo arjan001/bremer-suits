@@ -196,6 +196,12 @@ const cubeImages = [
   { src: '/images/about-model-1.jpg', alt: 'Master tailor handcrafting a bespoke suit - Left' },
 ]
 
+const SITE_URL = 'https://bremersuits.com'
+function getFullImageUrl(imagePath: string) {
+  if (imagePath.startsWith('http')) return imagePath
+  return `${SITE_URL}${imagePath.startsWith('/') ? '' : '/'}${imagePath}`
+}
+
 function HomePage() {
   const [currentSlide, setCurrentSlide] = useState(0)
   const [philosophyOffset, setPhilosophyOffset] = useState(0)
@@ -531,7 +537,7 @@ function HomePage() {
                     )}
                     {/* Order Similar Design Tooltip */}
                     <a
-                      href={`https://wa.me/254793880642?text=${encodeURIComponent(`Hello Bremer Suits, I am interested in ordering a similar design to: ${product.title}. Could you share more details?`)}`}
+                      href={`https://wa.me/254793880642?text=${encodeURIComponent(`Hello Bremer Suits, I am interested in ordering a similar design to: ${product.title}. Could you share more details?\n\nProduct image: ${getFullImageUrl(product.image)}`)}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-1.5 px-4 py-2 bg-black/80 text-white text-[10px] font-semibold uppercase tracking-wider shadow-lg opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300 hover:bg-black z-10 whitespace-nowrap backdrop-blur-sm"
@@ -571,7 +577,7 @@ function HomePage() {
 
                     {/* Order Yours → WhatsApp */}
                     <a
-                      href={`https://wa.me/254793880642?text=${encodeURIComponent(`Hello Bremer Suits, I am interested in this suit: ${product.title} (${currency === 'KES' ? `KES ${priceKES.toLocaleString()}` : `$${priceUSD.toLocaleString()}`}). Could you share more details?`)}`}
+                      href={`https://wa.me/254793880642?text=${encodeURIComponent(`Hello Bremer Suits, I am interested in this suit: ${product.title} (${currency === 'KES' ? `KES ${priceKES.toLocaleString()}` : `$${priceUSD.toLocaleString()}`}). Could you share more details?\n\nProduct image: ${getFullImageUrl(product.image)}`)}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex items-center justify-center gap-2 w-full py-2 text-[10px] lg:text-xs tracking-[0.15em] uppercase bg-[#25D366] text-white hover:bg-[#20BD5A] transition-colors duration-300 font-semibold"
@@ -886,7 +892,7 @@ function HomePage() {
             </button>
             {/* WhatsApp Enquire Button in Lightbox */}
             <a
-              href={`https://wa.me/254793880642?text=${encodeURIComponent(`Hello Bremer Suits, I am interested in this suit. Could you share more details?`)}`}
+              href={`https://wa.me/254793880642?text=${encodeURIComponent(`Hello Bremer Suits, I am interested in this suit. Could you share more details?\n\nProduct image: ${getFullImageUrl(lightboxImage || '')}`)}`}
               target="_blank"
               rel="noopener noreferrer"
               className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 px-6 py-3 bg-[#25D366] text-white text-sm font-bold uppercase tracking-wider rounded-full shadow-xl hover:bg-[#20BD5A] transition-colors"

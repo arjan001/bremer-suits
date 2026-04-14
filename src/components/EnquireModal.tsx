@@ -1,6 +1,12 @@
 import { useState } from 'react'
 import { X, Send } from 'lucide-react'
 
+const SITE_URL = 'https://bremersuits.com'
+function getFullImageUrl(imagePath: string) {
+  if (imagePath.startsWith('http')) return imagePath
+  return `${SITE_URL}${imagePath.startsWith('/') ? '' : '/'}${imagePath}`
+}
+
 export interface EnquireProduct {
   id: string
   title: string
@@ -43,7 +49,7 @@ export function EnquireModal({ product, open, onClose }: EnquireModalProps) {
   }
 
   const whatsAppMessage = encodeURIComponent(
-    `Hi, I'm interested in the "${product.title}" (${product.price}). Could you share more details?`
+    `Hi, I'm interested in the "${product.title}" (${product.price}). Could you share more details?\n\nProduct image: ${getFullImageUrl(product.image)}`
   )
   const whatsAppUrl = `https://wa.me/254793880642?text=${whatsAppMessage}`
 
