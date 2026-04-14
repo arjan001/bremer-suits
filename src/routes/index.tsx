@@ -96,7 +96,6 @@ const carouselImages = [
   '/images/carousel-new-2.jpg',
   '/images/carousel-new-3.jpg',
   '/images/couple-roses.jpg',
-  '/images/couple-burgundy-black.jpg',
 ]
 
 const pillars = [
@@ -590,35 +589,35 @@ function HomePage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
             <div className="flex flex-col justify-center">
               <p className="text-sm tracking-wide text-[#c8502a] mb-3 font-medium">
-                Our process is designed to make you feel understood and involved.
+                Crafted for two. Designed to turn heads together.
               </p>
               <h2
                 className="text-3xl lg:text-5xl font-bold text-black leading-tight mb-6"
                 style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
               >
-                A Tailoring Experience{' '}
-                <span className="block">Built Around You</span>
+                Better Together,{' '}
+                <span className="block">Styled Together</span>
               </h2>
               <p className="text-base text-gray-600 leading-relaxed mb-6">
-                From your first consultation to the final fitting, every step is guided by your vision. We listen, measure, craft, and refine &mdash; ensuring a garment that fits you perfectly in every way.
+                At Bremer Suits, we believe the best moments are shared &mdash; and the best couples deserve wardrobes that speak as one. From coordinated wedding ensembles to date-night looks that complement each other perfectly, we design couples&rsquo; wear that celebrates your bond with elegance, harmony, and intention.
               </p>
 
               <div className="grid grid-cols-2 gap-4 mb-8">
                 <div className="border-l-2 border-[#c8502a] pl-4">
-                  <h4 className="text-sm font-bold text-black mb-1">Consultation</h4>
-                  <p className="text-xs text-gray-500">Understanding your style and needs.</p>
+                  <h4 className="text-sm font-bold text-black mb-1">His &amp; Hers</h4>
+                  <p className="text-xs text-gray-500">Coordinated outfits that complement each other.</p>
                 </div>
                 <div className="border-l-2 border-[#c8502a] pl-4">
-                  <h4 className="text-sm font-bold text-black mb-1">Measurements</h4>
-                  <p className="text-xs text-gray-500">Precision patterns crafted for you.</p>
+                  <h4 className="text-sm font-bold text-black mb-1">Wedding Sets</h4>
+                  <p className="text-xs text-gray-500">Matching ensembles for your big day.</p>
                 </div>
                 <div className="border-l-2 border-[#c8502a] pl-4">
-                  <h4 className="text-sm font-bold text-black mb-1">Fittings</h4>
-                  <p className="text-xs text-gray-500">Fine-tuning shape, drape, and balance.</p>
+                  <h4 className="text-sm font-bold text-black mb-1">Custom Fabrics</h4>
+                  <p className="text-xs text-gray-500">Shared palettes, unique silhouettes.</p>
                 </div>
                 <div className="border-l-2 border-[#c8502a] pl-4">
-                  <h4 className="text-sm font-bold text-black mb-1">Delivery</h4>
-                  <p className="text-xs text-gray-500">Ready to wear, ready to impress.</p>
+                  <h4 className="text-sm font-bold text-black mb-1">Styled as One</h4>
+                  <p className="text-xs text-gray-500">Two looks, one unforgettable statement.</p>
                 </div>
               </div>
 
@@ -634,8 +633,8 @@ function HomePage() {
 
             <div className="aspect-[4/5] overflow-hidden bg-gray-100">
               <img
-                src="/images/portfolio/bespoke-navy-pinstripe-man.jpg"
-                alt="Bespoke custom tailoring consultation experience at Bremer Suits Nairobi"
+                src="/images/couples-hero-process.jpg"
+                alt="Couples styling and coordinated outfits by Bremer Suits Nairobi"
                 className="w-full h-full object-cover"
               />
             </div>
@@ -649,8 +648,8 @@ function HomePage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
             <div className="aspect-[4/5] overflow-hidden">
               <img
-                src="/images/gallery-15.jpg"
-                alt="Precision craftsmanship by Bremer Suits master tailors in Nairobi"
+                src="/images/commitment-section-new.jpg"
+                alt="Bremer Suits style commitment - bespoke tailoring in Nairobi"
                 className="w-full h-full object-cover"
               />
             </div>
