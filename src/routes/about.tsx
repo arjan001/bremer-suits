@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { useState, useEffect, useCallback } from 'react'
-import { ArrowRight, Scissors, Heart, Shield, ChevronLeft, ChevronRight } from 'lucide-react'
+import { useState, useEffect, useRef } from 'react'
+import { ArrowRight, Scissors, Heart, Shield } from 'lucide-react'
 
 const aboutCarouselImages = [
   '/images/about-carousel-1.jpg',
@@ -156,59 +156,53 @@ function getFullImageUrl(imagePath: string) {
 }
 
 function AboutCarousel() {
-  const [currentSlide, setCurrentSlide] = useState(0)
+  const [offset, setOffset] = useState(0)
+  const carouselRef = useRef<HTMLDivElement>(null)
 
-  const nextSlide = useCallback(() => {
-    setCurrentSlide((prev) => (prev + 1) % aboutCarouselImages.length)
-  }, [])
-
-  const prevSlide = useCallback(() => {
-    setCurrentSlide((prev) => (prev - 1 + aboutCarouselImages.length) % aboutCarouselImages.length)
-  }, [])
-
+  // Auto-scroll like the home page "Dress with Intention" carousel
   useEffect(() => {
-    const timer = setInterval(nextSlide, 5000)
+    const timer = setInterval(() => {
+      setOffset((prev) => {
+        const maxOffset = Math.max(0, aboutCarouselImages.length - 2)
+        return prev >= maxOffset ? 0 : prev + 1
+      })
+    }, 3000)
     return () => clearInterval(timer)
-  }, [nextSlide])
+  }, [])
 
   return (
     <div className="relative">
-      <div className="aspect-[4/5] overflow-hidden relative">
-        {aboutCarouselImages.map((src, idx) => (
-          <div
-            key={src}
-            className="absolute inset-0 transition-opacity duration-1000 ease-in-out"
-            style={{ opacity: idx === currentSlide ? 1 : 0 }}
-          >
-            <img
-              src={src}
-              alt={`Bremer Suits bespoke craftsmanship - Slide ${idx + 1}`}
-              className="w-full h-full object-cover"
-            />
-          </div>
-        ))}
-
-        <button
-          onClick={prevSlide}
-          className="absolute left-3 top-1/2 -translate-y-1/2 z-10 w-9 h-9 flex items-center justify-center bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-full transition-colors"
-          aria-label="Previous slide"
+      <div className="overflow-hidden" ref={carouselRef}>
+        <div
+          className="flex gap-3 transition-transform duration-700 ease-in-out"
+          style={{ transform: `translateX(-${offset * (50 + 0.75)}%)` }}
         >
-          <ChevronLeft size={18} className="text-white" />
-        </button>
-        <button
-          onClick={nextSlide}
-          className="absolute right-3 top-1/2 -translate-y-1/2 z-10 w-9 h-9 flex items-center justify-center bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-full transition-colors"
-          aria-label="Next slide"
-        >
-          <ChevronRight size={18} className="text-white" />
-        </button>
-
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10 flex gap-2">
-          {aboutCarouselImages.map((_, idx) => (
+          {aboutCarouselImages.map((src, idx) => (
+            <div key={idx} className="min-w-[calc(50%-6px)] h-[300px] lg:h-[500px] overflow-hidden flex-shrink-0 relative group">
+              <img
+                src={src}
+                alt={`Bremer Suits bespoke craftsmanship - Image ${idx + 1}`}
+                className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+              />
+              <a
+                href={`https://wa.me/254793880642?text=${encodeURIComponent(`Hello Bremer Suits, I am interested in ordering a similar design from your collection. Could you share more details?\n\nProduct image: ${getFullImageUrl(src)}`)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-1.5 px-3 py-1.5 bg-black/80 text-white text-[10px] font-semibold uppercase tracking-wider shadow-lg opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300 hover:bg-black z-10 whitespace-nowrap backdrop-blur-sm"
+              >
+                Order Similar Design
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M7 17l9.2-9.2M17 17V7H7"/></svg>
+              </a>
+            </div>
+          ))}
+        </div>
+        {/* Carousel indicators */}
+        <div className="flex justify-center gap-1.5 mt-4">
+          {Array.from({ length: Math.max(1, aboutCarouselImages.length - 1) }).map((_, idx) => (
             <button
               key={idx}
-              onClick={() => setCurrentSlide(idx)}
-              className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${idx === currentSlide ? 'bg-white w-8' : 'bg-white/40'}`}
+              onClick={() => setOffset(idx)}
+              className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${idx === offset ? 'bg-black w-5' : 'bg-gray-300'}`}
               aria-label={`Go to slide ${idx + 1}`}
             />
           ))}
