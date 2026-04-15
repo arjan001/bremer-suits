@@ -1,12 +1,12 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useState } from 'react'
-import { Mail, Send, Phone, MapPin, Clock, Instagram, MessageCircle, CheckCircle2, Calendar } from 'lucide-react'
+import { Mail, Send, Phone, MapPin, Clock, Instagram, CheckCircle2, MessageCircle } from 'lucide-react'
 
 export const Route = createFileRoute('/contact')({
   head: () => ({
     meta: [
-      { title: 'Book a Fitting | Private Consultation at Bremer Suits Nairobi' },
-      { name: 'description', content: 'Ready for your perfect fit? Schedule a private consultation at our Nairobi studio on Kimathi St. Expert measurements, fabric selection, and personalized styling for your next big event.' },
+      { title: 'Book a Fitting | Suit Appointment at Bremer Suits Nairobi' },
+      { name: 'description', content: 'Book an appointment at our Nairobi studio on Kimathi St. Expert suit fittings, fabric selection, and personalized styling advisory for your next look.' },
       { name: 'keywords', content: 'Bremer Suits, Bremer, BremerSuits, BREMER SUITS, book tailor appointment Nairobi, suit fitting consultation, Bremer Suits location, custom suit price Kenya, bespoke tailor contact, suit alterations near me, bremer suits contact, Kimathi Street tailor, Nairobi fitting studio, wedding suit consultation, corporate suit appointment, book suit fitting Kenya, schedule tailoring session' },
       { name: 'robots', content: 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1' },
       { name: 'author', content: 'Bremer Suits' },
@@ -22,8 +22,8 @@ export const Route = createFileRoute('/contact')({
       { name: 'msapplication-TileColor', content: '#1a1a1a' },
       { name: 'mobile-web-app-capable', content: 'yes' },
       { name: 'apple-mobile-web-app-capable', content: 'yes' },
-      { property: 'og:title', content: 'Book a Fitting | Private Consultation at Bremer Suits Nairobi' },
-      { property: 'og:description', content: 'Ready for your perfect fit? Schedule a private consultation at our Nairobi studio. Expert measurements, fabric selection, and personalized styling.' },
+      { property: 'og:title', content: 'Book a Fitting | Suit Appointment at Bremer Suits Nairobi' },
+      { property: 'og:description', content: 'Book an appointment at our Nairobi studio. Expert suit fittings, fabric selection, and personalized styling advisory.' },
       { property: 'og:type', content: 'website' },
       { property: 'og:url', content: 'https://bremersuits.com/contact' },
       { property: 'og:site_name', content: 'Bremer Suits' },
@@ -37,7 +37,7 @@ export const Route = createFileRoute('/contact')({
       { name: 'twitter:site', content: '@bremersuits' },
       { name: 'twitter:creator', content: '@bremersuits' },
       { name: 'twitter:title', content: 'Book a Fitting | Bremer Suits Nairobi' },
-      { name: 'twitter:description', content: 'Schedule a private consultation at our Nairobi studio. Expert measurements, fabric selection, and personalized styling.' },
+      { name: 'twitter:description', content: 'Book an appointment at our Nairobi studio. Expert suit fittings, fabric selection, and personalized styling advisory.' },
       { name: 'twitter:image', content: 'https://bremersuits.com/images/og-logo-gold-black.jpg' },
       { name: 'twitter:image:alt', content: 'Book a Fitting at Bremer Suits Nairobi' },
       { name: 'geo.region', content: 'KE-110' },
@@ -49,7 +49,7 @@ export const Route = createFileRoute('/contact')({
       { property: 'business:contact_data:country_name', content: 'Kenya' },
       { property: 'business:contact_data:email', content: 'brendahwanja6722@gmail.com' },
       { property: 'business:contact_data:phone_number', content: '+254 793 880642' },
-      { name: 'subject', content: 'Book a Consultation & Fitting' },
+      { name: 'subject', content: 'Book a Fitting & Appointment' },
       { name: 'classification', content: 'Business' },
       { name: 'category', content: 'Fashion & Tailoring' },
       { name: 'coverage', content: 'Kenya' },
@@ -78,7 +78,7 @@ export const Route = createFileRoute('/contact')({
           '@context': 'https://schema.org',
           '@type': 'ContactPage',
           name: 'Book a Fitting at Bremer Suits',
-          description: 'Schedule a private consultation at our Nairobi studio for expert measurements, fabric selection, and personalized styling.',
+          description: 'Book an appointment at our Nairobi studio for expert suit fittings, fabric selection, and personalized styling advisory.',
           url: 'https://bremersuits.com/contact',
           mainEntity: {
             '@type': 'LocalBusiness',
@@ -135,7 +135,7 @@ function Contact() {
         <div className="absolute inset-0">
           <img
             src="/images/contact-banner-new.jpg"
-            alt="Book a private suit fitting consultation at Bremer Suits Nairobi studio"
+            alt="Book a suit fitting appointment at Bremer Suits Nairobi studio"
             className="w-full h-full object-cover opacity-30"
           />
         </div>
@@ -147,12 +147,11 @@ function Contact() {
             className="text-4xl lg:text-6xl font-bold text-white mb-4"
             style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
           >
-            Book a Consultation with Bremer Suits
+            Book an Appointment
           </h1>
           <div className="w-16 h-0.5 bg-gold mx-auto mb-4" />
           <p className="text-white/60 max-w-lg mx-auto font-light">
-            Begin your journey to a refined personal image. Schedule a private
-            consultation with our team.
+            Schedule a suit fitting and let our team walk you through our available fabrics, designs, and tailoring options — crafted to match your style.
           </p>
         </div>
       </section>
@@ -236,7 +235,7 @@ function Contact() {
                   <div className="w-6 h-6 bg-gold/10 rounded-full flex items-center justify-center shrink-0 mt-0.5">
                     <span className="text-gold text-xs font-bold">1</span>
                   </div>
-                  <p className="text-sm text-gray-500">Complimentary 45–60 minute private consultation</p>
+                  <p className="text-sm text-gray-500">Complimentary 45–60 minute fitting session</p>
                 </div>
                 <div className="flex items-start gap-3">
                   <div className="w-6 h-6 bg-gold/10 rounded-full flex items-center justify-center shrink-0 mt-0.5">
@@ -416,40 +415,12 @@ function Contact() {
                 )}
               </form>
             </div>
-
-            {/* Quick Contact Bar */}
-            <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <a
-                href="https://wa.me/254793880642?text=Hello%2C%20I%27d%20like%20to%20book%20a%20consultation"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-3 p-4 bg-[#25D366]/5 border border-[#25D366]/20 hover:bg-[#25D366]/10 transition-colors"
-              >
-                <MessageCircle size={20} className="text-[#25D366] shrink-0" />
-                <div>
-                  <p className="text-sm font-semibold text-black">WhatsApp Us</p>
-                  <p className="text-xs text-gray-500">Chat directly for faster response</p>
-                </div>
-              </a>
-              <a
-                href="tel:+254793880642"
-                className="flex items-center gap-3 p-4 bg-black/5 border border-black/10 hover:bg-black/10 transition-colors"
-              >
-                <Phone size={20} className="text-black shrink-0" />
-                <div>
-                  <p className="text-sm font-semibold text-black">Call Us</p>
-                  <p className="text-xs text-gray-500">+254 793 880642</p>
-                </div>
-              </a>
-            </div>
-          </div>
         </div>
       </div>
-
-      {/* Map Section */}
+      </div>
       <section className="bg-gray-50 border-t border-gray-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <div className="text-center mb-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="text-center mb-6">
             <p className="text-xs tracking-[0.3em] uppercase text-gold mb-2 font-medium">Find Us</p>
             <h2
               className="text-2xl font-bold text-black"
@@ -458,7 +429,7 @@ function Contact() {
               Our Studio Location
             </h2>
           </div>
-          <div className="aspect-[16/6] bg-gray-200 overflow-hidden">
+          <div className="aspect-[16/5] max-h-[280px] bg-gray-200 overflow-hidden">
             <iframe
               src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3988.8193!2d36.82!3d-1.285!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2sKimathi+Street%2C+Nairobi!5e0!3m2!1sen!2ske!4v1700000000000!5m2!1sen!2ske"
               width="100%"

@@ -9,7 +9,6 @@ const navLinks = [
   { to: '/portfolio', label: 'Portfolio' },
   { to: '/about', label: 'About' },
   { to: '/services', label: 'Services' },
-  { to: '/consult', label: 'Consult' },
   { to: '/contact', label: 'Contact' },
 ] as const
 
@@ -148,7 +147,7 @@ export function Header() {
             {/* Right Icons */}
             <div className="flex items-center gap-3">
               <Link
-                to="/consult"
+                to="/contact"
                 className="hidden md:inline-flex items-center px-5 py-2 text-xs tracking-widest uppercase bg-black text-white hover:bg-gray-800 transition-colors duration-300 font-medium"
               >
                 Book Now
@@ -197,11 +196,11 @@ export function Header() {
                   )
                 })}
                 <Link
-                  to="/consult"
+                  to="/contact"
                   onClick={closeMobileMenu}
                   className="mt-4 inline-flex items-center justify-center px-5 py-3.5 text-xs tracking-widest uppercase bg-black text-white hover:bg-gray-800 transition-colors duration-300 font-medium"
                 >
-                  Book a Consultation
+                  Book an Appointment
                 </Link>
               </nav>
             </div>

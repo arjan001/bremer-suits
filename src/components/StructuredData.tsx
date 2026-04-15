@@ -156,7 +156,7 @@ export function StructuredData() {
         '@type': 'ContactPage',
         name: 'Book a Fitting at Bremer Suits',
         description:
-          'Schedule a private consultation at our Nairobi studio for expert measurements, fabric selection, and personalized styling.',
+          'Book an appointment at our Nairobi studio for expert suit fittings, fabric selection, and personalized styling advisory.',
         mainEntity: {
           '@type': 'LocalBusiness',
           name: 'Bremer Suits',
