@@ -419,8 +419,8 @@ function Contact() {
       </div>
       </div>
       <section className="bg-gray-50 border-t border-gray-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="text-center mb-6">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
+          <div className="text-center mb-8">
             <p className="text-xs tracking-[0.3em] uppercase text-gold mb-2 font-medium">Find Us</p>
             <h2
               className="text-2xl font-bold text-black"
@@ -429,17 +429,69 @@ function Contact() {
               Our Studio Location
             </h2>
           </div>
-          <div className="aspect-[16/5] max-h-[280px] bg-gray-200 overflow-hidden">
-            <iframe
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3988.8193!2d36.82!3d-1.285!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2sKimathi+Street%2C+Nairobi!5e0!3m2!1sen!2ske!4v1700000000000!5m2!1sen!2ske"
-              width="100%"
-              height="100%"
-              style={{ border: 0 }}
-              allowFullScreen
-              loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
-              title="Bremer Suits Nairobi Location"
-            />
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-start">
+            {/* Contact Details - Left */}
+            <div className="space-y-6">
+              <div className="flex items-start gap-4">
+                <div className="w-10 h-10 bg-black flex items-center justify-center shrink-0">
+                  <MapPin size={18} className="text-gold" strokeWidth={1.5} />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-black">Address</p>
+                  <p className="text-sm text-gray-500">BREMER SUITS, Kimathi St, Nairobi, Kenya</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-4">
+                <div className="w-10 h-10 bg-black flex items-center justify-center shrink-0">
+                  <Phone size={18} className="text-gold" strokeWidth={1.5} />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-black">Phone</p>
+                  <a href="tel:+254793880642" className="text-sm text-gray-500 hover:text-black transition-colors">+254 793 880642</a>
+                </div>
+              </div>
+              <div className="flex items-start gap-4">
+                <div className="w-10 h-10 bg-black flex items-center justify-center shrink-0">
+                  <Mail size={18} className="text-gold" strokeWidth={1.5} />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-black">Email</p>
+                  <a href="mailto:brendahwanja6722@gmail.com" className="text-sm text-gray-500 hover:text-black transition-colors">brendahwanja6722@gmail.com</a>
+                </div>
+              </div>
+              <div className="flex items-start gap-4">
+                <div className="w-10 h-10 bg-black flex items-center justify-center shrink-0">
+                  <Clock size={18} className="text-gold" strokeWidth={1.5} />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-black">Business Hours</p>
+                  <p className="text-sm text-gray-500">Mon – Fri: 9am – 6pm</p>
+                  <p className="text-sm text-gray-500">Sat: By appointment</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-4">
+                <div className="w-10 h-10 bg-[#25D366] flex items-center justify-center shrink-0">
+                  <MessageCircle size={18} className="text-white" strokeWidth={1.5} />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-black">WhatsApp</p>
+                  <a href="https://wa.me/254793880642" target="_blank" rel="noopener noreferrer" className="text-sm text-gray-500 hover:text-black transition-colors">Chat with us on WhatsApp</a>
+                </div>
+              </div>
+            </div>
+            {/* Map - Right */}
+            <div className="aspect-square lg:aspect-[4/3] min-h-[300px] bg-gray-200 overflow-hidden">
+              <iframe
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3988.8193!2d36.82!3d-1.285!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2sKimathi+Street%2C+Nairobi!5e0!3m2!1sen!2ske!4v1700000000000!5m2!1sen!2ske"
+                width="100%"
+                height="100%"
+                style={{ border: 0 }}
+                allowFullScreen
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                title="Bremer Suits Nairobi Location"
+              />
+            </div>
           </div>
         </div>
       </section>
