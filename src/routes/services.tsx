@@ -424,7 +424,7 @@ function Services() {
                 )}
                 {/* Order Similar Design Tooltip */}
                 <a
-                  href={`https://wa.me/254793880642?text=${encodeURIComponent(`Hello Bremer Suits, I am interested in ordering a similar design from your collection. Could you share more details?\n\n${SITE_URL}/share?image=${encodeURIComponent(service.image)}`)}`}
+                  href={`https://wa.me/254793880642?text=${encodeURIComponent(`Hello Bremer Suits, I am interested in ordering a similar design from your collection. Could you share more details?\n\n${getFullImageUrl(service.image)}`)}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-1.5 px-4 py-2 bg-black/80 text-white text-[10px] font-semibold uppercase tracking-wider shadow-lg opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300 hover:bg-black z-10 whitespace-nowrap backdrop-blur-sm"
@@ -527,7 +527,7 @@ function Services() {
                   </div>
                   {/* Order Similar Design Tooltip */}
                   <a
-                    href={`https://wa.me/254793880642?text=${encodeURIComponent(`Hello Bremer Suits, I am interested in ordering a similar design from your collection. Could you share more details?\n\n${SITE_URL}/share?image=${encodeURIComponent(service.image)}`)}`}
+                    href={`https://wa.me/254793880642?text=${encodeURIComponent(`Hello Bremer Suits, I am interested in ordering a similar design from your collection. Could you share more details?\n\n${getFullImageUrl(service.image)}`)}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="absolute bottom-4 right-4 flex items-center gap-1.5 px-3 py-1.5 bg-black/80 text-white text-[10px] font-semibold uppercase tracking-wider shadow-lg opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300 hover:bg-black z-10 whitespace-nowrap backdrop-blur-sm"
@@ -622,7 +622,7 @@ function Services() {
                   className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
                 />
                 <a
-                  href={`https://wa.me/254793880642?text=${encodeURIComponent(`Hello Bremer Suits, I am interested in ordering a similar design from your collection. Could you share more details?\n\n${SITE_URL}/share?image=${encodeURIComponent(src)}`)}`}
+                  href={`https://wa.me/254793880642?text=${encodeURIComponent(`Hello Bremer Suits, I am interested in ordering a similar design from your collection. Could you share more details?\n\n${getFullImageUrl(src)}`)}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-1.5 px-3 py-1.5 bg-black/80 text-white text-[10px] font-semibold uppercase tracking-wider shadow-lg opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300 hover:bg-black z-10 whitespace-nowrap backdrop-blur-sm"

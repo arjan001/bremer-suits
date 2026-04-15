@@ -521,7 +521,7 @@ function PortfolioPage() {
                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/15 transition-colors duration-300 pointer-events-none" />
                   {/* Order Similar Design Tooltip */}
                   <a
-                    href={`https://wa.me/254793880642?text=${encodeURIComponent(`Hello Bremer Suits, I am interested in ordering a similar design to: ${item.title || 'this piece from your portfolio'}. Could you share more details?\n\n${SITE_URL}/share?title=${encodeURIComponent(item.title || 'Portfolio Design')}&image=${encodeURIComponent(item.src)}`)}`}
+                    href={`https://wa.me/254793880642?text=${encodeURIComponent(`Hello Bremer Suits, I am interested in ordering a similar design to: ${item.title || 'this piece from your portfolio'}. Could you share more details?\n\n${getFullImageUrl(item.src)}`)}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-1.5 px-4 py-2 bg-black/80 text-white text-[10px] font-semibold uppercase tracking-wider shadow-lg opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300 hover:bg-black z-10 whitespace-nowrap backdrop-blur-sm"
@@ -666,7 +666,7 @@ function PortfolioPage() {
             </button>
             {/* WhatsApp Enquire Button in Lightbox */}
             <a
-              href={`https://wa.me/254793880642?text=${encodeURIComponent(`Hello Bremer Suits, I am interested in this suit from your portfolio. Could you share more details?\n\n${SITE_URL}/share?image=${encodeURIComponent(selectedImage || '')}`)}`}
+              href={`https://wa.me/254793880642?text=${encodeURIComponent(`Hello Bremer Suits, I am interested in this suit from your portfolio. Could you share more details?\n\n${getFullImageUrl(selectedImage || '')}`)}`}
               target="_blank"
               rel="noopener noreferrer"
               className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 px-6 py-3 bg-[#25D366] text-white text-sm font-bold uppercase tracking-wider rounded-full shadow-xl hover:bg-[#20BD5A] transition-colors"
