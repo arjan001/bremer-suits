@@ -214,6 +214,7 @@ export const Route = createRootRoute({
             { '@type': 'SiteNavigationElement', name: 'About', url: 'https://bremersuits.com/about' },
             { '@type': 'SiteNavigationElement', name: 'Services', url: 'https://bremersuits.com/services' },
             { '@type': 'SiteNavigationElement', name: 'Portfolio', url: 'https://bremersuits.com/portfolio' },
+            { '@type': 'SiteNavigationElement', name: 'Consult', url: 'https://bremersuits.com/consult' },
             { '@type': 'SiteNavigationElement', name: 'Contact', url: 'https://bremersuits.com/contact' },
             { '@type': 'SiteNavigationElement', name: 'FAQ', url: 'https://bremersuits.com/faq' },
           ],
@@ -384,6 +385,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         { '@type': 'SiteNavigationElement', name: 'About', url: 'https://bremersuits.com/about' },
         { '@type': 'SiteNavigationElement', name: 'Services', url: 'https://bremersuits.com/services' },
         { '@type': 'SiteNavigationElement', name: 'Portfolio', url: 'https://bremersuits.com/portfolio' },
+        { '@type': 'SiteNavigationElement', name: 'Consult', url: 'https://bremersuits.com/consult' },
         { '@type': 'SiteNavigationElement', name: 'Contact', url: 'https://bremersuits.com/contact' },
         { '@type': 'SiteNavigationElement', name: 'FAQ', url: 'https://bremersuits.com/faq' },
       ],
@@ -444,7 +446,7 @@ function StickyMobileCTA() {
   return (
     <div className="fixed bottom-0 left-0 right-0 z-50 lg:hidden bg-black/95 backdrop-blur-sm border-t border-white/10 px-4 py-3 safe-area-bottom">
       <Link
-        to="/contact"
+        to="/consult"
         className="flex items-center justify-center gap-2 w-full py-3 text-xs tracking-[0.2em] uppercase bg-white text-black font-semibold hover:bg-gray-100 transition-colors duration-300"
       >
         <Phone size={14} />
