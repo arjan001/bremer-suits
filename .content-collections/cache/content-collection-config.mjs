@@ -10,6 +10,7 @@ var blog = defineCollection({
     date: z.string(),
     summary: z.string(),
     tags: z.array(z.string()),
+    category: z.string().optional().default("General"),
     author: z.string(),
     content: z.string()
   })

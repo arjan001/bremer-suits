@@ -49,7 +49,7 @@ export function EnquireModal({ product, open, onClose }: EnquireModalProps) {
   }
 
   const whatsAppMessage = encodeURIComponent(
-    `Hi, I'm interested in the "${product.title}" (${product.price}). Could you share more details?\n\nProduct image: ${getFullImageUrl(product.image)}`
+    `Hi, I'm interested in the "${product.title}" (${product.price}). Could you share more details?\n\n${getFullImageUrl(product.image)}`
   )
   const whatsAppUrl = `https://wa.me/254793880642?text=${whatsAppMessage}`
 

@@ -200,7 +200,7 @@ export function Header() {
                   onClick={closeMobileMenu}
                   className="mt-4 inline-flex items-center justify-center px-5 py-3.5 text-xs tracking-widest uppercase bg-black text-white hover:bg-gray-800 transition-colors duration-300 font-medium"
                 >
-                  Book a Consultation
+                  Book an Appointment
                 </Link>
               </nav>
             </div>
