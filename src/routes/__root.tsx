@@ -413,7 +413,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 function RootLayout() {
   const router = useRouter()
   const pathname = router.state.location.pathname
-  const isAdmin = pathname.startsWith('/admin')
+  const isAdmin = pathname.startsWith('/admin') || pathname === '/admin-login'
   const hideExtras = isAdmin
 
   if (isAdmin) {
