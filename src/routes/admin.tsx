@@ -18,6 +18,7 @@ import {
   LogOut,
   BookOpen,
   Image,
+  Activity,
 } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { AdminProvider, useAdmin } from '@/lib/admin-store'
@@ -47,6 +48,7 @@ const sidebarItems = [
   { to: '/admin/analytics', label: 'Analytics', icon: BarChart3 },
   { to: '/admin/policies', label: 'Policies', icon: FileText },
   { to: '/admin/users', label: 'Users & Roles', icon: Users },
+  { to: '/admin/audit-logs', label: 'Audit Logs', icon: Activity },
   { to: '/admin/settings', label: 'Settings', icon: Settings },
 ] as const
 

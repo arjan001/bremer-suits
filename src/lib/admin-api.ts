@@ -1,6 +1,33 @@
 /* ── Admin API client – calls Netlify Functions backed by Supabase ── */
 
+import { getSupabaseClient } from './supabase-client'
+
 const BASE = '/.netlify/functions'
+
+/* ── cached current admin email, so audit logs can attribute actions ── */
+let cachedActorEmail: string | null = null
+let cachedActorId: string | null = null
+
+async function getActorHeaders(): Promise<Record<string, string>> {
+  if (cachedActorEmail && cachedActorId) {
+    return { 'x-admin-email': cachedActorEmail, 'x-admin-id': cachedActorId }
+  }
+  try {
+    const supabase = getSupabaseClient()
+    const { data } = await supabase.auth.getSession()
+    const user = data.session?.user
+    if (user) {
+      cachedActorEmail = user.email ?? null
+      cachedActorId = user.id ?? null
+    }
+  } catch {
+    /* ignore */
+  }
+  const h: Record<string, string> = {}
+  if (cachedActorEmail) h['x-admin-email'] = cachedActorEmail
+  if (cachedActorId) h['x-admin-id'] = cachedActorId
+  return h
+}
 
 /* ── snake_case ↔ camelCase helpers ── */
 function toSnake(str: string): string {
@@ -40,9 +67,10 @@ function mapToApi(data: Record<string, unknown>): Record<string, unknown> {
 }
 
 async function request<T>(url: string, options?: RequestInit): Promise<T> {
+  const actorHeaders = await getActorHeaders()
   const res = await fetch(url, {
     ...options,
-    headers: { 'Content-Type': 'application/json', ...(options?.headers || {}) },
+    headers: { 'Content-Type': 'application/json', ...actorHeaders, ...(options?.headers || {}) },
   })
   const json = await res.json()
   if (!res.ok) throw new Error(json.error || `Request failed (${res.status})`)
@@ -409,12 +437,34 @@ export const imagesApi = {
   async upload(file: File): Promise<string> {
     const formData = new FormData()
     formData.append('file', file)
+    const actorHeaders = await getActorHeaders()
     const res = await fetch(`${BASE}/admin-images`, {
       method: 'POST',
+      headers: actorHeaders,
       body: formData,
     })
     const json = await res.json()
     if (!res.ok) throw new Error(json.error || 'Upload failed')
     return json.url as string
   },
+}
+
+/* ── Audit Logs ── */
+export const auditLogsApi = {
+  async list(params: Record<string, string> = {}): Promise<{ data: Record<string, unknown>[]; total: number; page: number; limit: number }> {
+    const qs = new URLSearchParams(params).toString()
+    const endpoint = qs ? `${BASE}/admin-audit-logs?${qs}` : `${BASE}/admin-audit-logs`
+    return request<{ data: Record<string, unknown>[]; total: number; page: number; limit: number }>(endpoint)
+  },
+  async purge(before: string): Promise<{ success: boolean; deleted: number }> {
+    return request<{ success: boolean; deleted: number }>(`${BASE}/admin-audit-logs?before=${encodeURIComponent(before)}`, {
+      method: 'DELETE',
+    })
+  },
+}
+
+/* ── Reset cached actor (call on sign-out) ── */
+export function resetActorCache() {
+  cachedActorEmail = null
+  cachedActorId = null
 }

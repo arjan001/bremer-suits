@@ -184,6 +184,10 @@ export interface AdminUser {
   status: 'active' | 'inactive'
   lastLogin: string
   createdAt: string
+  permissions?: import('./permissions').PermissionMap | null
+  authUserId?: string | null
+  /** Write-only, used when creating a user and their Supabase Auth account in one step. */
+  password?: string
 }
 
 export interface AdminSocialLink {

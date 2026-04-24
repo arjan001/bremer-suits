@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { useState, useEffect, useMemo, useRef } from 'react'
 import { ArrowRight, Sparkles, X, ChevronLeft, ChevronRight, Star } from 'lucide-react'
+import { getCategories, type GalleryCategory } from '@/lib/products'
 
 const ITEMS_PER_PAGE = 12
 
@@ -377,6 +378,22 @@ function PortfolioPage() {
   const [activeCategory, setActiveCategory] = useState('all')
   const [currentPage, setCurrentPage] = useState(1)
   const [portfolioItems, setPortfolioItems] = useState<PortfolioItem[]>(staticPortfolioItems)
+  const [dbCategories, setDbCategories] = useState<GalleryCategory[]>([])
+
+  // Read ?category= from URL on first load so /portfolio?category=senator-suit
+  // (used from the landing page gallery section) filters correctly.
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    const params = new URLSearchParams(window.location.search)
+    const cat = params.get('category')
+    if (cat) setActiveCategory(cat)
+  }, [])
+
+  // Load category list from the DB so the filter tabs stay in sync
+  // with whatever admins manage inside /admin/categories.
+  useEffect(() => {
+    getCategories().then(setDbCategories).catch(() => undefined)
+  }, [])
 
   useEffect(() => {
     fetch('/.netlify/functions/admin-portfolio?status=active')
@@ -408,6 +425,20 @@ function PortfolioPage() {
       ? portfolioItems
       : portfolioItems.filter((item) => item.category === activeCategory)
   }, [activeCategory, portfolioItems])
+
+  // Merge the hardcoded filter tabs with any extra categories created by
+  // admins in /admin/categories, keeping a stable order for the known ones.
+  const mergedCategories = useMemo(() => {
+    const base = [...categories]
+    const knownIds = new Set(base.map((c) => c.id))
+    for (const c of dbCategories) {
+      if (!c.slug) continue
+      if (!knownIds.has(c.slug)) {
+        base.push({ id: c.slug, label: c.name || c.slug })
+      }
+    }
+    return base
+  }, [dbCategories])
 
   const totalPages = Math.ceil(filteredItems.length / ITEMS_PER_PAGE)
   const paginatedItems = filteredItems.slice(
@@ -488,7 +519,7 @@ function PortfolioPage() {
 
             {/* Category Filter Tabs */}
             <div className="flex flex-wrap items-center justify-center gap-3 mb-10">
-              {categories.map((cat) => (
+              {mergedCategories.map((cat) => (
                 <button
                   key={cat.id}
                   onClick={() => setActiveCategory(cat.id)}

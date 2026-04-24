@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
   Save,
   Store,
@@ -29,6 +29,8 @@ import {
   Shield,
   CheckCircle,
   AlertCircle,
+  Lock,
+  KeyRound,
 } from 'lucide-react'
 import {
   useAdmin,
@@ -38,15 +40,41 @@ import {
   type AdminPaymentMethod,
 } from '@/lib/admin-store'
 import { showSuccess, showError, showDeleteConfirm } from '@/lib/sweet-alert'
+import {
+  changeAdminPassword,
+  getAdminSession,
+  requestAdminPasswordReset,
+  toAdminAuthError,
+} from '@/lib/admin-auth'
+import {
+  ALL_ACTIONS,
+  ALL_RESOURCES,
+  defaultPermissionsForRole,
+  roleLabels as permissionRoleLabels,
+  type AdminRole,
+  type ResourceKey,
+} from '@/lib/permissions'
 
 export const Route = createFileRoute('/admin/settings')({
   component: AdminSettings,
 })
 
-type TabId = 'general' | 'seo-global' | 'seo-pages' | 'theme' | 'footer' | 'social' | 'author' | 'sitemap'
+type TabId =
+  | 'general'
+  | 'seo-global'
+  | 'seo-pages'
+  | 'theme'
+  | 'footer'
+  | 'social'
+  | 'author'
+  | 'sitemap'
+  | 'account'
+  | 'roles'
 
 const tabs: { id: TabId; label: string; icon: React.ElementType }[] = [
   { id: 'general', label: 'General', icon: Store },
+  { id: 'account', label: 'Account Security', icon: Lock },
+  { id: 'roles', label: 'Roles & Permissions', icon: Shield },
   { id: 'footer', label: 'Footer', icon: FileText },
   { id: 'social', label: 'Social Media', icon: Share2 },
   { id: 'author', label: 'Author & Credits', icon: User },
@@ -140,6 +168,8 @@ function AdminSettings() {
         {activeTab === 'general' && (
           <GeneralTab form={form} handleChange={handleChange} />
         )}
+        {activeTab === 'account' && <AccountSecurityTab />}
+        {activeTab === 'roles' && <RolesPermissionsTab />}
         {activeTab === 'footer' && (
           <FooterTab form={form} setForm={setForm} handleChange={handleChange} />
         )}
@@ -1556,6 +1586,276 @@ function ThemeTab({
               </select>
             </div>
           </div>
+        </div>
+      </section>
+    </div>
+  )
+}
+
+/* ── Account Security Tab ── */
+function AccountSecurityTab() {
+  const [email, setEmail] = useState('')
+  const [loadingEmail, setLoadingEmail] = useState(true)
+  const [current, setCurrent] = useState('')
+  const [next, setNext] = useState('')
+  const [confirm, setConfirm] = useState('')
+  const [showCurrent, setShowCurrent] = useState(false)
+  const [showNext, setShowNext] = useState(false)
+  const [submitting, setSubmitting] = useState(false)
+  const [sendingReset, setSendingReset] = useState(false)
+
+  // Load signed-in admin email
+  useEffect(() => {
+    getAdminSession()
+      .then((s) => setEmail(s.email || ''))
+      .finally(() => setLoadingEmail(false))
+  }, [])
+
+  async function handleChange(e: React.FormEvent) {
+    e.preventDefault()
+    if (next.length < 8) {
+      showError('Password too short', 'Use at least 8 characters.')
+      return
+    }
+    if (next !== confirm) {
+      showError('Passwords do not match')
+      return
+    }
+    if (!email) {
+      showError('Missing session email')
+      return
+    }
+    setSubmitting(true)
+    try {
+      await changeAdminPassword(email, current, next)
+      setCurrent('')
+      setNext('')
+      setConfirm('')
+      showSuccess('Password Updated', 'Your admin password has been changed.')
+    } catch (err) {
+      showError('Password Update Failed', toAdminAuthError(err))
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
+  async function handleSendReset() {
+    if (!email) return
+    setSendingReset(true)
+    try {
+      await requestAdminPasswordReset(email)
+      showSuccess('Reset Link Sent', 'Check your email for the reset link.')
+    } catch (err) {
+      showError('Failed to send reset link', toAdminAuthError(err))
+    } finally {
+      setSendingReset(false)
+    }
+  }
+
+  return (
+    <div className="max-w-2xl space-y-6">
+      <section className="bg-white border border-gray-200 rounded-lg p-6">
+        <div className="flex items-center gap-2 mb-1">
+          <Lock size={18} className="text-gray-400" />
+          <h2 className="text-sm font-bold text-black uppercase tracking-wider">Change Password</h2>
+        </div>
+        <p className="text-sm text-gray-500 mb-5">
+          Signed in as{' '}
+          <span className="font-medium text-black">
+            {loadingEmail ? 'loading…' : email || 'unknown'}
+          </span>
+        </p>
+        <form onSubmit={handleChange} className="space-y-4">
+          <div>
+            <label className="block text-sm font-semibold text-black mb-1">Current Password</label>
+            <div className="relative">
+              <input
+                type={showCurrent ? 'text' : 'password'}
+                value={current}
+                onChange={(e) => setCurrent(e.target.value)}
+                required
+                autoComplete="current-password"
+                className="w-full px-3 py-2.5 pr-10 border border-gray-200 rounded-lg text-sm focus:border-black focus:ring-1 focus:ring-black outline-none"
+              />
+              <button
+                type="button"
+                onClick={() => setShowCurrent((v) => !v)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-black"
+              >
+                {showCurrent ? <EyeOff size={16} /> : <Eye size={16} />}
+              </button>
+            </div>
+          </div>
+          <div>
+            <label className="block text-sm font-semibold text-black mb-1">New Password</label>
+            <div className="relative">
+              <input
+                type={showNext ? 'text' : 'password'}
+                value={next}
+                onChange={(e) => setNext(e.target.value)}
+                required
+                minLength={8}
+                autoComplete="new-password"
+                className="w-full px-3 py-2.5 pr-10 border border-gray-200 rounded-lg text-sm focus:border-black focus:ring-1 focus:ring-black outline-none"
+              />
+              <button
+                type="button"
+                onClick={() => setShowNext((v) => !v)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-black"
+              >
+                {showNext ? <EyeOff size={16} /> : <Eye size={16} />}
+              </button>
+            </div>
+            <p className="text-xs text-gray-400 mt-1">Minimum 8 characters.</p>
+          </div>
+          <div>
+            <label className="block text-sm font-semibold text-black mb-1">Confirm New Password</label>
+            <input
+              type={showNext ? 'text' : 'password'}
+              value={confirm}
+              onChange={(e) => setConfirm(e.target.value)}
+              required
+              autoComplete="new-password"
+              className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:border-black focus:ring-1 focus:ring-black outline-none"
+            />
+          </div>
+          <button
+            type="submit"
+            disabled={submitting}
+            className="inline-flex items-center gap-2 px-4 py-2.5 bg-black text-white text-sm font-semibold rounded-lg hover:bg-gray-800 disabled:opacity-50"
+          >
+            <Lock size={14} /> {submitting ? 'Updating…' : 'Update Password'}
+          </button>
+        </form>
+      </section>
+
+      <section className="bg-white border border-gray-200 rounded-lg p-6">
+        <div className="flex items-center gap-2 mb-1">
+          <KeyRound size={18} className="text-gray-400" />
+          <h2 className="text-sm font-bold text-black uppercase tracking-wider">Forgot Password</h2>
+        </div>
+        <p className="text-sm text-gray-500 mb-4">
+          Send a password reset link to the admin email on file.
+        </p>
+        <button
+          onClick={handleSendReset}
+          disabled={!email || sendingReset}
+          className="inline-flex items-center gap-2 px-4 py-2.5 border border-gray-300 text-sm font-semibold rounded-lg text-black hover:bg-gray-50 disabled:opacity-50"
+        >
+          <KeyRound size={14} /> {sendingReset ? 'Sending…' : 'Send Reset Link'}
+        </button>
+      </section>
+    </div>
+  )
+}
+
+/* ── Roles & Permissions Tab ── */
+function RolesPermissionsTab() {
+  const { users, updateUser } = useAdmin()
+  const [selectedRole, setSelectedRole] = useState<AdminRole>('super_admin')
+
+  const rolePerms = defaultPermissionsForRole(selectedRole)
+
+  return (
+    <div className="space-y-8">
+      <section className="bg-white border border-gray-200 rounded-lg p-6">
+        <div className="flex items-center gap-2 mb-1">
+          <Shield size={18} className="text-gray-400" />
+          <h2 className="text-sm font-bold text-black uppercase tracking-wider">Role Defaults</h2>
+        </div>
+        <p className="text-sm text-gray-500 mb-5">
+          Default permission matrix applied to users with the selected role. Individual users
+          can override these on the Users & Roles page.
+        </p>
+
+        <div className="flex flex-wrap gap-2 mb-5">
+          {(Object.keys(permissionRoleLabels) as AdminRole[]).map((r) => (
+            <button
+              key={r}
+              onClick={() => setSelectedRole(r)}
+              className={`px-3 py-1.5 text-xs font-semibold rounded-full transition-colors ${
+                selectedRole === r
+                  ? 'bg-black text-white'
+                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              }`}
+            >
+              {permissionRoleLabels[r]}
+            </button>
+          ))}
+        </div>
+
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-gray-100 bg-gray-50/50">
+                <th className="text-left px-3 py-2 font-semibold text-gray-500 text-xs uppercase tracking-wider">
+                  Resource
+                </th>
+                {ALL_ACTIONS.map((a) => (
+                  <th
+                    key={a}
+                    className="text-center px-3 py-2 font-semibold text-gray-500 text-xs uppercase tracking-wider"
+                  >
+                    {a}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-50">
+              {ALL_RESOURCES.map(({ key, label }) => (
+                <tr key={key}>
+                  <td className="px-3 py-2 text-gray-700">{label}</td>
+                  {ALL_ACTIONS.map((a) => {
+                    const allowed = Boolean(rolePerms[key as ResourceKey]?.[a])
+                    return (
+                      <td key={a} className="px-3 py-2 text-center">
+                        {allowed ? (
+                          <CheckCircle size={16} className="inline text-green-600" />
+                        ) : (
+                          <X size={16} className="inline text-gray-300" />
+                        )}
+                      </td>
+                    )
+                  })}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section className="bg-white border border-gray-200 rounded-lg p-6">
+        <div className="flex items-center gap-2 mb-1">
+          <User size={18} className="text-gray-400" />
+          <h2 className="text-sm font-bold text-black uppercase tracking-wider">Team Overview</h2>
+        </div>
+        <p className="text-sm text-gray-500 mb-5">
+          Fetched live from Supabase — {users.length} admin {users.length === 1 ? 'user' : 'users'}.
+        </p>
+        <div className="divide-y divide-gray-50">
+          {users.map((u) => (
+            <div key={u.id} className="flex items-center justify-between py-3 gap-3">
+              <div className="min-w-0">
+                <p className="font-medium text-black truncate">{u.name}</p>
+                <p className="text-xs text-gray-400 truncate">{u.email}</p>
+              </div>
+              <select
+                value={u.role}
+                onChange={(e) => updateUser(u.id, { role: e.target.value as AdminRole })}
+                disabled={u.role === 'super_admin'}
+                className="px-2 py-1.5 border border-gray-200 rounded-lg text-xs bg-white focus:border-black outline-none disabled:opacity-60"
+              >
+                {(Object.keys(permissionRoleLabels) as AdminRole[]).map((r) => (
+                  <option key={r} value={r}>
+                    {permissionRoleLabels[r]}
+                  </option>
+                ))}
+              </select>
+            </div>
+          ))}
+          {users.length === 0 && (
+            <p className="py-8 text-center text-sm text-gray-400">No admin users yet.</p>
+          )}
         </div>
       </section>
     </div>

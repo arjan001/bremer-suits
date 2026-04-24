@@ -1,5 +1,6 @@
 import type { Context } from '@netlify/functions'
 import { getSupabase, jsonResponse, errorResponse, corsHeaders } from './utils/supabase.ts'
+import { logAudit } from './utils/audit.ts'
 
 export default async function handler(req: Request, _context: Context) {
   if (req.method === 'OPTIONS') {
@@ -32,7 +33,7 @@ export default async function handler(req: Request, _context: Context) {
     if (req.method === 'PUT') {
       const body = await req.json()
       // Upsert settings (single row)
-      const { data: existing } = await supabase.from('settings').select('id').single()
+      const { data: existing } = await supabase.from('settings').select('*').single()
       if (existing) {
         const { data, error } = await supabase
           .from('settings')
@@ -41,6 +42,13 @@ export default async function handler(req: Request, _context: Context) {
           .select()
           .single()
         if (error) return errorResponse(error.message, 500)
+        await logAudit(supabase, req, {
+          action: 'update',
+          resource: 'settings',
+          resourceId: existing.id,
+          description: 'Updated site settings',
+          metadata: { keys: Object.keys(body || {}) },
+        })
         return jsonResponse(data)
       } else {
         const { data, error } = await supabase
@@ -49,6 +57,13 @@ export default async function handler(req: Request, _context: Context) {
           .select()
           .single()
         if (error) return errorResponse(error.message, 500)
+        await logAudit(supabase, req, {
+          action: 'create',
+          resource: 'settings',
+          resourceId: data?.id,
+          description: 'Initialised site settings',
+          metadata: { keys: Object.keys(body || {}) },
+        })
         return jsonResponse(data, 201)
       }
     }

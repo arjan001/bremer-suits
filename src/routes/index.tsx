@@ -14,7 +14,7 @@ import {
   Sparkles,
   X,
 } from 'lucide-react'
-import { getProducts, type Product } from '@/lib/products'
+import { getProducts, getCategories, type Product, type GalleryCategory } from '@/lib/products'
 
 export const Route = createFileRoute('/')({
   head: () => ({
@@ -213,6 +213,8 @@ function HomePage() {
   const [cubeDepth, setCubeDepth] = useState(0)
   const [products, setProducts] = useState<Product[]>([])
   const [productsLoading, setProductsLoading] = useState(true)
+  const [galleryCategories, setGalleryCategories] = useState<GalleryCategory[]>([])
+  const [galleryCategoriesLoading, setGalleryCategoriesLoading] = useState(true)
 
   const nextSlide = useCallback(() => {
     setCurrentSlide((prev) => (prev + 1) % carouselImages.length)
@@ -252,6 +254,13 @@ function HomePage() {
     getProducts()
       .then((data) => setProducts(data))
       .finally(() => setProductsLoading(false))
+  }, [])
+
+  // Fetch gallery categories from database
+  useEffect(() => {
+    getCategories()
+      .then((data) => setGalleryCategories(data))
+      .finally(() => setGalleryCategoriesLoading(false))
   }, [])
 
   // Philosophy carousel auto-scroll
@@ -599,6 +608,80 @@ function HomePage() {
               See More of Our Collection
               <ArrowRight size={14} />
             </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* ===== GALLERY – SHOP BY CATEGORY (DB-driven) ===== */}
+      <section className="py-16 lg:py-24 bg-[#f7f5f2]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-10">
+            <p className="text-sm tracking-wide text-[#c8502a] mb-3 font-medium">
+              Our Gallery
+            </p>
+            <h2
+              className="text-3xl lg:text-5xl font-bold text-black leading-tight mb-4"
+              style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
+            >
+              Shop by Category
+            </h2>
+            <p className="text-base text-gray-500 max-w-xl mx-auto">
+              Explore our collections — from wedding tuxedos and couples styling to senator and Kaunda suits,
+              bespoke and made-to-measure tailoring.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4 lg:gap-6">
+            {galleryCategoriesLoading ? (
+              Array.from({ length: 6 }).map((_, i) => (
+                <div key={i} className="aspect-[4/3] bg-gray-200 animate-pulse rounded" />
+              ))
+            ) : galleryCategories.length === 0 ? (
+              <p className="col-span-full text-center text-gray-500">No categories available yet.</p>
+            ) : (
+              galleryCategories.map((cat) => {
+                const categoryCount = products.filter(
+                  (p) => p.category === cat.name || p.category === cat.slug,
+                ).length
+                const portfolioHref = `/portfolio?category=${cat.slug}`
+                return (
+                  <a
+                    key={cat.id}
+                    href={portfolioHref}
+                    aria-label={`View ${cat.name} collection`}
+                    className="group relative overflow-hidden aspect-[4/3] bg-gray-100 block"
+                  >
+                    {cat.image ? (
+                      <img
+                        src={cat.image}
+                        alt={`${cat.name} – Bremer Suits collection`}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-gradient-to-br from-gray-200 to-gray-300" />
+                    )}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+                    <div className="absolute bottom-0 left-0 right-0 p-5">
+                      <h3
+                        className="text-lg lg:text-xl font-bold text-white mb-1"
+                        style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
+                      >
+                        {cat.name}
+                      </h3>
+                      {cat.description && (
+                        <p className="text-xs text-white/80 line-clamp-2 mb-2">
+                          {cat.description}
+                        </p>
+                      )}
+                      <div className="flex items-center gap-2 text-[11px] tracking-[0.2em] uppercase text-[#c9a96e] font-semibold">
+                        {categoryCount > 0 && <span>{categoryCount} {categoryCount === 1 ? 'item' : 'items'}</span>}
+                        <ArrowRight size={12} />
+                      </div>
+                    </div>
+                  </a>
+                )
+              })
+            )}
           </div>
         </div>
       </section>
