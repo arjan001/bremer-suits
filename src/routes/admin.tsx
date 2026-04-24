@@ -19,8 +19,9 @@ import {
   BookOpen,
   Image,
 } from 'lucide-react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { AdminProvider, useAdmin } from '@/lib/admin-store'
+import { getAdminSession, logoutAdmin } from '@/lib/admin-auth'
 
 export const Route = createFileRoute('/admin')({
   head: () => ({
@@ -51,6 +52,7 @@ const sidebarItems = [
 
 function AdminLayoutInner() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [checkingAccess, setCheckingAccess] = useState(true)
   const router = useRouter()
   const pathname = router.state.location.pathname
   const { orders, settings } = useAdmin()
@@ -58,6 +60,47 @@ function AdminLayoutInner() {
 
   const isActive = (to: string, exact?: boolean) =>
     exact ? pathname === to : pathname === to || pathname.startsWith(to + '/')
+
+  useEffect(() => {
+    let active = true
+
+    async function checkSession() {
+      try {
+        const session = await getAdminSession()
+        if (!session.isAdmin) {
+          await router.navigate({ to: '/admin-login' })
+          return
+        }
+      } catch {
+        await router.navigate({ to: '/admin-login' })
+        return
+      } finally {
+        if (active) setCheckingAccess(false)
+      }
+    }
+
+    checkSession()
+
+    return () => {
+      active = false
+    }
+  }, [router])
+
+  async function handleLogout() {
+    try {
+      await logoutAdmin()
+    } finally {
+      await router.navigate({ to: '/admin-login' })
+    }
+  }
+
+  if (checkingAccess) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <p className="text-sm text-gray-500">Checking admin session...</p>
+      </div>
+    )
+  }
 
   return (
     <div className="flex h-screen bg-gray-50">
@@ -155,7 +198,10 @@ function AdminLayoutInner() {
               <ArrowLeft size={14} />
               <span className="hidden sm:inline">View Store</span>
             </Link>
-            <button className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-red-600 transition-colors">
+            <button
+              onClick={handleLogout}
+              className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-red-600 transition-colors"
+            >
               <LogOut size={14} />
               <span className="hidden sm:inline">Sign Out</span>
             </button>
