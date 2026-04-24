@@ -7,7 +7,8 @@
 -- Notes:
 -- 1) Replace placeholder values before running.
 -- 2) This script manages admin profile metadata only.
--- 3) Authentication for admin panel is handled by Netlify Identity.
+-- 3) Authentication for admin panel is handled by Supabase Auth.
+--    Create the actual admin user in Supabase Dashboard -> Authentication -> Users.
 
 INSERT INTO admin_users (name, email, role, status)
 VALUES (
