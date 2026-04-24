@@ -1,6 +1,6 @@
 import type { Context } from '@netlify/functions'
 import { getStore } from '@netlify/blobs'
-import { signup } from '@netlify/identity'
+import { admin } from '@netlify/identity'
 import { corsHeaders, errorResponse, jsonResponse } from './utils/supabase.ts'
 
 interface AdminBootstrapState {
@@ -101,8 +101,13 @@ export default async function handler(req: Request, _context: Context) {
       if (!email || !validateEmail(email)) return errorResponse('Valid email is required', 422)
       if (password.length < 8) return errorResponse('Password must be at least 8 characters', 422)
 
-      const user = await signup(email, password, {
-        full_name: name,
+      await admin.createUser({
+        email,
+        password,
+        data: {
+          user_metadata: { full_name: name },
+          app_metadata: { roles: ['admin'] },
+        },
       })
 
       await STORE.setJSON(ADMIN_BOOTSTRAP_KEY, {
@@ -114,7 +119,7 @@ export default async function handler(req: Request, _context: Context) {
       return jsonResponse({
         success: true,
         email,
-        requiresEmailConfirmation: !user.emailVerified,
+        requiresEmailConfirmation: false,
       }, 201)
     }
 

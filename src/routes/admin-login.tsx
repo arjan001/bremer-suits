@@ -84,11 +84,7 @@ function AdminLoginPage() {
       setHasAdmin(true)
       setAdminEmail(result.email)
       setLoginForm({ email: result.email, password: '' })
-      setMessage(
-        result.requiresEmailConfirmation
-          ? 'Admin registered. Confirm the email first, then login.'
-          : 'Admin registered successfully. You can now login.',
-      )
+      setMessage('Admin registered successfully. You can now login.')
       setRegisterForm({ name: '', email: '', password: '', confirmPassword: '' })
     } catch (err) {
       setError(toAdminAuthError(err))
