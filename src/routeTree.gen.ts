@@ -39,6 +39,7 @@ import { Route as AdminCategoriesRouteImport } from './routes/admin/categories'
 import { Route as AdminCardDetailsRouteImport } from './routes/admin/card-details'
 import { Route as AdminAnalyticsRouteImport } from './routes/admin/analytics'
 import { Route as AdminMenuRouteImport } from './routes/admin/menu'
+import { Route as AdminAuditLogsRouteImport } from './routes/admin/audit-logs'
 
 const WishlistRoute = WishlistRouteImport.update({
   id: '/wishlist',
@@ -190,6 +191,11 @@ const AdminMenuRoute = AdminMenuRouteImport.update({
   path: '/menu',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminAuditLogsRoute = AdminAuditLogsRouteImport.update({
+  id: '/audit-logs',
+  path: '/audit-logs',
+  getParentRoute: () => AdminRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -205,6 +211,7 @@ export interface FileRoutesByFullPath {
   '/terms-of-service': typeof TermsOfServiceRoute
   '/wishlist': typeof WishlistRoute
   '/admin/analytics': typeof AdminAnalyticsRoute
+  '/admin/audit-logs': typeof AdminAuditLogsRoute
   '/admin/card-details': typeof AdminCardDetailsRoute
   '/admin/categories': typeof AdminCategoriesRoute
   '/admin/delivery': typeof AdminDeliveryRoute
@@ -236,6 +243,7 @@ export interface FileRoutesByTo {
   '/terms-of-service': typeof TermsOfServiceRoute
   '/wishlist': typeof WishlistRoute
   '/admin/analytics': typeof AdminAnalyticsRoute
+  '/admin/audit-logs': typeof AdminAuditLogsRoute
   '/admin/card-details': typeof AdminCardDetailsRoute
   '/admin/categories': typeof AdminCategoriesRoute
   '/admin/delivery': typeof AdminDeliveryRoute
@@ -269,6 +277,7 @@ export interface FileRoutesById {
   '/terms-of-service': typeof TermsOfServiceRoute
   '/wishlist': typeof WishlistRoute
   '/admin/analytics': typeof AdminAnalyticsRoute
+  '/admin/audit-logs': typeof AdminAuditLogsRoute
   '/admin/card-details': typeof AdminCardDetailsRoute
   '/admin/categories': typeof AdminCategoriesRoute
   '/admin/delivery': typeof AdminDeliveryRoute
@@ -303,6 +312,7 @@ export interface FileRouteTypes {
     | '/terms-of-service'
     | '/wishlist'
     | '/admin/analytics'
+    | '/admin/audit-logs'
     | '/admin/card-details'
     | '/admin/categories'
     | '/admin/delivery'
@@ -334,6 +344,7 @@ export interface FileRouteTypes {
     | '/terms-of-service'
     | '/wishlist'
     | '/admin/analytics'
+    | '/admin/audit-logs'
     | '/admin/card-details'
     | '/admin/categories'
     | '/admin/delivery'
@@ -366,6 +377,7 @@ export interface FileRouteTypes {
     | '/terms-of-service'
     | '/wishlist'
     | '/admin/analytics'
+    | '/admin/audit-logs'
     | '/admin/card-details'
     | '/admin/categories'
     | '/admin/delivery'
@@ -602,6 +614,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminMenuRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/audit-logs': {
+      id: '/admin/audit-logs'
+      path: '/audit-logs'
+      fullPath: '/admin/audit-logs'
+      preLoaderRoute: typeof AdminAuditLogsRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/portfolio': {
       id: '/admin/portfolio'
       path: '/portfolio'
@@ -621,6 +640,7 @@ declare module '@tanstack/react-router' {
 
 interface AdminRouteChildren {
   AdminAnalyticsRoute: typeof AdminAnalyticsRoute
+  AdminAuditLogsRoute: typeof AdminAuditLogsRoute
   AdminCardDetailsRoute: typeof AdminCardDetailsRoute
   AdminCategoriesRoute: typeof AdminCategoriesRoute
   AdminDeliveryRoute: typeof AdminDeliveryRoute
@@ -638,6 +658,7 @@ interface AdminRouteChildren {
 
 const AdminRouteChildren: AdminRouteChildren = {
   AdminAnalyticsRoute: AdminAnalyticsRoute,
+  AdminAuditLogsRoute: AdminAuditLogsRoute,
   AdminCardDetailsRoute: AdminCardDetailsRoute,
   AdminCategoriesRoute: AdminCategoriesRoute,
   AdminDeliveryRoute: AdminDeliveryRoute,

@@ -1,5 +1,6 @@
 import type { Context } from '@netlify/functions'
 import { getSupabase, jsonResponse, errorResponse, corsHeaders } from './utils/supabase.ts'
+import { logAudit } from './utils/audit.ts'
 
 export default async function handler(req: Request, _context: Context) {
   if (req.method === 'OPTIONS') {
@@ -41,12 +42,20 @@ export default async function handler(req: Request, _context: Context) {
           .insert(orderItems)
         if (itemsError) return errorResponse(itemsError.message, 500)
       }
+      await logAudit(supabase, req, {
+        action: 'create',
+        resource: 'orders',
+        resourceId: order?.id,
+        description: `Created order ${order?.order_number ?? order?.id}`,
+        metadata: { after: order, itemCount: items?.length ?? 0 },
+      })
       return jsonResponse(order, 201)
     }
 
     if (req.method === 'PUT') {
       if (!id) return errorResponse('Missing id parameter')
       const body = await req.json()
+      const { data: before } = await supabase.from('orders').select('*').eq('id', id).single()
       const { data, error } = await supabase
         .from('orders')
         .update({ ...body, updated_at: new Date().toISOString() })
@@ -54,11 +63,19 @@ export default async function handler(req: Request, _context: Context) {
         .select()
         .single()
       if (error) return errorResponse(error.message, 500)
+      await logAudit(supabase, req, {
+        action: 'update',
+        resource: 'orders',
+        resourceId: id,
+        description: `Updated order ${data?.order_number ?? id}${before?.status && body.status && before.status !== body.status ? ` (status: ${before.status} → ${body.status})` : ''}`,
+        metadata: { before, after: data, changes: body },
+      })
       return jsonResponse(data)
     }
 
     if (req.method === 'DELETE') {
       if (!id) return errorResponse('Missing id parameter')
+      const { data: before } = await supabase.from('orders').select('*').eq('id', id).single()
       // Delete order items first (cascade should handle this, but explicit)
       const { error: itemsError } = await supabase.from('order_items').delete().eq('order_id', id)
       if (itemsError) return errorResponse(itemsError.message, 500)
@@ -67,6 +84,13 @@ export default async function handler(req: Request, _context: Context) {
         .delete()
         .eq('id', id)
       if (error) return errorResponse(error.message, 500)
+      await logAudit(supabase, req, {
+        action: 'delete',
+        resource: 'orders',
+        resourceId: id,
+        description: `Deleted order ${before?.order_number ?? id}`,
+        metadata: { before },
+      })
       return jsonResponse({ success: true })
     }
 

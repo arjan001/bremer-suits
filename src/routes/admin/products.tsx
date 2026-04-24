@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { useState } from 'react'
-import { Plus, Search, Edit2, Trash2, X, Package, Download, Upload, Eye, Palette } from 'lucide-react'
+import { useEffect, useMemo, useState } from 'react'
+import { Plus, Search, Edit2, Trash2, X, Package, Download, Upload, Eye, Palette, ChevronLeft, ChevronRight } from 'lucide-react'
 import { useAdmin, type AdminProduct } from '@/lib/admin-store'
 import { ImageUpload } from '@/components/ImageUpload'
 import { showCreateSuccess, showUpdateSuccess, showDeleteSuccess, showDeleteConfirm, showError } from '@/lib/sweet-alert'
@@ -28,6 +28,8 @@ const defaultColors = [
 
 const allSizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL', '3XL']
 
+const PAGE_SIZE_OPTIONS = [10, 25, 50, 100, 0] as const // 0 = show all
+
 function AdminProducts() {
   const { products, addProduct, updateProduct, deleteProduct, categories } = useAdmin()
   const [search, setSearch] = useState('')
@@ -35,12 +37,28 @@ function AdminProducts() {
   const [modal, setModal] = useState<ModalMode>('closed')
   const [editItem, setEditItem] = useState<AdminProduct | null>(null)
   const [viewItem, setViewItem] = useState<AdminProduct | null>(null)
+  const [pageSize, setPageSize] = useState<number>(25)
+  const [page, setPage] = useState(1)
 
   const filtered = products.filter((p) => {
     const matchSearch = p.title.toLowerCase().includes(search.toLowerCase()) || p.sku.toLowerCase().includes(search.toLowerCase())
     const matchCat = !filterCategory || p.category === filterCategory
     return matchSearch && matchCat
   })
+
+  const totalFiltered = filtered.length
+  const effectivePageSize = pageSize === 0 ? Math.max(totalFiltered, 1) : pageSize
+  const totalPages = Math.max(1, Math.ceil(totalFiltered / effectivePageSize))
+  const safePage = Math.min(page, totalPages)
+  const paginated = useMemo(
+    () => filtered.slice((safePage - 1) * effectivePageSize, safePage * effectivePageSize),
+    [filtered, safePage, effectivePageSize],
+  )
+
+  // Reset to page 1 whenever filters/search/page-size change
+  useEffect(() => {
+    setPage(1)
+  }, [search, filterCategory, pageSize])
 
   const openEdit = (p: AdminProduct) => { setEditItem(p); setModal('edit') }
   const openAdd = () => { setEditItem(null); setModal('add') }
@@ -152,7 +170,7 @@ function AdminProducts() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
-              {filtered.map((p) => (
+              {paginated.map((p) => (
                 <tr key={p.id} className="hover:bg-gray-50/50 transition-colors">
                   <td className="px-4 py-3"><input type="checkbox" className="rounded border-gray-300" /></td>
                   <td className="px-4 py-3">
@@ -203,6 +221,56 @@ function AdminProducts() {
             </tbody>
           </table>
         </div>
+
+        {/* Pagination + page size */}
+        {totalFiltered > 0 && (
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 px-4 py-3 border-t border-gray-100 bg-gray-50/40">
+            <div className="flex items-center gap-3 text-xs text-gray-600">
+              <span>
+                Showing <span className="font-semibold text-black">{(safePage - 1) * effectivePageSize + 1}</span>–
+                <span className="font-semibold text-black">{Math.min(safePage * effectivePageSize, totalFiltered)}</span>
+                {' '}of{' '}
+                <span className="font-semibold text-black">{totalFiltered}</span>
+              </span>
+              <span className="text-gray-300">|</span>
+              <label className="flex items-center gap-2">
+                <span>Rows per page</span>
+                <select
+                  value={pageSize}
+                  onChange={(e) => setPageSize(Number(e.target.value))}
+                  className="px-2 py-1 border border-gray-200 rounded-md text-xs bg-white focus:border-black outline-none"
+                >
+                  {PAGE_SIZE_OPTIONS.map((n) => (
+                    <option key={n} value={n}>
+                      {n === 0 ? 'All' : n}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            </div>
+            <div className="flex items-center gap-1">
+              <button
+                onClick={() => setPage((p) => Math.max(1, p - 1))}
+                disabled={safePage === 1}
+                className="w-9 h-9 flex items-center justify-center border border-gray-200 rounded-lg text-gray-600 hover:border-black hover:text-black disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                aria-label="Previous page"
+              >
+                <ChevronLeft size={14} />
+              </button>
+              <span className="px-3 text-xs font-semibold text-gray-700">
+                Page {safePage} / {totalPages}
+              </span>
+              <button
+                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                disabled={safePage >= totalPages}
+                className="w-9 h-9 flex items-center justify-center border border-gray-200 rounded-lg text-gray-600 hover:border-black hover:text-black disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                aria-label="Next page"
+              >
+                <ChevronRight size={14} />
+              </button>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Product View Modal */}

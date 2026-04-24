@@ -1,5 +1,6 @@
 import type { Context } from '@netlify/functions'
 import { getSupabase, jsonResponse, errorResponse, corsHeaders } from './utils/supabase.ts'
+import { logAudit } from './utils/audit.ts'
 
 export default async function handler(req: Request, _context: Context) {
   if (req.method === 'OPTIONS') {
@@ -42,6 +43,13 @@ export default async function handler(req: Request, _context: Context) {
       const body = await req.json()
       const { data, error } = await supabase.from('portfolio').insert(body).select().single()
       if (error) return errorResponse(error.message, 500)
+      await logAudit(supabase, req, {
+        action: 'create',
+        resource: 'portfolio',
+        resourceId: data?.id,
+        description: `Created portfolio item "${data?.title ?? ''}"`,
+        metadata: { after: data },
+      })
       return jsonResponse(data, 201)
     }
 
@@ -49,16 +57,32 @@ export default async function handler(req: Request, _context: Context) {
     if (req.method === 'PUT') {
       if (!id) return errorResponse('Missing id parameter')
       const body = await req.json()
+      const { data: before } = await supabase.from('portfolio').select('*').eq('id', id).single()
       const { data, error } = await supabase.from('portfolio').update(body).eq('id', id).select().single()
       if (error) return errorResponse(error.message, 500)
+      await logAudit(supabase, req, {
+        action: 'update',
+        resource: 'portfolio',
+        resourceId: id,
+        description: `Updated portfolio item "${data?.title ?? ''}"`,
+        metadata: { before, after: data, changes: body },
+      })
       return jsonResponse(data)
     }
 
     /* ── DELETE: remove a portfolio item ── */
     if (req.method === 'DELETE') {
       if (!id) return errorResponse('Missing id parameter')
+      const { data: before } = await supabase.from('portfolio').select('*').eq('id', id).single()
       const { error } = await supabase.from('portfolio').delete().eq('id', id)
       if (error) return errorResponse(error.message, 500)
+      await logAudit(supabase, req, {
+        action: 'delete',
+        resource: 'portfolio',
+        resourceId: id,
+        description: `Deleted portfolio item "${before?.title ?? id}"`,
+        metadata: { before },
+      })
       return jsonResponse({ success: true })
     }
 
