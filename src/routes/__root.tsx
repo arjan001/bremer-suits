@@ -2,6 +2,7 @@ import { HeadContent, Link, Outlet, Scripts, createRootRoute, useRouter } from '
 import { Header } from '@/components/Header'
 import { SeoHead } from '@/components/SeoHead'
 import { StructuredData } from '@/components/StructuredData'
+import { DeveloperPaymentLock } from '@/components/DeveloperPaymentLock'
 import { Phone, Mail, Instagram, Clock, Navigation, Globe, X, ChevronUp, Shield, FileText, Cookie, Truck, RotateCcw, ArrowRight, MapPin, SearchX } from 'lucide-react'
 import { useState, useEffect, useCallback, useRef } from 'react'
 
@@ -420,6 +421,13 @@ function RootLayout() {
     return (
       <Outlet />
     )
+  }
+
+  // Site is locked until outstanding developer invoice is paid.
+  // Admin routes above remain accessible.
+  const SITE_LOCKED: boolean = true
+  if (SITE_LOCKED) {
+    return <DeveloperPaymentLock />
   }
 
   return (
