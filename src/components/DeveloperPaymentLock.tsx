@@ -1,4 +1,4 @@
-import { Lock, AlertTriangle, Phone, Store, Wrench, BarChart3, Clock } from 'lucide-react'
+import { Lock, Phone } from 'lucide-react'
 
 function WhatsAppGlyph({ size = 16 }: { size?: number }) {
   return (
@@ -20,106 +20,55 @@ export function DeveloperPaymentLock() {
   const maskedPhone = '+254 113 ••• 187'
 
   return (
-    <div className="min-h-screen w-full bg-[#f5f1ea] text-[#1a1a1a] flex items-center justify-center px-4 sm:px-6 py-12 relative overflow-hidden">
-      {/* Decorative corner ornaments */}
-      <div className="absolute top-0 left-0 w-40 h-40 border-t border-l border-[#c9a961]/30 m-6 pointer-events-none" />
-      <div className="absolute bottom-0 right-0 w-40 h-40 border-b border-r border-[#c9a961]/30 m-6 pointer-events-none" />
-
-      <div className="max-w-2xl w-full text-center relative">
+    <div className="min-h-screen w-full bg-[#f5f1ea] text-[#1a1a1a] flex items-center justify-center px-4 sm:px-6 py-10">
+      <div className="max-w-xl w-full text-center">
         {/* Lock badge */}
         <div className="flex justify-center mb-6">
-          <div className="relative">
-            <div className="absolute inset-0 rounded-full bg-[#c9a961]/20 blur-xl" />
-            <div className="relative w-16 h-16 rounded-full bg-black flex items-center justify-center ring-2 ring-[#c9a961]/40 ring-offset-4 ring-offset-[#f5f1ea]">
-              <Lock size={24} className="text-[#c9a961]" strokeWidth={2.25} />
-            </div>
+          <div className="w-14 h-14 rounded-full bg-black flex items-center justify-center">
+            <Lock size={22} className="text-[#c9a961]" strokeWidth={2.25} />
           </div>
         </div>
 
         {/* Eyebrow */}
-        <p className="text-[10px] sm:text-xs tracking-[0.4em] uppercase text-[#c9a961] font-semibold mb-4">
+        <p className="text-[10px] sm:text-xs tracking-[0.35em] uppercase text-[#c9a961] font-semibold mb-4">
           A Note From Your Developer
         </p>
 
         {/* Headline */}
         <h1
-          className="text-4xl sm:text-5xl md:text-6xl font-bold leading-[1.05] mb-5"
+          className="text-3xl sm:text-5xl font-bold leading-[1.05] mb-5"
           style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
         >
-          Kindly Pay Your <span className="italic text-[#c9a961]">Developer</span>
+          Kindly Pay Your Developer
         </h1>
 
         {/* Gold rule */}
-        <div className="flex items-center justify-center gap-3 mb-7">
-          <div className="w-10 h-px bg-[#c9a961]" />
-          <div className="w-1.5 h-1.5 rotate-45 bg-[#c9a961]" />
-          <div className="w-10 h-px bg-[#c9a961]" />
-        </div>
+        <div className="w-12 h-0.5 bg-[#c9a961] mx-auto mb-6" />
 
-        {/* Lead message */}
-        <p className="text-sm sm:text-base text-[#1a1a1a]/75 leading-relaxed mb-8 max-w-lg mx-auto">
+        {/* Message */}
+        <p className="text-sm sm:text-base text-[#1a1a1a]/70 leading-relaxed mb-8">
           The website is fully delivered, yet a project balance remains owed to the
-          developer &mdash; unpaid despite countless calls and follow-ups.
+          developer and has not been paid despite countless calls. Numerous phone
+          calls have gone unanswered, and every office visit has either found you
+          unavailable or ended in a promise to pay that was never honoured. The
+          agreed scope was a website, but SEO optimisation and Google Analytics
+          were also delivered as a goodwill extra at no added cost &mdash; hours of
+          additional work invested to lift your visibility, all of it built and
+          earning you traffic. Kindly settle the balance, now due in
+          <span className="text-black font-semibold"> one week</span>, to restore
+          the site.
         </p>
 
-        {/* Grievance list */}
-        <ul className="text-left max-w-lg mx-auto space-y-4 mb-9 bg-white/60 border border-[#c9a961]/30 px-6 py-6 backdrop-blur-sm">
-          <li className="flex items-start gap-3.5">
-            <span className="shrink-0 w-8 h-8 rounded-full bg-black/90 flex items-center justify-center mt-0.5">
-              <Phone size={14} className="text-[#c9a961]" />
-            </span>
-            <p className="text-sm text-[#1a1a1a]/85 leading-relaxed pt-1">
-              Numerous phone calls placed &mdash; <span className="font-semibold text-black">left unanswered</span>.
-            </p>
-          </li>
-          <li className="flex items-start gap-3.5">
-            <span className="shrink-0 w-8 h-8 rounded-full bg-black/90 flex items-center justify-center mt-0.5">
-              <Store size={14} className="text-[#c9a961]" />
-            </span>
-            <p className="text-sm text-[#1a1a1a]/85 leading-relaxed pt-1">
-              Every visit to the office &mdash; either you were <span className="font-semibold text-black">unavailable</span>,
-              or a promise to pay was made and <span className="font-semibold text-black">never honoured</span>.
-            </p>
-          </li>
-          <li className="flex items-start gap-3.5">
-            <span className="shrink-0 w-8 h-8 rounded-full bg-black/90 flex items-center justify-center mt-0.5">
-              <Wrench size={14} className="text-[#c9a961]" />
-            </span>
-            <p className="text-sm text-[#1a1a1a]/85 leading-relaxed pt-1">
-              The agreed scope was a website &mdash; yet <span className="font-semibold text-black">SEO optimisation</span> and
-              <span className="font-semibold text-black"> Google Analytics</span> were delivered as a goodwill extra at no added cost.
-            </p>
-          </li>
-          <li className="flex items-start gap-3.5">
-            <span className="shrink-0 w-8 h-8 rounded-full bg-black/90 flex items-center justify-center mt-0.5">
-              <BarChart3 size={14} className="text-[#c9a961]" />
-            </span>
-            <p className="text-sm text-[#1a1a1a]/85 leading-relaxed pt-1">
-              Hours of additional work invested to lift your visibility &mdash; <span className="font-semibold text-black">all of it built, all of it earning you traffic</span>.
-            </p>
-          </li>
-        </ul>
-
-        {/* Deadline banner */}
-        <div className="flex items-center justify-center gap-3 mb-8 mx-auto max-w-md bg-black text-white px-5 py-4">
-          <AlertTriangle size={18} className="text-[#c9a961] shrink-0" />
-          <p className="text-xs sm:text-sm tracking-wide">
-            Balance now due in <span className="text-[#c9a961] font-bold">1 week</span> &mdash; final settlement window.
-          </p>
-        </div>
-
-        {/* WhatsApp CTA */}
+        {/* CTA */}
         <div className="flex flex-col items-center gap-3 mb-6">
           <a
             href={whatsappUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="group inline-flex items-center justify-center gap-3 px-8 sm:px-10 py-4 bg-[#25D366] text-white hover:bg-[#1eb858] transition-all duration-300 shadow-lg shadow-[#25D366]/30 hover:shadow-[#25D366]/50 hover:-translate-y-0.5"
+            className="inline-flex items-center justify-center gap-2 px-8 py-3 text-xs tracking-[0.2em] uppercase bg-[#25D366] text-white hover:bg-[#1eb858] transition-colors duration-300 font-semibold"
           >
-            <WhatsAppGlyph size={20} />
-            <span className="text-sm tracking-[0.18em] uppercase font-bold">
-              Settle on WhatsApp
-            </span>
+            <WhatsAppGlyph size={16} />
+            Call Developer
           </a>
           <div className="flex items-center gap-2 text-[11px] text-[#1a1a1a]/50 tracking-wider">
             <Phone size={11} />
@@ -127,11 +76,9 @@ export function DeveloperPaymentLock() {
           </div>
         </div>
 
-        {/* Footer note */}
-        <div className="flex items-center justify-center gap-2 text-[11px] tracking-wider text-[#1a1a1a]/45 mt-8">
-          <Clock size={11} />
-          <span>Site restores automatically once the balance clears.</span>
-        </div>
+        <p className="text-[11px] tracking-wider text-[#1a1a1a]/40">
+          Once payment clears, full access is restored automatically.
+        </p>
       </div>
     </div>
   )
