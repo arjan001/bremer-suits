@@ -468,3 +468,16 @@ export function resetActorCache() {
   cachedActorEmail = null
   cachedActorId = null
 }
+
+/* ── PayHero Payments ── */
+export const payheroApi = {
+  async stkPush(data: { amount: number; phone_number: string; external_reference?: string; customer_name?: string; order_id?: string }) {
+    return request<Record<string, unknown>>(`${BASE}/payhero-payments?action=stk-push`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    })
+  },
+  async checkStatus(reference: string) {
+    return request<Record<string, unknown>>(`${BASE}/payhero-payments?action=status&reference=${encodeURIComponent(reference)}`)
+  },
+}

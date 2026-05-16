@@ -1,8 +1,9 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useState } from 'react'
-import { Plus, Edit2, Trash2, X, CreditCard, Phone, Building2, Eye, Clock } from 'lucide-react'
+import { Plus, Edit2, Trash2, X, CreditCard, Phone, Building2, Eye, Clock, Send, RefreshCw, Loader2, CheckCircle, XCircle } from 'lucide-react'
 import { useAdmin, type AdminCardDetail, type AdminOrder } from '@/lib/admin-store'
-import { showCreateSuccess, showUpdateSuccess, showDeleteSuccess, showDeleteConfirm, showError } from '@/lib/sweet-alert'
+import { payheroApi } from '@/lib/admin-api'
+import { showCreateSuccess, showUpdateSuccess, showDeleteSuccess, showDeleteConfirm, showError, showSuccess } from '@/lib/sweet-alert'
 
 export const Route = createFileRoute('/admin/card-details')({
   component: AdminCardDetails,
@@ -16,28 +17,154 @@ function AdminCardDetails() {
   const [modal, setModal] = useState<'closed' | 'add' | 'edit'>('closed')
   const [editItem, setEditItem] = useState<AdminCardDetail | null>(null)
   const [viewTransaction, setViewTransaction] = useState<AdminOrder | null>(null)
+  const [stkModal, setStkModal] = useState<{ open: boolean; order?: AdminOrder }>({ open: false })
+  const [stkPhone, setStkPhone] = useState('')
+  const [stkLoading, setStkLoading] = useState(false)
+  const [statusLoading, setStatusLoading] = useState<string | null>(null)
 
-  // Filter orders that used card payment and have card details
   const cardTransactions = orders
     .filter((o) => o.paymentMethod === 'card' && o.paymentDetails && ('cardNumber' in o.paymentDetails || 'lastFourDigits' in o.paymentDetails))
     .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
 
-  // Filter orders that used M-PESA and have payment details
   const mpesaTransactions = orders
     .filter((o) => o.paymentMethod === 'mpesa' && o.paymentDetails && 'phoneNumber' in o.paymentDetails)
     .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
+
+  const pendingOrders = orders
+    .filter((o) => !o.paymentStatus || o.paymentStatus === 'pending_processing' || o.paymentStatus === 'pending_collection')
+    .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
+
+  const handleStkPush = async () => {
+    if (!stkModal.order || !stkPhone) return
+    setStkLoading(true)
+    try {
+      await payheroApi.stkPush({
+        amount: stkModal.order.total,
+        phone_number: stkPhone,
+        customer_name: stkModal.order.customer.fullName,
+        order_id: stkModal.order.id,
+        external_reference: stkModal.order.orderNumber,
+      })
+      showSuccess('STK Push Sent!', `Payment prompt sent to ${stkPhone}. Customer will receive an M-PESA prompt.`)
+      setStkModal({ open: false })
+      setStkPhone('')
+    } catch (err) {
+      showError(err instanceof Error ? err.message : 'Failed to send STK Push')
+    } finally {
+      setStkLoading(false)
+    }
+  }
+
+  const handleCheckStatus = async (order: AdminOrder) => {
+    const ref = order.paymentDetails?.payheroReference || order.orderNumber
+    if (!ref) return
+    setStatusLoading(order.id)
+    try {
+      const data = await payheroApi.checkStatus(ref as string)
+      const status = (data as Record<string, unknown>)?.status || (data as Record<string, unknown>)?.Status
+      if (status === 'SUCCESS' || status === 'success' || status === 'completed') {
+        showSuccess('Payment Completed', 'This transaction has been paid successfully.')
+      } else if (status === 'FAILED' || status === 'failed') {
+        showError('Payment Failed')
+      } else {
+        showSuccess('Payment Status', `Current status: ${status || 'Pending'}`)
+      }
+    } catch (err) {
+      showError(err instanceof Error ? err.message : 'Failed to check status')
+    } finally {
+      setStatusLoading(null)
+    }
+  }
 
   return (
     <div>
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-black" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>Card Details</h1>
-          <p className="text-sm text-gray-500 mt-1">Payment methods, card transactions & account details</p>
+          <h1 className="text-2xl font-bold text-black" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>Card Details & Payments</h1>
+          <p className="text-sm text-gray-500 mt-1">Payment methods, card transactions, M-PESA & PayHero STK Push</p>
         </div>
         <button onClick={() => { setEditItem(null); setModal('add') }} className="flex items-center gap-2 px-4 py-2.5 bg-black text-white text-sm font-semibold rounded-lg hover:bg-gray-800 transition-colors">
           <Plus size={16} /> Add Payment Method
         </button>
       </div>
+
+      {/* PayHero STK Push Section */}
+      {settings.payheroEnabled && pendingOrders.length > 0 && (
+        <div className="mb-8">
+          <h2 className="text-sm font-bold text-black uppercase tracking-wider mb-3 flex items-center gap-2">
+            <Send size={16} className="text-green-600" />
+            PayHero — Send M-PESA STK Push ({pendingOrders.length} pending)
+          </h2>
+          <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-gray-100 bg-gray-50/50">
+                    <th className="text-left px-4 py-2.5 font-semibold text-gray-500 text-xs uppercase tracking-wider">Order</th>
+                    <th className="text-left px-4 py-2.5 font-semibold text-gray-500 text-xs uppercase tracking-wider">Customer</th>
+                    <th className="text-left px-4 py-2.5 font-semibold text-gray-500 text-xs uppercase tracking-wider">Amount</th>
+                    <th className="text-left px-4 py-2.5 font-semibold text-gray-500 text-xs uppercase tracking-wider">Payment</th>
+                    <th className="text-left px-4 py-2.5 font-semibold text-gray-500 text-xs uppercase tracking-wider">Status</th>
+                    <th className="text-right px-4 py-2.5 font-semibold text-gray-500 text-xs uppercase tracking-wider">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-50">
+                  {pendingOrders.map((o) => (
+                    <tr key={o.id} className="hover:bg-gray-50/50 transition-colors">
+                      <td className="px-4 py-2.5">
+                        <p className="font-medium text-black text-xs">{o.orderNumber}</p>
+                        <p className="text-[10px] text-gray-400">{new Date(o.createdAt).toLocaleDateString()}</p>
+                      </td>
+                      <td className="px-4 py-2.5">
+                        <p className="text-xs text-gray-700">{o.customer.fullName}</p>
+                        <p className="text-[10px] text-gray-400">{o.customer.phone}</p>
+                      </td>
+                      <td className="px-4 py-2.5">
+                        <p className="text-xs font-semibold text-black">{settings.currency} {o.total.toLocaleString()}</p>
+                      </td>
+                      <td className="px-4 py-2.5">
+                        <span className="text-xs capitalize text-gray-600">{o.paymentMethod}</span>
+                      </td>
+                      <td className="px-4 py-2.5">
+                        <span className={`inline-flex px-2 py-0.5 text-[10px] font-semibold rounded-full ${
+                          o.paymentStatus === 'completed' ? 'bg-green-50 text-green-700' :
+                          o.paymentStatus === 'failed' ? 'bg-red-50 text-red-700' :
+                          o.paymentDetails?.stkPushSent ? 'bg-blue-50 text-blue-700' :
+                          'bg-amber-50 text-amber-700'
+                        }`}>
+                          {o.paymentStatus === 'completed' ? 'Paid' :
+                           o.paymentStatus === 'failed' ? 'Failed' :
+                           o.paymentDetails?.stkPushSent ? 'STK Sent' : 'Pending'}
+                        </span>
+                      </td>
+                      <td className="px-4 py-2.5 text-right flex items-center justify-end gap-1">
+                        <button
+                          onClick={() => { setStkModal({ open: true, order: o }); setStkPhone(o.customer.phone || '') }}
+                          className="inline-flex items-center gap-1 px-2.5 py-1.5 bg-green-600 text-white text-xs font-semibold rounded-md hover:bg-green-700 transition-colors"
+                          title="Send M-PESA STK Push"
+                        >
+                          <Send size={12} /> STK Push
+                        </button>
+                        {o.paymentDetails?.payheroReference && (
+                          <button
+                            onClick={() => handleCheckStatus(o)}
+                            disabled={statusLoading === o.id}
+                            className="inline-flex items-center gap-1 px-2.5 py-1.5 bg-blue-600 text-white text-xs font-semibold rounded-md hover:bg-blue-700 transition-colors disabled:opacity-50"
+                            title="Check payment status"
+                          >
+                            {statusLoading === o.id ? <Loader2 size={12} className="animate-spin" /> : <RefreshCw size={12} />}
+                            Status
+                          </button>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Card Transactions from Orders */}
       {cardTransactions.length > 0 && (
@@ -349,6 +476,53 @@ function AdminCardDetails() {
               <div className="pt-2">
                 <button onClick={() => setViewTransaction(null)} className="w-full py-2.5 bg-black text-white text-sm font-semibold rounded-lg hover:bg-gray-800">
                   Close
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* STK Push Modal */}
+      {stkModal.open && stkModal.order && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/40" onClick={() => setStkModal({ open: false })} />
+          <div className="relative bg-white rounded-lg w-full max-w-sm shadow-xl">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+              <h2 className="text-lg font-bold text-black">Send M-PESA STK Push</h2>
+              <button onClick={() => setStkModal({ open: false })} className="p-1 text-gray-400 hover:text-black"><X size={20} /></button>
+            </div>
+            <div className="p-6 space-y-4">
+              <div className="bg-green-50 border border-green-100 rounded-lg p-3">
+                <p className="text-xs font-semibold text-green-800">Order: {stkModal.order.orderNumber}</p>
+                <p className="text-xs text-green-700">Customer: {stkModal.order.customer.fullName}</p>
+                <p className="text-sm font-bold text-green-900 mt-1">{settings.currency} {stkModal.order.total.toLocaleString()}</p>
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-black mb-1">Phone Number</label>
+                <div className="relative">
+                  <Phone size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                  <input
+                    type="tel"
+                    value={stkPhone}
+                    onChange={(e) => setStkPhone(e.target.value)}
+                    placeholder="e.g. 0712345678"
+                    className="w-full pl-9 pr-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:border-green-600 focus:ring-1 focus:ring-green-600 outline-none"
+                  />
+                </div>
+                <p className="text-xs text-gray-400 mt-1">The customer will receive an M-PESA payment prompt on this number</p>
+              </div>
+              <div className="flex gap-3 pt-2">
+                <button type="button" onClick={() => setStkModal({ open: false })} className="flex-1 py-2.5 text-sm font-medium text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
+                  Cancel
+                </button>
+                <button
+                  onClick={handleStkPush}
+                  disabled={stkLoading || !stkPhone}
+                  className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-green-600 text-white text-sm font-semibold rounded-lg hover:bg-green-700 disabled:opacity-50"
+                >
+                  {stkLoading ? <Loader2 size={16} className="animate-spin" /> : <Send size={16} />}
+                  {stkLoading ? 'Sending...' : 'Send STK Push'}
                 </button>
               </div>
             </div>
