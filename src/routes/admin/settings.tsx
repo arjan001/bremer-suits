@@ -70,11 +70,13 @@ type TabId =
   | 'sitemap'
   | 'account'
   | 'roles'
+  | 'payhero'
 
 const tabs: { id: TabId; label: string; icon: React.ElementType }[] = [
   { id: 'general', label: 'General', icon: Store },
   { id: 'account', label: 'Account Security', icon: Lock },
   { id: 'roles', label: 'Roles & Permissions', icon: Shield },
+  { id: 'payhero', label: 'PayHero', icon: CreditCard },
   { id: 'footer', label: 'Footer', icon: FileText },
   { id: 'social', label: 'Social Media', icon: Share2 },
   { id: 'author', label: 'Author & Credits', icon: User },
@@ -170,6 +172,9 @@ function AdminSettings() {
         )}
         {activeTab === 'account' && <AccountSecurityTab />}
         {activeTab === 'roles' && <RolesPermissionsTab />}
+        {activeTab === 'payhero' && (
+          <PayHeroTab form={form} handleChange={handleChange} />
+        )}
         {activeTab === 'footer' && (
           <FooterTab form={form} setForm={setForm} handleChange={handleChange} />
         )}
@@ -1744,6 +1749,97 @@ function AccountSecurityTab() {
         >
           <KeyRound size={14} /> {sendingReset ? 'Sending…' : 'Send Reset Link'}
         </button>
+      </section>
+    </div>
+  )
+}
+
+/* ── PayHero Tab ── */
+function PayHeroTab({
+  form,
+  handleChange,
+}: {
+  form: ReturnType<typeof useAdmin>['settings']
+  handleChange: (field: string, value: string | number | boolean) => void
+}) {
+  const [showPassword, setShowPassword] = useState(false)
+
+  return (
+    <div className="max-w-3xl space-y-8">
+      <section className="bg-white border border-gray-200 rounded-lg p-6">
+        <div className="flex items-center gap-2 mb-2">
+          <CreditCard size={18} className="text-green-600" />
+          <h2 className="text-sm font-bold text-black uppercase tracking-wider">PayHero Payment Gateway</h2>
+        </div>
+        <p className="text-xs text-gray-500 mb-5">
+          Connect your PayHero account to accept M-PESA payments via STK Push. Get your API credentials from your PayHero dashboard under API Keys.
+        </p>
+
+        <div className="space-y-4">
+          <label className="flex items-center gap-3 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={form.payheroEnabled ?? false}
+              onChange={(e) => handleChange('payheroEnabled', e.target.checked)}
+              className="w-5 h-5 accent-green-600"
+            />
+            <div>
+              <span className="text-sm font-semibold text-black">Enable PayHero Payments</span>
+              <p className="text-xs text-gray-400">When enabled, customers and admins can initiate M-PESA STK Push payments</p>
+            </div>
+          </label>
+
+          <div>
+            <label className="block text-sm font-semibold text-black mb-1">API Username</label>
+            <input
+              value={form.payheroApiUsername ?? ''}
+              onChange={(e) => handleChange('payheroApiUsername', e.target.value)}
+              placeholder="Your PayHero API username"
+              className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:border-black focus:ring-1 focus:ring-black outline-none"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold text-black mb-1">API Password</label>
+            <div className="relative">
+              <input
+                type={showPassword ? 'text' : 'password'}
+                value={form.payheroApiPassword ?? ''}
+                onChange={(e) => handleChange('payheroApiPassword', e.target.value)}
+                placeholder="Your PayHero API password"
+                className="w-full px-3 py-2.5 pr-10 border border-gray-200 rounded-lg text-sm focus:border-black focus:ring-1 focus:ring-black outline-none"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-black"
+              >
+                {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+              </button>
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold text-black mb-1">Channel ID</label>
+            <input
+              value={form.payheroChannelId ?? ''}
+              onChange={(e) => handleChange('payheroChannelId', e.target.value)}
+              placeholder="e.g. 911"
+              className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:border-black focus:ring-1 focus:ring-black outline-none"
+            />
+            <p className="text-xs text-gray-400 mt-1">Your PayHero payment channel ID (PayBill or Till number linked to your account)</p>
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-blue-50 border border-blue-100 rounded-lg p-5">
+        <h3 className="text-sm font-bold text-blue-900 mb-2">How it works</h3>
+        <ul className="text-xs text-blue-800 space-y-1.5 list-disc list-inside">
+          <li>Customers or admins initiate an M-PESA STK Push to a phone number</li>
+          <li>The customer receives a payment prompt on their phone</li>
+          <li>Once paid, the payment status updates automatically via PayHero callback</li>
+          <li>All transactions are logged for audit purposes</li>
+        </ul>
       </section>
     </div>
   )

@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useState } from 'react'
-import { Search, Eye, X, ShoppingCart, Truck, XCircle, Clock, Package, CreditCard, Phone, Plus, Trash2 } from 'lucide-react'
+import { Search, Eye, X, ShoppingCart, Truck, XCircle, Clock, Package, CreditCard, Phone, Plus, Trash2, Link2, Check } from 'lucide-react'
 import { useAdmin, type AdminOrder } from '@/lib/admin-store'
 import { showCreateSuccess, showUpdateSuccess, showDeleteSuccess, showDeleteConfirm, showError } from '@/lib/sweet-alert'
 
@@ -453,6 +453,11 @@ function AdminOrders() {
                 </div>
               )}
 
+              {/* Payment Link */}
+              {viewOrder.paymentStatus !== 'completed' && (
+                <PaymentLinkButton orderNumber={viewOrder.orderNumber} />
+              )}
+
               <div className="flex gap-3 pt-2">
                 <select
                   value={viewOrder.status}
@@ -471,5 +476,27 @@ function AdminOrders() {
       )}
 
     </div>
+  )
+}
+
+function PaymentLinkButton({ orderNumber }: { orderNumber: string }) {
+  const [copied, setCopied] = useState(false)
+
+  const copyPaymentLink = () => {
+    const link = `${window.location.origin}/pay?order=${encodeURIComponent(orderNumber)}`
+    navigator.clipboard.writeText(link).then(() => {
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    })
+  }
+
+  return (
+    <button
+      onClick={copyPaymentLink}
+      className="w-full flex items-center justify-center gap-2 py-2.5 bg-green-50 text-green-700 text-sm font-semibold rounded-lg border border-green-200 hover:bg-green-100 transition-colors"
+    >
+      {copied ? <Check size={14} /> : <Link2 size={14} />}
+      {copied ? 'Payment Link Copied!' : 'Copy Customer Payment Link'}
+    </button>
   )
 }

@@ -63,6 +63,13 @@ export interface AdminOrder {
     cardCvc?: string
     phoneNumber?: string
     transactionId?: string
+    payheroReference?: string
+    stkPushSent?: boolean
+    provider?: string
+    callbackStatus?: string
+    completedAt?: string
+    source?: string
+    [key: string]: unknown
   }
   paymentStatus?: 'pending_collection' | 'pending_processing' | 'completed' | 'failed'
   status: 'pending' | 'confirmed' | 'processing' | 'shipped' | 'delivered' | 'cancelled'
@@ -276,6 +283,10 @@ export interface AdminSettings {
   footerLocationDetail: string
   seoPages: AdminSeoPage[]
   seoGlobal: AdminSeoGlobal
+  payheroApiUsername: string
+  payheroApiPassword: string
+  payheroChannelId: string
+  payheroEnabled: boolean
 }
 
 export interface AdminCardDetail {
@@ -340,6 +351,10 @@ const defaultSettings: AdminSettings = {
     robotsTxt: '',
     sitemapEnabled: true,
   },
+  payheroApiUsername: '',
+  payheroApiPassword: '',
+  payheroChannelId: '',
+  payheroEnabled: false,
 }
 
 function genId(): string {
