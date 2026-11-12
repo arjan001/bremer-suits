@@ -7,7 +7,14 @@ export function getSupabase() {
   if (!supabaseUrl || !supabaseKey) {
     throw new Error('Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY environment variables')
   }
-  return createClient(supabaseUrl, supabaseKey)
+  // Handle new sb_secret_... format by using createClient with explicit options
+  const client = createClient(supabaseUrl, supabaseKey, {
+    auth: {
+      autoRefreshToken: false,
+      persistSession: false,
+    },
+  })
+  return client
 }
 
 export function corsHeaders() {

@@ -1,0 +1,9 @@
+node_modules
+dist
+.netlify
+.tanstack
+.content-collections/cache
+.env
+.env.*
+!.env.example
+*.log
