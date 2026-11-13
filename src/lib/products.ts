@@ -44,17 +44,20 @@ function mapProduct(row: Record<string, unknown>): Product {
 /**
  * Load active products from the API (Supabase via Netlify Functions).
  * Returns empty array on the server or when no products exist.
+ * Pass throwOnError to distinguish a failed request from an empty collection.
  */
-export async function getProducts(): Promise<Product[]> {
+export async function getProducts(options: { throwOnError?: boolean } = {}): Promise<Product[]> {
   if (typeof window === 'undefined') return []
   try {
     const res = await fetch(`${BASE}/admin-products`)
-    if (!res.ok) return []
+    if (!res.ok) throw new Error(`Collection request failed (${res.status})`)
     const rows = (await res.json()) as Record<string, unknown>[]
+    if (!Array.isArray(rows)) throw new Error('Invalid collection response')
     return rows
       .filter((p) => !p.status || p.status === 'active')
       .map(mapProduct)
-  } catch {
+  } catch (error) {
+    if (options.throwOnError) throw error
     return []
   }
 }
@@ -91,14 +94,15 @@ export interface GalleryCategory {
 /**
  * Load active gallery/storefront categories from the API (Supabase via
  * Netlify Functions). Falls back to an empty array on failure so the
- * caller can gracefully degrade to static content.
+ * caller can gracefully degrade. Pass throwOnError to show a retry state.
  */
-export async function getCategories(): Promise<GalleryCategory[]> {
+export async function getCategories(options: { throwOnError?: boolean } = {}): Promise<GalleryCategory[]> {
   if (typeof window === 'undefined') return []
   try {
     const res = await fetch(`${BASE}/admin-categories`)
-    if (!res.ok) return []
+    if (!res.ok) throw new Error(`Collection request failed (${res.status})`)
     const rows = (await res.json()) as Record<string, unknown>[]
+    if (!Array.isArray(rows)) throw new Error('Invalid collection response')
     return rows
       .filter((c) => !c.status || c.status === 'active')
       .map((c) => ({
@@ -109,7 +113,8 @@ export async function getCategories(): Promise<GalleryCategory[]> {
         image: (c.image as string) || '',
         status: ((c.status as string) || 'active') as 'active' | 'inactive',
       }))
-  } catch {
+  } catch (error) {
+    if (options.throwOnError) throw error
     return []
   }
 }
