@@ -213,6 +213,10 @@ function HomePage() {
   const [cubeDepth, setCubeDepth] = useState(0)
   const [products, setProducts] = useState<Product[]>([])
   const [productsLoading, setProductsLoading] = useState(true)
+  const [productsError, setProductsError] = useState(false)
+  const [productsAttempt, setProductsAttempt] = useState(0)
+  const [categoriesError, setCategoriesError] = useState(false)
+  const [categoriesAttempt, setCategoriesAttempt] = useState(0)
   const [galleryCategories, setGalleryCategories] = useState<GalleryCategory[]>([])
   const [galleryCategoriesLoading, setGalleryCategoriesLoading] = useState(true)
 
@@ -251,17 +255,27 @@ function HomePage() {
 
   // Fetch products from database
   useEffect(() => {
-    getProducts()
-      .then((data) => setProducts(data))
-      .finally(() => setProductsLoading(false))
-  }, [])
+    let cancelled = false
+    setProductsLoading(true)
+    setProductsError(false)
+    getProducts({ throwOnError: true })
+      .then((data) => { if (!cancelled) setProducts(data) })
+      .catch(() => { if (!cancelled) setProductsError(true) })
+      .finally(() => { if (!cancelled) setProductsLoading(false) })
+    return () => { cancelled = true }
+  }, [productsAttempt])
 
   // Fetch gallery categories from database
   useEffect(() => {
-    getCategories()
-      .then((data) => setGalleryCategories(data))
-      .finally(() => setGalleryCategoriesLoading(false))
-  }, [])
+    let cancelled = false
+    setGalleryCategoriesLoading(true)
+    setCategoriesError(false)
+    getCategories({ throwOnError: true })
+      .then((data) => { if (!cancelled) setGalleryCategories(data) })
+      .catch(() => { if (!cancelled) setCategoriesError(true) })
+      .finally(() => { if (!cancelled) setGalleryCategoriesLoading(false) })
+    return () => { cancelled = true }
+  }, [categoriesAttempt])
 
   // Philosophy carousel auto-scroll
   useEffect(() => {
@@ -515,6 +529,11 @@ function HomePage() {
                   </div>
                 </div>
               ))
+            ) : productsError ? (
+              <div className="col-span-full text-center text-gray-500" role="alert">
+                <p>We couldn’t load our collection. Please try again.</p>
+                <button className="mt-3 underline text-black" onClick={() => setProductsAttempt((attempt) => attempt + 1)}>Try again</button>
+              </div>
             ) : products.length === 0 ? (
               <p className="col-span-full text-center text-gray-500">No products available at the moment.</p>
             ) : (
@@ -636,6 +655,11 @@ function HomePage() {
               Array.from({ length: 6 }).map((_, i) => (
                 <div key={i} className="aspect-[4/3] bg-gray-200 animate-pulse rounded" />
               ))
+            ) : categoriesError ? (
+              <div className="col-span-full text-center text-gray-500" role="alert">
+                <p>We couldn’t load our categories. Please try again.</p>
+                <button className="mt-3 underline text-black" onClick={() => setCategoriesAttempt((attempt) => attempt + 1)}>Try again</button>
+              </div>
             ) : galleryCategories.length === 0 ? (
               <p className="col-span-full text-center text-gray-500">No categories available yet.</p>
             ) : (
